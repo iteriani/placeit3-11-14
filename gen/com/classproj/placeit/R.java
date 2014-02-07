@@ -221,7 +221,9 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001c;
     }
     public static final class id {
-        public static final int action_settings=0x7f05000b;
+        public static final int ScrollView01=0x7f05000b;
+        public static final int action_settings=0x7f05000e;
+        public static final int description=0x7f05000d;
         public static final int drawer_layout=0x7f050005;
         public static final int find=0x7f050007;
         public static final int hybrid=0x7f050004;
@@ -233,12 +235,14 @@ containing a value of this type.
         public static final int normal=0x7f050001;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
+        public static final int title=0x7f05000c;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
+        public static final int placeit_form=0x7f030001;
     }
     public static final class menu {
         public static final int activity_main=0x7f0a0000;
@@ -410,7 +414,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name android:adSize
+          @attr name com.classproj.placeit:adSize
         */
         public static final int AdsAttrs_adSize = 0;
         /**
@@ -430,7 +434,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name android:adSizes
+          @attr name com.classproj.placeit:adSizes
         */
         public static final int AdsAttrs_adSizes = 1;
         /**
@@ -446,7 +450,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name android:adUnitId
+          @attr name com.classproj.placeit:adUnitId
         */
         public static final int AdsAttrs_adUnitId = 2;
         /** Attributes that can be used with a MapAttrs.
@@ -502,7 +506,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraBearing
+          @attr name com.classproj.placeit:cameraBearing
         */
         public static final int MapAttrs_cameraBearing = 1;
         /**
@@ -516,7 +520,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTargetLat
+          @attr name com.classproj.placeit:cameraTargetLat
         */
         public static final int MapAttrs_cameraTargetLat = 2;
         /**
@@ -530,7 +534,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTargetLng
+          @attr name com.classproj.placeit:cameraTargetLng
         */
         public static final int MapAttrs_cameraTargetLng = 3;
         /**
@@ -544,7 +548,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraTilt
+          @attr name com.classproj.placeit:cameraTilt
         */
         public static final int MapAttrs_cameraTilt = 4;
         /**
@@ -558,7 +562,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:cameraZoom
+          @attr name com.classproj.placeit:cameraZoom
         */
         public static final int MapAttrs_cameraZoom = 5;
         /**
@@ -578,7 +582,7 @@ containing a value of this type.
 <tr><td><code>terrain</code></td><td>3</td><td></td></tr>
 <tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
 </table>
-          @attr name android:mapType
+          @attr name com.classproj.placeit:mapType
         */
         public static final int MapAttrs_mapType = 0;
         /**
@@ -592,7 +596,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiCompass
+          @attr name com.classproj.placeit:uiCompass
         */
         public static final int MapAttrs_uiCompass = 6;
         /**
@@ -606,7 +610,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiRotateGestures
+          @attr name com.classproj.placeit:uiRotateGestures
         */
         public static final int MapAttrs_uiRotateGestures = 7;
         /**
@@ -620,7 +624,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiScrollGestures
+          @attr name com.classproj.placeit:uiScrollGestures
         */
         public static final int MapAttrs_uiScrollGestures = 8;
         /**
@@ -634,7 +638,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiTiltGestures
+          @attr name com.classproj.placeit:uiTiltGestures
         */
         public static final int MapAttrs_uiTiltGestures = 9;
         /**
@@ -648,7 +652,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiZoomControls
+          @attr name com.classproj.placeit:uiZoomControls
         */
         public static final int MapAttrs_uiZoomControls = 10;
         /**
@@ -662,7 +666,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:uiZoomGestures
+          @attr name com.classproj.placeit:uiZoomGestures
         */
         public static final int MapAttrs_uiZoomGestures = 11;
         /**
@@ -676,7 +680,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:useViewLifecycle
+          @attr name com.classproj.placeit:useViewLifecycle
         */
         public static final int MapAttrs_useViewLifecycle = 12;
         /**
@@ -690,7 +694,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name android:zOrderOnTop
+          @attr name com.classproj.placeit:zOrderOnTop
         */
         public static final int MapAttrs_zOrderOnTop = 13;
     };
