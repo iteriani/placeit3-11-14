@@ -55,6 +55,10 @@ public class MainActivity extends FragmentActivity implements OnMapClickListener
 	/* reference to markers on the map*/
 	private List<Marker> mMarkers;
 	private Iterator<Marker> marker;
+	
+	/* Reference to all placeits*/
+	List<PlaceIt> placeits;
+	
 	/* Database handler */
 	private PlaceItHandler db;
 
@@ -142,6 +146,7 @@ public class MainActivity extends FragmentActivity implements OnMapClickListener
 				Log.d("Insert: ", "Inserting ..");
 				PlaceIt placeit = new PlaceIt(titleText, descText,
 						position.longitude, position.latitude);
+				placeits.add(placeit);
 				db.addPlaceIt(placeit);		
 				
 				
@@ -169,7 +174,7 @@ public class MainActivity extends FragmentActivity implements OnMapClickListener
 
 	private void initializeMarkers() {
 		Log.d("Reading: ", "Reading all placeits..");
-		List<PlaceIt> placeits = db.getAllPlaceIts();
+		placeits = db.getAllPlaceIts();
 		Log.d("placeitcount", Integer.toString(placeits.size()));
 		for (PlaceIt pc : placeits) {
 			String log = "Id: " + pc.getID() + " ,Name: " + pc.getTitle()
