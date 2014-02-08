@@ -9,6 +9,7 @@ import PlaceItDB.PlaceIt;
 import PlaceItDB.PlaceItHandler;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
@@ -35,23 +36,30 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-public class MainActivity extends FragmentActivity implements
-		OnMapClickListener {
+
+public class MainActivity extends FragmentActivity implements OnMapClickListener {
+	
+	/*  record object is used in database handler to bind to activity*/
 	FragmentActivity record = this;
+	
+	/* googleMap is our singleton map to add ui elements to.*/
 	GoogleMap googleMap;
-	MarkerOptions markerOptions;
-	LatLng latLng;
-	private LocationManager locationManager;
+	
+	/* Current location of user*/
 	Location location;
+	
+	/* Reference to items in swipe-bar*/
 	String[] swipebarElements;
-	private DrawerLayout myDrawLayout;
 	private ListView viewLists;
+	
+	/* reference to markers on the map*/
 	private List<Marker> mMarkers;
 	private Iterator<Marker> marker;
+	/* Database handler */
 	private PlaceItHandler db;
+
 	@SuppressLint("NewApi")
 	private void setUpMapIfNeeded() {
-		
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (googleMap == null) {
@@ -66,19 +74,25 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		swipebarElements = new String[] { "Ankoor", "Hitler", "Stalin" };
-		myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		viewLists = (ListView) findViewById(R.id.left_drawer);
+
 		mMarkers = new Vector<Marker>();
 		this.setUpMapIfNeeded();
 		db = new PlaceItHandler(record);
 		this.initializeMarkers();
+		this.setUpFindButton();
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
 
+	}
+
+	public void setUpFindButton() {
 		// Getting reference to btn_find of the layout activity_main
 		Button btn_find = (Button) findViewById(R.id.find);
 
@@ -101,39 +115,47 @@ public class MainActivity extends FragmentActivity implements
 		// Setting button click event listener for the find button
 		btn_find.setOnClickListener(findClickListener);
 	}
-
+	
+	
 	@Override
 	public void onMapClick(final LatLng position) {
+		/* Initialize dialog box*/
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Create Place-It");
-		/*
-		 * alert.setMessage("Please enter a title:"); final EditText input = new
-		 * EditText(this); alert.setView(input);
-		 */
 		LayoutInflater inflater = getLayoutInflater();
-		// Inflate and set the layout for the dialog
-		// Pass null as the parent view because its going in the dialog layout
 		final View dialog = inflater.inflate(R.layout.placeit_form, null);
 		final EditText title = (EditText) dialog.findViewById(R.id.title);
 		final EditText description = (EditText) dialog
 				.findViewById(R.id.description);
 		alert.setView(dialog);
+		/* Initialize submission button.*/
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
+				/* User submits his/her placeit and this method is called */
 				String descText = description.getText().toString();
 				String titleText = title.getText().toString();
-				
-				Toast.makeText(MainActivity.this, "Tag added!",
+				/* Notification of added place-it*/
+				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();
+				
+				/* Add marker to database*/
+				Log.d("Insert: ", "Inserting ..");
+				PlaceIt placeit = new PlaceIt(titleText, descText,
+						position.longitude, position.latitude);
+				db.addPlaceIt(placeit);		
+				
+				
+				descText += placeit.getActiveDate();
+				
+				/* Add marker to the map*/
 				Marker added = googleMap.addMarker(new MarkerOptions()
 						.position(position).title(titleText).snippet(descText));
 				mMarkers.add(added);
-
 				
-				Log.d("Insert: ", "Inserting ..");
-				db.addPlaceIt(new PlaceIt(titleText, descText, position.longitude, position.latitude));
+
 			}
 		});
+		/* Cancel button which does nothing when clicked and exits the dialog.*/
 		alert.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
@@ -141,21 +163,24 @@ public class MainActivity extends FragmentActivity implements
 								Toast.LENGTH_SHORT).show();
 					}
 				});
+		
 		alert.show();
 	}
-	
-	private void initializeMarkers(){
+
+	private void initializeMarkers() {
 		Log.d("Reading: ", "Reading all placeits..");
 		List<PlaceIt> placeits = db.getAllPlaceIts();
 		Log.d("placeitcount", Integer.toString(placeits.size()));
 		for (PlaceIt pc : placeits) {
-			String log = "Id: " + pc.getID() + " ,Name: "
-					+ pc.getTitle() + " ,Desc: " + pc.getDescription() + 
-					"coords : " + pc.getLatitude() + "," + pc.getLongitude();
+			String log = "Id: " + pc.getID() + " ,Name: " + pc.getTitle()
+					+ " ,Desc: " + pc.getDescription() + "coords : "
+					+ pc.getLatitude() + "," + pc.getLongitude();
 			// Writing Contacts to log
 			Log.d("Name: ", log);
+			String descText = pc.getDescription() + "\r\n Set on " +  pc.getActiveDate();
 			Marker added = googleMap.addMarker(new MarkerOptions()
-			.position(new LatLng(pc.getLatitude(), pc.getLongitude())).title(pc.getTitle()).snippet(pc.getDescription()));
+					.position(new LatLng(pc.getLatitude(), pc.getLongitude()))
+					.title(pc.getTitle()).snippet(descText));
 			mMarkers.add(added);
 
 		}
@@ -168,7 +193,7 @@ public class MainActivity extends FragmentActivity implements
 		location = googleMap.getMyLocation();
 
 		if (location != null) {
-			latLng = new LatLng(location.getLatitude(), location.getLongitude());
+			LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,
 					8.0f));
 		}
@@ -207,7 +232,7 @@ public class MainActivity extends FragmentActivity implements
 			location = googleMap.getMyLocation();
 
 			if (location != null) {
-				latLng = new LatLng(location.getLatitude(),
+				LatLng latLng = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
 						latLng, 8.0f));
@@ -232,7 +257,7 @@ public class MainActivity extends FragmentActivity implements
 				Address address = (Address) addresses.get(i);
 
 				// Creating an instance of GeoPoint, to display in Google Map
-				latLng = new LatLng(address.getLatitude(),
+				LatLng latLng = new LatLng(address.getLatitude(),
 						address.getLongitude());
 
 				String addressText = String.format(
@@ -241,7 +266,7 @@ public class MainActivity extends FragmentActivity implements
 								.getAddressLine(0) : "", address
 								.getCountryName());
 
-				markerOptions = new MarkerOptions();
+				MarkerOptions markerOptions = new MarkerOptions();
 				markerOptions.position(latLng);
 				markerOptions.title(addressText);
 

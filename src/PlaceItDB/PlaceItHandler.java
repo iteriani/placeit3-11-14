@@ -1,6 +1,8 @@
 package PlaceItDB;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -8,12 +10,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 5;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
@@ -27,6 +30,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 	private static final String KEY_DESCRIPTION = "description";
 	private static final String KEY_LONGITUDE = "longitude";
 	private static final String KEY_LATITUDE = "latitude";
+	private static final String KEY_ACTIVEDATE ="activeDate";
 
 	public PlaceItHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,7 +41,8 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		String CREATE_PLACEITS_TABLE = "CREATE TABLE " + TABLE_PLACEITS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, " + KEY_TITLE
 				+ " VARCHAR(255), " + KEY_DESCRIPTION + " TEXT ,"  
-				+ KEY_LONGITUDE + " DOUBLE, " + KEY_LATITUDE + " DOUBLE " + ")";
+				+ KEY_LONGITUDE + " DOUBLE, " + KEY_LATITUDE + " DOUBLE ," + KEY_ACTIVEDATE + 
+				" DOUBLE" +")";
 
 		db.execSQL(CREATE_PLACEITS_TABLE);
 	}
@@ -60,7 +65,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		values.put(KEY_DESCRIPTION, placeIt.getDescription());
 		values.put(KEY_LONGITUDE, placeIt.getLongitude());
 		values.put(KEY_LATITUDE, placeIt.getLatitude());
-
+		values.put(KEY_ACTIVEDATE, placeIt.getActiveDate().getTime());
 		// Inserting Row
 		db.insert(TABLE_PLACEITS, null, values);
 		db.close(); // Closing database connection
@@ -79,7 +84,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 		PlaceIt placeit = new PlaceIt(
 				cursor.getString(1), cursor.getString(2), Double.parseDouble(cursor.getString(3)), 
-				Double.parseDouble(cursor.getString(4)));
+				Double.parseDouble(cursor.getString(4)), Long.valueOf(cursor.getString(5)));
 		// return contact
 		return placeit;
 	}
@@ -102,7 +107,10 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 				contact.setDescription(cursor.getString(2));
 				contact.setLatitude(Double.valueOf(cursor.getString(3)));
 				contact.setLongitude(Double.valueOf(cursor.getString(4)));
-				// Adding placeit to list
+				double ds = Double.parseDouble(cursor.getString(5));
+				long sd = (long) ds;
+				contact.setActiveDate(sd);
+				// Adding placeit to listr
 				placeItList.add(contact);
 			} while (cursor.moveToNext());
 		}
@@ -129,8 +137,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		ContentValues values = new ContentValues();
 		values.put(KEY_TITLE, placeit.getTitle());
 		values.put(KEY_DESCRIPTION, placeit.getDescription());
-		
-
+		values.put(KEY_ACTIVEDATE, placeit.getActiveDate().getTime());
 		// updating row
 		return db.update(TABLE_PLACEITS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(placeit.getID()) });
@@ -149,6 +156,26 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		db.delete(TABLE_PLACEITS, KEY_ID + " = ?",
 				new String[] { String.valueOf(placeit.getID()) });
 		db.close();
+	}
+
+	@Override
+	public int repostPlaceit(PlaceIt placeit) {
+		
+		java.util.Date date = placeit.getActiveDate();
+	    Calendar cal = Calendar.getInstance(); // creates calendar
+	    cal.setTime(date); // sets calendar time/date
+	    cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+	    java.util.Date newDate = cal.getTime(); // returns new date object, one hour in the future
+	    
+	    placeit.setActiveDate(newDate.getTime());
+		return this.updatePlaceIt(placeit);
+	}
+
+	@Override
+	public void deactivatePlaceit(PlaceIt placeit) {
+		placeit.setActiveDate(0); /* maybe...*/
+		this.updatePlaceIt(placeit);
+		
 	}
 
 }

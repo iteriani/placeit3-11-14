@@ -1,5 +1,7 @@
 package PlaceItDB;
 
+import java.sql.Date;
+
 public class PlaceIt {
     
     //private variables
@@ -8,19 +10,32 @@ public class PlaceIt {
     String _description;
     double _latitude;
     double _longitude;
-    
+    long _activeDate;
+    String _displayType;
      
     // Empty constructor
     public PlaceIt(){
          
     }
     // constructor
+    
+    public PlaceIt(String title, String description, double latitude, double longitude, long date){
+        this._title = title;
+        this._description = description;
+        this._latitude = latitude;
+        this._longitude = longitude;
+        this._activeDate = date;
+    }
+    
     public PlaceIt(String title, String description, double latitude, double longitude){
         this._title = title;
         this._description = description;
         this._latitude = latitude;
         this._longitude = longitude;
+        this._activeDate = new java.util.Date().getTime();
     }
+    
+
      
     // constructor
     public PlaceIt(String title, String description){
@@ -75,5 +90,15 @@ public class PlaceIt {
     // setting description
     public void setLatitude(double latitude){
         this._latitude = latitude;
+    }
+    
+    // getting date
+    public java.util.Date getActiveDate(){
+        return new java.util.Date(this._activeDate);
+    }
+     
+    // setting description
+    public void setActiveDate(long sd){
+        this._activeDate = sd;
     }
 }
