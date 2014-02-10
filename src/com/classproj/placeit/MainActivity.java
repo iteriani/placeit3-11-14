@@ -22,8 +22,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SyncStateContract.Constants;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.Notification.Builder;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.View;
@@ -42,20 +49,9 @@ public class MainActivity extends FragmentActivity {
 	    String[] swipebarElements;
 	    private DrawerLayout myDrawLayout;
 	    private ListView viewLists;
-	    private void centerMapOnMyLocation() {
-
-	        //googleMap.setMyLocationEnabled(true);
-	    	
-	        location = googleMap.getMyLocation();
-
-	        if (location != null) {
-	        	latLng = new LatLng(location.getLatitude(),
-	                    location.getLongitude());
-	        	googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,
-		        		 8.0f));
-	        }
-	        
-	    }
+	    MarkerOptions marker;
+	    String provide;
+	    NotificationCompat.Builder n;
 	    @Override
 	    protected void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
@@ -89,16 +85,76 @@ public class MainActivity extends FragmentActivity {
 	                }
 	            }
 	        };
-	 
+	        Intent intent = new Intent(this, MainActivity.class);
+            final PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            NotificationManager nm = (NotificationManager) this
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
 	        // Setting button click event listener for the find button
 	        btn_find.setOnClickListener(findClickListener);
+	        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	        Criteria criteria = new Criteria();
+	        provide = locationManager.getBestProvider(criteria, false);
+	        n = new NotificationCompat.Builder(this);
+        	n.setContentTitle("Reminder")
+            .setContentText("TURN DOWN FOR WHATT!!!")
+            .setSmallIcon(R.drawable.catme)
+            .setContentIntent(pIntent)
+            .setAutoCancel(true)
+            .build();
+       
+       	NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);  
+       	manager.notify(100, n.build());  
+	        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+	            @Override
+	            public void onLocationChanged(Location location) {
+	            	Location currLoc = locationManager.getLastKnownLocation(provide);
+	    	        if (currLoc != null) {
+	    	        	if (marker != null)
+	    	        	{
+	    	        		Location markerLocation = new Location ("Marker Location");
+	    	        		markerLocation.setLatitude(marker.getPosition().latitude);
+	    	        		markerLocation.setLongitude(marker.getPosition().longitude);
+	    	        		float dist = currLoc.distanceTo(markerLocation);
+	    	        		dist = (float) (dist * 0.62137);
+	    	                if (dist <= 0.5)
+	    	                {
+	    	               
+	    	                	n.setContentTitle("Notification Reminder")
+	    	                     .setContentText("You are near the .... [reminder]")
+	    	                     .setSmallIcon(R.drawable.ic_launcher)
+	    	                     .setContentIntent(pIntent)
+	    	                     .setAutoCancel(true)
+	    	                     .build();
+	    	                
+	    	                	NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);  
+	    	                	manager.notify(100, n.build());  
+	    	                }
+	    	        	}
+	    	        }
+	            }
+	            @Override
+	            public void onProviderDisabled(String provider) {
+	                // TODO Auto-generated method stub
+	            }
+	            @Override
+	            public void onProviderEnabled(String provider) {
+	                // TODO Auto-generated method stub
+	            }
+	            @Override
+	            public void onStatusChanged(String provider, int status,
+	                    Bundle extras) {
+	                // TODO Auto-generated method stub
+	            }           
+	        });
 	        
+	          //  onLocationChanged(location);
+
 	        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
 	            @Override
 	            public void onMapClick(LatLng point) {
 	                // TODO Auto-generated method stub
-	            	MarkerOptions marker = new MarkerOptions().position(
+	                marker = new MarkerOptions().position(
 	                        new LatLng(point.latitude, point.longitude)).title("Reminder");
 	            	marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
 	            	googleMap.addMarker(marker);
