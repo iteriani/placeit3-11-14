@@ -1,4 +1,4 @@
-package com.classproj.placeit;
+package PlaceItControllers;
 
 import java.util.List;
 
