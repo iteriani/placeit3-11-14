@@ -1,10 +1,14 @@
 package com.classproj.placeit;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import PlaceItControllers.PlaceItController;
 import PlaceItControllers.PlaceItHandler;
 import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
+import PlaceItDB.PlaceIt;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,9 +30,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
-		OnMapClickListener {
+		OnMapClickListener, iView {
 
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -38,11 +44,14 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Current location of user */
 	Location location;
+	
+	/* Markers on the map*/
+	List<Marker> mMarkers;
 
 	/* Reference to items in swipe-bar */
 	String[] swipebarElements;
 	private ListView viewLists;
-	
+
 	/* Controller */
 	PlaceItController controller;
 
@@ -67,6 +76,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		mMarkers = new LinkedList<Marker>();
 		swipebarElements = new String[] { "Ankoor", "Hitler", "Stalin" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		viewLists = (ListView) findViewById(R.id.left_drawer);
@@ -74,15 +84,13 @@ public class MainActivity extends FragmentActivity implements
 		GoogleMap map = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
-		
+
 		iPLScheduleModel scheduler = new PlaceItScheduler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
-		controller = new PlaceItController(db, map, scheduler);
+		controller = new PlaceItController(db, this, scheduler);
 		controller.initializeMarkers();
-		
+
 		this.setUpFindButton();
-
-
 	}
 
 	public void setUpFindButton() {
@@ -100,7 +108,8 @@ public class MainActivity extends FragmentActivity implements
 				String location = etLocation.getText().toString();
 
 				if (location != null && !location.equals("")) {
-					new GeocoderTask(getBaseContext(), googleMap).execute(location);
+					new GeocoderTask(getBaseContext(), googleMap)
+							.execute(location);
 				}
 			}
 		};
@@ -129,9 +138,9 @@ public class MainActivity extends FragmentActivity implements
 				/* Notification of added place-it */
 				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();
-				
+
 				controller.AddPlaceIt(titleText, descText, position);
-				
+
 			}
 		});
 		/* Cancel button which does nothing when clicked and exits the dialog. */
@@ -168,5 +177,17 @@ public class MainActivity extends FragmentActivity implements
 		return true;
 	}
 
+	public void addMarker(PlaceIt pc) {
+		String log = "Id: " + pc.getID() + " ,Name: " + pc.getTitle()
+				+ " ,Desc: " + pc.getDescription() + "coords : "
+				+ pc.getLatitude() + "," + pc.getLongitude();
+		String descText = pc.getDescription() + "\r\n Set on "
+				+ pc.getActiveDate();
+		Marker added = googleMap.addMarker(new MarkerOptions()
+				.position(new LatLng(pc.getLatitude(), pc.getLongitude()))
+				.title(pc.getTitle()).snippet(descText));
+		mMarkers.add(added);
+
+	}
 
 }
