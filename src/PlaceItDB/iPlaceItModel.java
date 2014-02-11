@@ -2,6 +2,8 @@ package PlaceItDB;
 
 import java.util.List;
 
+import Models.PlaceIt;
+
 public interface iPlaceItModel {
 
 	// Adding new PlaceIt

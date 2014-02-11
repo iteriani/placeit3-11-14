@@ -1,11 +1,10 @@
-package PlaceItControllers;
+package PlaceItDB;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import PlaceItDB.PlaceIt;
-import PlaceItDB.iPlaceItModel;
+import Models.PlaceIt;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

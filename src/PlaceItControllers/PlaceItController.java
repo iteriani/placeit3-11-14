@@ -3,7 +3,7 @@ package PlaceItControllers;
 import java.util.List;
 import java.util.Vector;
 
-import PlaceItDB.PlaceIt;
+import Models.PlaceIt;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
 import android.util.Log;

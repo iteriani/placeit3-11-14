@@ -3,12 +3,12 @@ package com.classproj.placeit;
 import java.util.LinkedList;
 import java.util.List;
 
+import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
-import PlaceItControllers.PlaceItHandler;
-import PlaceItControllers.PlaceItScheduler;
+import PlaceItDB.PlaceItHandler;
+import PlaceItDB.PlaceItScheduler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
-import PlaceItDB.PlaceIt;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -173,7 +173,16 @@ public class MainActivity extends FragmentActivity implements
 				.position(new LatLng(pc.getLatitude(), pc.getLongitude()))
 				.title(pc.getTitle()).snippet(descText));
 		mMarkers.add(added);
+	}
 
+	@Override
+	public void removeMarker(PlaceIt pc) {
+		for(Marker marker : mMarkers){
+			if(marker.getTitle() == pc.getTitle() && marker.getSnippet() == pc.getDescription()){
+				marker.remove();
+			}
+		}
+		
 	}
 
 }

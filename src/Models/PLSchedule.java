@@ -1,7 +1,9 @@
-package PlaceItDB;
+package Models;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import PlaceItDB.Schedule;
 
 public class PLSchedule {
 

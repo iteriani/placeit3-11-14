@@ -1,10 +1,8 @@
-package PlaceItControllers;
+package PlaceItDB;
 
 import java.util.List;
 
-import PlaceItDB.PlaceIt;
-import PlaceItDB.Schedule;
-import PlaceItDB.iPLScheduleModel;
+import Models.PlaceIt;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
