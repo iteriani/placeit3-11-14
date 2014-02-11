@@ -145,20 +145,6 @@ public class MainActivity extends FragmentActivity implements
 		alert.show();
 	}
 
-	private void centerMapOnMyLocation() {
-
-		googleMap.setMyLocationEnabled(true);
-
-		location = googleMap.getMyLocation();
-
-		if (location != null) {
-			LatLng latLng = new LatLng(location.getLatitude(),
-					location.getLongitude());
-			googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,
-					8.0f));
-		}
-
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
