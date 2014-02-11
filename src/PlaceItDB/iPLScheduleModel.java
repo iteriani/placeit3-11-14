@@ -1,9 +1,8 @@
 package PlaceItDB;
 
-import java.sql.Date;
 import java.util.List;
 
-interface iPLScheduleModel {
+public interface iPLScheduleModel {
 	
 	/* is set up before db calls to reactivate sleeping placeits
 	*/

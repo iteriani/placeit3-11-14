@@ -2,7 +2,7 @@ package PlaceItDB;
 
 import java.util.List;
 
-interface iPlaceItModel {
+public interface iPlaceItModel {
 
 	// Adding new PlaceIt
 	public void addPlaceIt(PlaceIt PlaceIt);

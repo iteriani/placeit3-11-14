@@ -1,6 +1,7 @@
 package PlaceItDB;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 public class PlaceIt {
     
@@ -101,4 +102,8 @@ public class PlaceIt {
     public void setActiveDate(long sd){
         this._activeDate = sd;
     }
+
+	public boolean isActive() {
+		return this._activeDate != 0;
+	}
 }

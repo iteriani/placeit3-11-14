@@ -1,22 +1,22 @@
-package PlaceItDB;
+package PlaceItControllers;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import PlaceItDB.PlaceIt;
+import PlaceItDB.iPlaceItModel;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
@@ -65,7 +65,10 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		values.put(KEY_DESCRIPTION, placeIt.getDescription());
 		values.put(KEY_LONGITUDE, placeIt.getLongitude());
 		values.put(KEY_LATITUDE, placeIt.getLatitude());
-		values.put(KEY_ACTIVEDATE, placeIt.getActiveDate().getTime());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(placeIt.getActiveDate());
+        cal.add(Calendar.MINUTE, 45);
+		values.put(KEY_ACTIVEDATE, cal.getTime().getTime());
 		// Inserting Row
 		db.insert(TABLE_PLACEITS, null, values);
 		db.close(); // Closing database connection
