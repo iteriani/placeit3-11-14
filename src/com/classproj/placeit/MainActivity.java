@@ -10,6 +10,7 @@ import PlaceItDB.PlaceItHandler;
 import PlaceItDB.PLScheduleHandler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
+import android.R;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -122,6 +123,10 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapClick(final LatLng position) {
+		setUpDialog(position);
+	}
+	
+	public void setUpDialog(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Create Place-It");
