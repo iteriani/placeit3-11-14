@@ -1,5 +1,7 @@
 package PlaceItDB;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import Models.PlaceIt;
@@ -23,7 +25,7 @@ public class PlaceItScheduler extends SQLiteOpenHelper implements
 	// Contacts Table Columns names
 	int _id;
 	int placeitID; // this is a foreign key to placeIt
-	List<Schedule> schedules;
+	List<Integer> schedules;
 	Boolean debug;
 
 	private static final String KEY_ID = "id";
@@ -64,19 +66,24 @@ public class PlaceItScheduler extends SQLiteOpenHelper implements
 	}
 
 	@Override
-	public PlaceIt initializeSchedule(PlaceIt placeit, List<Schedule> schedules) {
+	public PlaceIt initializeSchedule(PlaceIt placeit, List<Integer> schedules) {
+		Date currDate = placeit.getActiveDate();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currDate);
+		int weekday = cal.get(Calendar.DAY_OF_WEEK);
+		
+		
+		return null;
+	}
+
+	@Override
+	public PlaceIt addSchedule(PlaceIt placeit, Integer day) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlaceIt addSchedule(PlaceIt placeit, Schedule day) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PlaceIt removeSchedule(PlaceIt placeit, Schedule day) {
+	public PlaceIt removeSchedule(PlaceIt placeit, Integer day) {
 		// TODO Auto-generated method stub
 		return null;
 	}

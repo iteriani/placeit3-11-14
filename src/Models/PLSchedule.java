@@ -3,21 +3,20 @@ package Models;
 import java.util.LinkedList;
 import java.util.List;
 
-import PlaceItDB.Schedule;
 
 public class PLSchedule {
 
 	// private variables
 	int _id;
 	int placeitID; // this is a foreign key to placeIt
-	List<Schedule> schedules;
+	List<Integer> schedules;
 
 	protected PLSchedule(int placeitID) {
 		this.placeitID = placeitID;
-		this.schedules = new LinkedList<Schedule>();
+		this.schedules = new LinkedList<Integer>();
 	}
 
-	protected PLSchedule(int placeitID, List<Schedule> schedules) {
+	protected PLSchedule(int placeitID, List<Integer> schedules) {
 		this(placeitID);
 		this.schedules = schedules;
 	}
@@ -30,15 +29,15 @@ public class PLSchedule {
 		this.placeitID = placeitID;
 	}
 
-	public List<Schedule> getSchedule() {
+	public List<Integer> getInteger() {
 		return this.schedules;
 	}
 
-	public void setSchedule(List<Schedule> schedules) {
+	public void setInteger(List<Integer> schedules) {
 		this.schedules = schedules;
 	}
 
-	public boolean addDay(Schedule day) {
+	public boolean addDay(Integer day) {
 		if (this.schedules.contains(day)) {
 			return false;
 		}
@@ -46,7 +45,7 @@ public class PLSchedule {
 		return true;
 	}
 
-	public boolean removeDay(Schedule day) {
+	public boolean removeDay(Integer day) {
 		if (this.schedules.contains(day)) {
 			this.schedules.remove(day);
 			return true;
