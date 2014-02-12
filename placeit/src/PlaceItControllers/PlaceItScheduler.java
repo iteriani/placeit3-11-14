@@ -97,6 +97,13 @@ public class PlaceItScheduler {
 	/*
 	 * Upon receiving a placeit, it will look for the next scheduled time and
 	 * return the place it with the activated date.
+	 * NEED to have two types of logic, one to 45 minutes, and one to the further date
+	 * 
+	 * if .getschedule = empty, then it is a regular +45 min
+	 * if the next .getschedule is not empty, it will pass in 1,2,3,4,5,6,7
+	 * if you pass in a 0,is with the 45 min, the rest are days of week
+	 * After this is done, they will eventually merge and do this again. 
+	 * 
 	 */
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
