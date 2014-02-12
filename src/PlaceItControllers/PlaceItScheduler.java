@@ -13,17 +13,18 @@ public class PlaceItScheduler {
 
 	private iPlaceItModel PLrepository;
 	private iPLScheduleModel scheduleRepository;
-	
+
 	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db) {
 		this.PLrepository = db;
 		this.scheduleRepository = scheduleDB;
 	}
 
 	public void setUpSchedules() {
-		List<PlaceIt> placeits= this.PLrepository.getAllPlaceIts();
-		for(PlaceIt placeit : placeits){
-			if(placeit.isActive() == true){
-				List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
+		List<PlaceIt> placeits = this.PLrepository.getAllPlaceIts();
+		for (PlaceIt placeit : placeits) {
+			if (placeit.isActive() == true) {
+				List<Integer> schedules = this.scheduleRepository
+						.getSchedule(placeit);
 				placeit = this.initializeSchedule(placeit, schedules);
 			}
 		}
@@ -44,9 +45,9 @@ public class PlaceItScheduler {
 
 		for (Integer schedule : schedules) {
 			Calendar date = null;
-			if(schedule > 0){ // schedule 0 is MINUTE
+			if (schedule > 0) { // schedule 0 is MINUTE
 				date = this.nextDayOfWeek(currDate, schedule);
-			}else{
+			} else {
 				date = Calendar.getInstance();
 				date.add(Calendar.MINUTE, 1);
 			}
@@ -71,12 +72,13 @@ public class PlaceItScheduler {
 		return date;
 	}
 
-	public PlaceIt startSchedule(PlaceIt placeit, List<Integer> days){
-		for(Integer num : days){
+	public PlaceIt startSchedule(PlaceIt placeit, List<Integer> days) {
+		for (Integer num : days) {
 			this.addSchedule(placeit, num);
 		}
 		return this.initializeSchedule(placeit, days);
 	}
+
 	/*
 	 * Will add schedule to PLSchedule database and return a new placeit to be
 	 * updated.
@@ -100,8 +102,13 @@ public class PlaceItScheduler {
 	 */
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.HOUR, 24);
-		return this.initializeSchedule(placeit, schedules);
+		if (schedules.size() == 0) {
+
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.HOUR, 24);
+			return this.initializeSchedule(placeit, schedules);
+		}
+
 	}
 }

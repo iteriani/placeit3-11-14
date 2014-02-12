@@ -13,7 +13,5 @@ public interface iView {
 	public void notifyUser(List<PlaceIt> pc);
 
 	public void getMarker(int id);
-	public void getMarker(int id);
-	// get marker based on the Place-It's ID
 	
 }
