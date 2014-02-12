@@ -103,7 +103,7 @@ public class PlaceItScheduler {
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
 		if (schedules.size() == 0) {
-
+			return placeit;
 		} else {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.HOUR, 24);

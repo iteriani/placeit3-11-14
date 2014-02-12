@@ -66,6 +66,7 @@ public class MainActivity extends FragmentActivity implements
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (googleMap == null) {
+			
 			googleMap = ((SupportMapFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.map)).getMap();
 			// Check if we were successful in obtaining the map.
@@ -236,6 +237,12 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void notifyUser(List<PlaceIt> pc) {
 
+	}
+
+	@Override
+	public void getMarker(int id) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
