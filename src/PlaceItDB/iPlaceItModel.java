@@ -27,7 +27,6 @@ public interface iPlaceItModel {
 	// deleteAll 
 	public void deleteAll();
 	
-	public int repostPlaceit(PlaceIt placeit);
-	
 	public void deactivatePlaceit(PlaceIt placeit);
+
 }

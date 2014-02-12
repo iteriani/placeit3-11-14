@@ -95,8 +95,8 @@ public class MainActivity extends FragmentActivity implements
 		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
 		PlaceItScheduler scheduler = new PlaceItScheduler(scheduleDB, db);
-		controller = new PlaceItController(db, this, scheduler);
-		controller.initializeMarkers();
+		controller = new PlaceItController(db, this);
+		controller.initializeView();
 
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this

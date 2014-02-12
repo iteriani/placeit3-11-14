@@ -113,7 +113,7 @@ public class mockPlaceItHandler implements iPlaceItModel{
 		// TODO Auto-generated method stub
 		mocklist = null;
 	}
-
+/*
 	@Override
 	public int repostPlaceit(PlaceIt placeit) {
 		// TODO Auto-generated method stub
@@ -143,7 +143,7 @@ public class mockPlaceItHandler implements iPlaceItModel{
 		}
 		return num;
 	}
-
+*/
 	@Override
 	public void deactivatePlaceit(PlaceIt placeit) {
 		// TODO Auto-generated method stub

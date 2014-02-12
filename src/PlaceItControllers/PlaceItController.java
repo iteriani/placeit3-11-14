@@ -15,18 +15,15 @@ public class PlaceItController {
 	private iPlaceItModel db;
 	private iView view;
 	private List<PlaceIt> placeits;
-	private PlaceItScheduler scheduler;
 
-	public PlaceItController(iPlaceItModel db, iView view,
-			PlaceItScheduler scheduler) {
+	public PlaceItController(iPlaceItModel db, iView view) {
 		this.db = db;
 		this.view = view;
 
 		this.placeits = new Vector<PlaceIt>();
-		this.scheduler = scheduler;
 	}
 
-	public void initializeMarkers() {
+	public void initializeView() {
 
 		placeits = db.getAllPlaceIts();
 		for (PlaceIt pc : placeits) {
@@ -43,11 +40,13 @@ public class PlaceItController {
 				position.latitude);
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
-
-
-		/* Add marker to the map */
 		view.addMarker(placeit);
-
+	}
+	
+	public void RemovePlaceIt(PlaceIt placeit){
+		placeits.remove(placeit);
+		db.deactivatePlaceit(placeit);
+		view.removeMarker(placeit);
 	}
 
 	public void checkCoordinates(Location coords) {

@@ -160,18 +160,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		db.close();
 	}
 
-	@Override
-	public int repostPlaceit(PlaceIt placeit) {
-		
-		java.util.Date date = placeit.getActiveDate();
-	    Calendar cal = Calendar.getInstance(); // creates calendar
-	    cal.setTime(date); // sets calendar time/date
-	    cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
-	    java.util.Date newDate = cal.getTime(); // returns new date object, one hour in the future
-	    
-	    placeit.setActiveDate(newDate.getTime());
-		return this.updatePlaceIt(placeit);
-	}
+
 
 	@Override
 	public void deactivatePlaceit(PlaceIt placeit) {
