@@ -48,7 +48,7 @@ public class PlaceIt {
         return this._id;
     }
      
-    // setting id
+    // setting ID
     public void setID(int id){
         this._id = id;
     }

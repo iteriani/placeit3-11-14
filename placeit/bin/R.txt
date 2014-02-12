@@ -78,7 +78,6 @@ int id title 0x7f05000c
 int integer google_play_services_version 0x7f070000
 int layout activity_main 0x7f030000
 int layout placeit_form 0x7f030001
-int layout placeit_notification 0x7f030002
 int menu activity_main 0x7f0a0000
 int menu main 0x7f0a0001
 int string action_settings 0x7f06001b
