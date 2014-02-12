@@ -47,7 +47,6 @@ public class PlaceItController {
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
 
-		descText += placeit.getActiveDate();
 
 		/* Add marker to the map */
 		view.addMarker(placeit);

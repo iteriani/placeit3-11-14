@@ -8,4 +8,7 @@ public interface iView {
 	
 	public void removeMarker(PlaceIt pc);
 	
+	public void getMarker(int id);
+	// get marker based on the Place-It's ID
+	
 }
