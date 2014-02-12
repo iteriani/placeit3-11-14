@@ -5,6 +5,6 @@ import junit.framework.TestCase;
 public class UserStory1Test extends TestCase {
 
 	public void testMapAppears(){
-		
+		fail();
 	}
 }

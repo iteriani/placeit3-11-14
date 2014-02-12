@@ -180,6 +180,7 @@ public class MainActivity extends FragmentActivity implements
 		for(Marker marker : mMarkers){
 			if(marker.getTitle() == pc.getTitle() && marker.getSnippet() == pc.getDescription()){
 				marker.remove();
+				mMarkers.remove(marker);
 			}
 		}
 		
