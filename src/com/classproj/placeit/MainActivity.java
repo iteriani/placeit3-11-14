@@ -6,14 +6,16 @@ import java.util.List;
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
 import PlaceItControllers.PlaceItScheduler;
-import PlaceItDB.PlaceItHandler;
 import PlaceItDB.PLScheduleHandler;
+import PlaceItDB.PlaceItHandler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -26,7 +28,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -39,14 +40,17 @@ public class MainActivity extends FragmentActivity implements
 
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
+	LocationManager locationManager;
 
 	/* googleMap is our singleton map to add ui elements to. */
 	GoogleMap googleMap;
 
 	/* Current location of user */
 	Location location;
-	
-	/* Markers on the map*/
+
+	/* */
+
+	/* Markers on the map */
 	List<Marker> mMarkers;
 
 	/* Reference to items in swipe-bar */
@@ -92,6 +96,14 @@ public class MainActivity extends FragmentActivity implements
 		controller = new PlaceItController(db, this, scheduler);
 		controller.initializeMarkers();
 
+		// Acquire a reference to the system Location Manager
+		locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		Location coords = locationManager
+				.getLastKnownLocation(locationManager.GPS_PROVIDER);
+		if (coords != null) {
+			controller.checkCoordinates(coords);
+		}
 		this.setUpFindButton();
 	}
 
@@ -122,6 +134,10 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapClick(final LatLng position) {
+		setUpPlaceItForm(position);
+	}
+
+	public void setUpPlaceItForm(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Create Place-It");
@@ -157,6 +173,33 @@ public class MainActivity extends FragmentActivity implements
 		alert.show();
 	}
 
+	public void setUpPlaceItNotification(List<PlaceIt> pc) {
+		/* Initialize dialog box */
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Create Place-It");
+		LayoutInflater inflater = getLayoutInflater();
+		final View dialog = inflater.inflate(R.layout.placeit_form, null);
+		final EditText title = (EditText) dialog.findViewById(R.id.title);
+		final EditText description = (EditText) dialog
+				.findViewById(R.id.description);
+		alert.setView(dialog);
+		/* Initialize submission button. */
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+			}
+		});
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						Toast.makeText(MainActivity.this, "Nothing added!",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+
+		alert.show();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -179,13 +222,19 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void removeMarker(PlaceIt pc) {
-		for(Marker marker : mMarkers){
-			if(marker.getTitle() == pc.getTitle() && marker.getSnippet() == pc.getDescription()){
+		for (Marker marker : mMarkers) {
+			if (marker.getTitle() == pc.getTitle()
+					&& marker.getSnippet() == pc.getDescription()) {
 				marker.remove();
 				mMarkers.remove(marker);
 			}
 		}
-		
+
+	}
+
+	@Override
+	public void notifyUser(List<PlaceIt> pc) {
+
 	}
 
 }

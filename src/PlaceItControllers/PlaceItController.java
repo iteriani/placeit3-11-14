@@ -4,15 +4,11 @@ import java.util.List;
 import java.util.Vector;
 
 import Models.PlaceIt;
-import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
-import android.util.Log;
+import android.location.Location;
 
 import com.classproj.placeit.iView;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PlaceItController {
 
@@ -31,7 +27,7 @@ public class PlaceItController {
 	}
 
 	public void initializeMarkers() {
-		
+
 		placeits = db.getAllPlaceIts();
 		for (PlaceIt pc : placeits) {
 			if (pc.isActive()) {
@@ -39,11 +35,12 @@ public class PlaceItController {
 			}
 		}
 	}
-	
-	public void AddPlaceIt(String titleText, String descText, final LatLng position){
-		
-		PlaceIt placeit = new PlaceIt(titleText, descText,
-				position.longitude, position.latitude);
+
+	public void AddPlaceIt(String titleText, String descText,
+			final LatLng position) {
+
+		PlaceIt placeit = new PlaceIt(titleText, descText, position.longitude,
+				position.latitude);
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
 
@@ -51,9 +48,35 @@ public class PlaceItController {
 
 		/* Add marker to the map */
 		view.addMarker(placeit);
+
+	}
+
+	public void checkCoordinates(Location coords) {
 		
+		List<PlaceIt> clean = new Vector<PlaceIt>();
+		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
+		
+		for (int i = 0; i < placeits.size(); i++) {
+			PlaceIt currMarker = placeits.get(i);
+			Location start = new Location("Start");
+			Location end = new Location("End");
+			if (currLoc != null && currMarker != null) {
+				start.setLatitude(currLoc.latitude);
+				start.setLongitude(currLoc.longitude);
+				end.setLongitude(currMarker.getLongitude());
+				end.setLatitude(currMarker.getLatitude());
+				float dist = start.distanceTo(end);
+				// Convert to miles
+				dist = (float) (dist * 0.000621371);
+				if (dist <= 0.5) {
+					clean.add(placeits.get(i));
+				}	
+			}
 		}
-	
+		
+		this.view.notifyUser(clean);
+		
+
+	}
+
 }
-
-
