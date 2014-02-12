@@ -5,8 +5,9 @@ import java.util.List;
 
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
+import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.PlaceItHandler;
-import PlaceItDB.PlaceItScheduler;
+import PlaceItDB.PLScheduleHandler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
@@ -85,8 +86,9 @@ public class MainActivity extends FragmentActivity implements
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
 
-		iPLScheduleModel scheduler = new PlaceItScheduler(record);
+		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
+		PlaceItScheduler scheduler = new PlaceItScheduler(scheduleDB, db);
 		controller = new PlaceItController(db, this, scheduler);
 		controller.initializeMarkers();
 

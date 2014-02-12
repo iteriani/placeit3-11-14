@@ -19,10 +19,10 @@ public class PlaceItController {
 	private iPlaceItModel db;
 	private iView view;
 	private List<PlaceIt> placeits;
-	private iPLScheduleModel scheduler;
+	private PlaceItScheduler scheduler;
 
 	public PlaceItController(iPlaceItModel db, iView view,
-			iPLScheduleModel scheduler) {
+			PlaceItScheduler scheduler) {
 		this.db = db;
 		this.view = view;
 
