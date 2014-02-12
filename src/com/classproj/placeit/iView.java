@@ -2,6 +2,8 @@ package com.classproj.placeit;
 
 import java.util.List;
 
+import com.google.android.gms.maps.model.Marker;
+
 import Models.PlaceIt;
 
 public interface iView {
@@ -12,6 +14,6 @@ public interface iView {
 
 	public void notifyUser(List<PlaceIt> pc);
 
-	public void getMarker(int id);
+	public Marker getMarker(int id);
 	
 }

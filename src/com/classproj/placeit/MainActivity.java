@@ -9,8 +9,8 @@ import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.PLScheduleHandler;
 import PlaceItDB.PlaceItHandler;
 import PlaceItDB.iPLScheduleModel;
+import com.classproj.placeit.R;
 import PlaceItDB.iPlaceItModel;
-import android.R;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -86,7 +86,7 @@ public class MainActivity extends FragmentActivity implements
 		mMarkers = new LinkedList<Marker>();
 		swipebarElements = new String[] { "Ankoor", "Hitler", "Stalin" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		viewLists = (ListView) findViewById(R.id.left_drawer);
+	//	viewLists = (ListView) findViewById(R.id.left_drawer);
 
 		GoogleMap map = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
@@ -206,7 +206,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		//getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -240,8 +240,13 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void getMarker(int id) {
-		// TODO Auto-generated method stub
+	public Marker getMarker(int id) {
+		for(Marker marker : mMarkers){
+			if(marker.getId() == Integer.toString(id)){
+				return marker;
+			}
+		}
+		return null;
 		
 	}
 
