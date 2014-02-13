@@ -50,7 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
 		OnMapClickListener, LocationListener, iView {
-
+	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
 	LocationManager locationManager;
@@ -65,7 +65,7 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Markers on the map */
 	List<Marker> mMarkers;
-
+	Marker locMarker;
 	/* Reference to items in swipe-bar */
 	String[] swipebarElements;
 	private ListView viewLists;
@@ -73,7 +73,7 @@ public class MainActivity extends FragmentActivity implements
 	/* Controller */
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
-
+	ArrayList<String> newList = new ArrayList<String>();
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -148,7 +148,7 @@ public class MainActivity extends FragmentActivity implements
 		swipebarElements = new String[] { "No Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-		ArrayList<String> newList = new ArrayList<String>();
+		newList = new ArrayList<String>();
 		if (mMarkers.size() == 0) {
 			newList.add("No Reminders");
 		} else {
@@ -156,13 +156,6 @@ public class MainActivity extends FragmentActivity implements
 				newList.add(marker.getTitle());
 			}
 		}
-
-		/*
-		viewLists = (ListView) findViewById(R.id.left_drawer);
-		viewLists.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_left, newList));
-				*/
-
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
@@ -183,8 +176,8 @@ public class MainActivity extends FragmentActivity implements
 				String location = etLocation.getText().toString();
 
 				if (location != null && !location.equals("")) {
-					new GeocoderTask(getBaseContext(), googleMap)
-							.execute(location);
+					findPlace = new GeocoderTask(getBaseContext(), googleMap);
+							findPlace.execute(location);
 				}
 			}
 		};
@@ -196,7 +189,10 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMapClick(final LatLng position) {
 		setUpDialog(position);
-		
+		if (findPlace != null)
+		{
+			findPlace.removeMarkers();
+		}
 	}
 
 	public void setupTimeDialog(PlaceIt placeit) {
@@ -283,6 +279,7 @@ public class MainActivity extends FragmentActivity implements
 
 				PlaceIt placeit = controller.AddPlaceIt(titleText, descText, position);
 				setupTimeDialog(placeit);
+				setUpSideBar();
 			}
 		});
 		

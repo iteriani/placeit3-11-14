@@ -26,7 +26,8 @@
             android:layout_height="fill_parent"
             android:hint="number" 
             android:layout_toRightOf="@id/every"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:inputType="number" />
             
             <TextView
                 android:id="@+id/weeks"
