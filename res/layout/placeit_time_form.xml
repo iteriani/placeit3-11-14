@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+           
+            <TextView
+                android:id="@+id/every"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Every"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp" 
+                android:padding="6dip"
+                 />
+            
+            <EditText
+            android:id="@+id/numweeks"
+            android:layout_width="96dp"
+            android:layout_height="fill_parent"
+            android:hint="number" 
+            android:layout_toRightOf="@id/every"
+            android:layout_centerInParent="true" />
+            
+            <TextView
+                android:id="@+id/weeks"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="weeks" 
+                android:layout_toRightOf="@id/numweeks"
+                android:textColor="#FFFFFF" 
+                android:textSize="20sp"
+                android:padding="6dip"/>
+        </RelativeLayout>
+    
+</ScrollView>
