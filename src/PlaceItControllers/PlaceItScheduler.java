@@ -113,8 +113,7 @@ public class PlaceItScheduler {
 	public List<PlaceIt> checkActive(List<PlaceIt> placeits){
 		List<PlaceIt> newActive = new Vector<PlaceIt>();
 		for(PlaceIt placeit : placeits){
-			if(placeit.isActive() && placeit.getActiveDate().before(new Date())){
-				//Log.d("date?", placeit.getActiveDate().toLocaleString());		
+			if(placeit.isActive() && placeit.getActiveDate().before(new Date())){		
 				newActive.add(placeit);
 			}
 		}

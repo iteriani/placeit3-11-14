@@ -92,6 +92,9 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 
 	@Override
 	public List<Integer> getSchedule(PlaceIt placeit) {
+		
+		
+		
 		List<Integer> schedules = new Vector<Integer>();
 		String selectQuery = "SELECT " + KEY_PLACEITDAY + " FROM " + TABLE_PLSCHEDULE + " WHERE "
 				+ KEY_PLACEITID + " = " + String.valueOf(placeit.getID());

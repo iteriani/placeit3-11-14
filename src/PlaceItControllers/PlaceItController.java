@@ -60,7 +60,6 @@ public class PlaceItController {
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
 		for (int i = 0; i < placeits.size(); i++) {
-			clean.add(placeits.get(i));
 			PlaceIt currMarker = placeits.get(i);
 			Location start = new Location("Start");
 			Location end = new Location("End");
@@ -72,7 +71,7 @@ public class PlaceItController {
 				float dist = start.distanceTo(end);
 				// Convert to miles
 				dist = (float) (dist * 0.000621371);
-				if (dist <= 0.5) {
+				if (dist <= .5) {
 					clean.add(placeits.get(i));
 				}	
 			}

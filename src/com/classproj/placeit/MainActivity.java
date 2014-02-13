@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -39,6 +40,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -127,6 +129,8 @@ public class MainActivity extends FragmentActivity implements
 		List<PlaceIt> checkList = null;
 		Location myLocationNow = locationManager
 				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50*1000, 1, this);
 
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
@@ -323,7 +327,7 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						Calendar cal = Calendar.getInstance();
-						cal.add(Calendar.MINUTE, 45);
+						cal.add(Constants.INTERVAL_TYPE, Constants.INTERVAL_NUMBER);
 						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,cal.getTime());
 
 						Toast.makeText(MainActivity.this, "PlaceIt will be active at " + 
@@ -423,8 +427,15 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
+		Log.d("LOCATION COORDS", arg0.toString());
 		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
-		createNotifs(cleanList);
+		cleanList = scheduler.checkActive(cleanList);
+		for(PlaceIt single : cleanList){
+			googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(single.getLatitude(), single.getLongitude())));
+			Log.d("PlaceIt found -- ", single.getTitle() + "-" + single.getDescription());		
+		}
+
+		setUpNotification(cleanList);
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 	private static final String KEY_DESCRIPTION = "description";
 	private static final String KEY_LONGITUDE = "longitude";
 	private static final String KEY_LATITUDE = "latitude";
-	private static final String KEY_ACTIVEDATE ="activeDate";
+	private static final String KEY_ACTIVEDATE = "activeDate";
 
 	public PlaceItHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,9 +39,9 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_PLACEITS_TABLE = "CREATE TABLE " + TABLE_PLACEITS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY, " + KEY_TITLE
-				+ " VARCHAR(255), " + KEY_DESCRIPTION + " TEXT ,"  
-				+ KEY_LONGITUDE + " DOUBLE, " + KEY_LATITUDE + " DOUBLE ," + KEY_ACTIVEDATE + 
-				" DOUBLE" +")";
+				+ " VARCHAR(255), " + KEY_DESCRIPTION + " TEXT ,"
+				+ KEY_LONGITUDE + " DOUBLE, " + KEY_LATITUDE + " DOUBLE ,"
+				+ KEY_ACTIVEDATE + " DOUBLE" + ")";
 
 		db.execSQL(CREATE_PLACEITS_TABLE);
 	}
@@ -60,13 +60,13 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_TITLE, placeIt.getTitle()); 
+		values.put(KEY_TITLE, placeIt.getTitle());
 		values.put(KEY_DESCRIPTION, placeIt.getDescription());
 		values.put(KEY_LONGITUDE, placeIt.getLongitude());
 		values.put(KEY_LATITUDE, placeIt.getLatitude());
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(placeIt.getActiveDate());
-        cal.add(Calendar.MINUTE, 45);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(placeIt.getActiveDate());
+		cal.add(Calendar.MINUTE, 45);
 		values.put(KEY_ACTIVEDATE, cal.getTime().getTime());
 		// Inserting Row
 		db.insert(TABLE_PLACEITS, null, values);
@@ -81,14 +81,19 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID,
 				KEY_TITLE, KEY_DESCRIPTION }, KEY_ID + "=?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
-		if (cursor != null)
+		if (cursor != null) {
 			cursor.moveToFirst();
 
-		PlaceIt placeit = new PlaceIt(
-				cursor.getString(1), cursor.getString(2), Double.parseDouble(cursor.getString(3)), 
-				Double.parseDouble(cursor.getString(4)), Long.valueOf(cursor.getString(5)));
-		// return contact
-		return placeit;
+			PlaceIt placeit = new PlaceIt(cursor.getString(1),
+					cursor.getString(2),
+					Double.parseDouble(cursor.getString(3)),
+					Double.parseDouble(cursor.getString(4)),
+					Long.valueOf(cursor.getString(5)));
+			// return contact
+			return placeit;
+		}else{
+			return null;
+		}
 	}
 
 	@Override
@@ -144,9 +149,9 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		return db.update(TABLE_PLACEITS, values, KEY_ID + " = ?",
 				new String[] { String.valueOf(placeit.getID()) });
 	}
-	
+
 	@Override
-	public void deleteAll(){
+	public void deleteAll() {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLACEITS);
 		onCreate(db);
@@ -160,13 +165,11 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		db.close();
 	}
 
-
-
 	@Override
 	public void deactivatePlaceit(PlaceIt placeit) {
-		placeit.setActiveDate(0); /* maybe...*/
+		placeit.setActiveDate(0); /* maybe... */
 		this.updatePlaceIt(placeit);
-		
+
 	}
 
 }
