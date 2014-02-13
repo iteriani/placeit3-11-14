@@ -1,5 +1,6 @@
 package com.classproj.placeit;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,17 +14,21 @@ import com.classproj.placeit.R;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -37,7 +42,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
-		OnMapClickListener, iView {
+		OnMapClickListener, LocationListener, iView {
 
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -76,6 +81,15 @@ public class MainActivity extends FragmentActivity implements
 		}
 		return googleMap;
 	}
+	public void expand() {
+	    String[] newArray = new String[swipebarElements.length + 1];
+	    System.arraycopy(swipebarElements, 0, newArray, 0, swipebarElements.length);
+
+	    //an alternative to using System.arraycopy would be a for-loop:
+	    // for(int i = 0; i < OrigArray.length; i++)
+	    //     newArray[i] = OrigArray[i];
+	    swipebarElements = newArray;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +98,6 @@ public class MainActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_main);
 
 		mMarkers = new LinkedList<Marker>();
-		swipebarElements = new String[] { "Ankoor", "Hitler", "Stalin" };
-		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-	//	viewLists = (ListView) findViewById(R.id.left_drawer);
 
 		GoogleMap map = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
@@ -97,7 +108,26 @@ public class MainActivity extends FragmentActivity implements
 		PlaceItScheduler scheduler = new PlaceItScheduler(scheduleDB, db);
 		controller = new PlaceItController(db, this, scheduler);
 		controller.initializeMarkers();
+		swipebarElements = new String[]{"No Reminders"};
+		ArrayList<String> newList = new ArrayList<String>();
+		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		viewLists = (ListView) findViewById(R.id.left_drawer);
+		if (controller.getList()== null || controller.getList().size()== 0)
+		{	
+			newList.add("No Reminders");
+		}
+		else
+		{
+			for (int i =0; i < controller.getList().size(); i++)
+			{
+				newList.add(controller.getList().get(i).getTitle());
+			}
+	
+		}
 
+		viewLists.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_left, newList));
+		
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -107,6 +137,17 @@ public class MainActivity extends FragmentActivity implements
 			controller.checkCoordinates(coords);
 		}
 		this.setUpFindButton();
+		List<PlaceIt> checkList = null;
+		Location myLocationNow = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+	    if (myLocationNow != null) {
+	    	 checkList= controller.checkCoordinates(myLocationNow);
+	    }
+	    
+	    if (checkList != null)
+	    {
+	    	createNotifs(checkList);
+	    }
+	
 	}
 
 	public void setUpFindButton() {
@@ -247,6 +288,50 @@ public class MainActivity extends FragmentActivity implements
 			}
 		}
 		return null;
+		
+	}
+	
+	public void createNotifs (List<PlaceIt> cleanList)
+	{
+		for (int i = 0; i < cleanList.size(); i++ )
+		{
+			NotificationCompat.Builder mBuilder =  new NotificationCompat.Builder(this)
+		    .setSmallIcon(R.drawable.cat)
+		    .setContentTitle(cleanList.get(i).getTitle())
+		    .setContentText(cleanList.get(i).getDescription());;
+			
+			// Sets an ID for the notification
+			int mNotificationId = 001;
+			// Gets an instance of the NotificationManager service
+			NotificationManager mNotifyMgr = 
+			        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+			// Builds the notification and issues it.
+			mNotifyMgr.notify(mNotificationId, mBuilder.build());
+		}
+	}
+
+	@Override
+	public void onLocationChanged(Location arg0) {
+		// TODO Auto-generated method stub
+		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
+		createNotifs(cleanList);
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
 		
 	}
 

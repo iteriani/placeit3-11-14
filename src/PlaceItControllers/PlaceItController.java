@@ -49,8 +49,13 @@ public class PlaceItController {
 		view.addMarker(placeit);
 
 	}
+	
+	public List<PlaceIt> getList()
+	{
+		return placeits;
+	}
 
-	public void checkCoordinates(Location coords) {
+	public List<PlaceIt> checkCoordinates(Location coords) {
 		
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
@@ -74,7 +79,7 @@ public class PlaceItController {
 		}
 		
 		this.view.notifyUser(clean);
-		
+		return clean;
 
 	}
 
