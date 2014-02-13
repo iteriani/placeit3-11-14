@@ -10,6 +10,7 @@ import Models.PlaceIt;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -46,9 +47,9 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 		String CREATE_PLACEITS_TABLE =
 
 		"CREATE TABLE " + TABLE_PLSCHEDULE + "(" + KEY_ID
-				+ " INTEGER PRIMARY KEY, " + KEY_PLACEITID
-				+ " INTEGER, " + KEY_PLACEITDAY
-				+ " INTEGER, " + "FOREIGN KEY(" + KEY_PLACEITID
+				+ " INTEGER PRIMARY KEY, " + KEY_PLACEITID + " INTEGER, "
+				+ KEY_PLACEITDAY + " INTEGER, " + "FOREIGN KEY("
+				+ KEY_PLACEITID
 				+ ") REFERENCES placeIts(id) ON DELETE CASCADE)";
 
 		db.execSQL(CREATE_PLACEITS_TABLE);
@@ -65,49 +66,75 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 
 	@Override
 	public PlaceIt addSchedule(PlaceIt placeit, List<Integer> days) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		for (Integer day : days) {
-			ContentValues values = new ContentValues();
-			values.put(KEY_PLACEITID, Integer.toString(placeit.getID()));
-			values.put(KEY_PLACEITDAY, Integer.toString(day));
-			db.insert(TABLE_PLSCHEDULE, null, values);
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			for (Integer day : days) {
+				ContentValues values = new ContentValues();
+				values.put(KEY_PLACEITID, Integer.toString(placeit.getID()));
+				values.put(KEY_PLACEITDAY, Integer.toString(day));
+				db.insert(TABLE_PLSCHEDULE, null, values);
+			}
+
+			return placeit;
+
+		} catch (Exception e) {
+			try {
+				onCreate(this.getWritableDatabase());
+				return this.addSchedule(placeit, days);
+			} catch (Exception e2) {
+				return null;
+			}
 		}
-		return placeit;
 	}
 
 	@Override
 	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> days) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		for (Integer day : days) {
-			db.delete(
-					TABLE_PLSCHEDULE,
-					KEY_PLACEITID + " = ? AND " + KEY_PLACEITDAY + " = ?",
-					new String[] { String.valueOf(placeit.getID()),
-							String.valueOf(day) });
-			db.close();
+		try {
+			for (Integer day : days) {
+				db.delete(
+						TABLE_PLSCHEDULE,
+						KEY_PLACEITID + " = ? AND " + KEY_PLACEITDAY + " = ?",
+						new String[] { String.valueOf(placeit.getID()),
+								String.valueOf(day) });
+				db.close();
+			}
+		} catch (Exception e) {
+			try {
+				onCreate(this.getWritableDatabase());
+				return this.removeSchedule(placeit, days);
+			} catch (Exception e2) {
+				return null;
+			}
 		}
-
 		return null;
 	}
 
 	@Override
 	public List<Integer> getSchedule(PlaceIt placeit) {
-		
-		
-		
-		List<Integer> schedules = new Vector<Integer>();
-		String selectQuery = "SELECT " + KEY_PLACEITDAY + " FROM " + TABLE_PLSCHEDULE + " WHERE "
-				+ KEY_PLACEITID + " = " + String.valueOf(placeit.getID());
+		try {
+			List<Integer> schedules = new Vector<Integer>();
+			String selectQuery = "SELECT " + KEY_PLACEITDAY + " FROM "
+					+ TABLE_PLSCHEDULE + " WHERE " + KEY_PLACEITID + " = "
+					+ String.valueOf(placeit.getID());
 
-		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
-		if (cursor.moveToFirst()) {
-			do {
-				schedules.add(Integer.parseInt(cursor.getString(0)));
-				
-			} while (cursor.moveToNext());
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			if (cursor.moveToFirst()) {
+				do {
+					schedules.add(Integer.parseInt(cursor.getString(0)));
+
+				} while (cursor.moveToNext());
+			}
+			return schedules;
+		} catch (Exception e) {
+			try {
+				onCreate(this.getWritableDatabase());
+				return this.getSchedule(placeit);
+			} catch (Exception e2) {
+				return null;
+			}
 		}
-		return schedules;
 	}
 
 }
