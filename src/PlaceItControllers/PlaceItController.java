@@ -39,8 +39,8 @@ public class PlaceItController {
 	public void AddPlaceIt(String titleText, String descText,
 			final LatLng position) {
 
-		PlaceIt placeit = new PlaceIt(titleText, descText, position.longitude,
-				position.latitude);
+		PlaceIt placeit = new PlaceIt(titleText, descText, position.latitude,
+				position.longitude);
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
 
