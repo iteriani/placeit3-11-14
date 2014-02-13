@@ -73,7 +73,7 @@ public class PlaceItScheduler {
 
 	/* Will remove schedule from placeit and return a new placeit to be updated. */
 	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> days) {
-		return this.scheduleRepository.addSchedule(placeit, days);
+		return this.scheduleRepository.removeSchedule(placeit, days);
 	}
 
 	/*

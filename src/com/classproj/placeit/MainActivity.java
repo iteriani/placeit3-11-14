@@ -191,18 +191,16 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapClick(final LatLng position) {
-		//setUpDialog(position);
-		setupTimeDialog();
+		setUpDialog(position);
+		
 	}
 
-	public void setupTimeDialog() {
+	public void setupTimeDialog(PlaceIt placeit) {
 		/*Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
 		startActivity(myIntent);*/
-
-		
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Set recurrence");
+		builder.setTitle("Set recurrence for PlaceIt " + placeit.getTitle());
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
 		
@@ -279,8 +277,8 @@ public class MainActivity extends FragmentActivity implements
 				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();
 
-				controller.AddPlaceIt(titleText, descText, position);
-
+				PlaceIt placeit = controller.AddPlaceIt(titleText, descText, position);
+				setupTimeDialog(placeit);
 			}
 		});
 		
@@ -344,9 +342,10 @@ public class MainActivity extends FragmentActivity implements
 		alert.setNegativeButton("Discard",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,new Date(0));
-						Toast.makeText(MainActivity.this, "Placeit value has been set to "
-								+ newplaceit.getActiveDate().getTime(),
+	//gotta rename
+						controller.RemovePlaceIt(placeit);
+						
+						Toast.makeText(MainActivity.this, "Placeit value has been removed",
 								Toast.LENGTH_SHORT).show();
 					}
 				});

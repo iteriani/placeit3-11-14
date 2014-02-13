@@ -33,7 +33,7 @@ public class PlaceItController {
 		}
 	}
 
-	public void AddPlaceIt(String titleText, String descText,
+	public PlaceIt AddPlaceIt(String titleText, String descText,
 			final LatLng position) {
 
 		PlaceIt placeit = new PlaceIt(titleText, descText, position.latitude,
@@ -41,10 +41,11 @@ public class PlaceItController {
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
 		view.addMarker(placeit);
+		return placeit;
 	}
 	
 	public void RemovePlaceIt(PlaceIt placeit){
-		placeits.remove(placeit);
+	//	placeits.remove(placeit);
 		db.deactivatePlaceit(placeit);
 		view.removeMarker(placeit);
 	}
