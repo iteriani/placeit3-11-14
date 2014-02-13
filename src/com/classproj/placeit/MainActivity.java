@@ -48,7 +48,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
 		OnMapClickListener, LocationListener, iView {
-
+	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
 	LocationManager locationManager;
@@ -63,7 +63,7 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Markers on the map */
 	List<Marker> mMarkers;
-
+	Marker locMarker;
 	/* Reference to items in swipe-bar */
 	String[] swipebarElements;
 	private ListView viewLists;
@@ -172,8 +172,8 @@ public class MainActivity extends FragmentActivity implements
 				String location = etLocation.getText().toString();
 
 				if (location != null && !location.equals("")) {
-					new GeocoderTask(getBaseContext(), googleMap)
-							.execute(location);
+					findPlace = new GeocoderTask(getBaseContext(), googleMap);
+							findPlace.execute(location);
 				}
 			}
 		};
@@ -185,7 +185,10 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMapClick(final LatLng position) {
 		setUpDialog(position);
-		
+		if (findPlace != null)
+		{
+			findPlace.removeMarkers();
+		}
 	}
 
 	public void setupTimeDialog(PlaceIt placeit) {

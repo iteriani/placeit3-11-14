@@ -12,13 +12,14 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 // An AsyncTask class for accessing the GeoCoding Web Service
 class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 	Context baseContext;
 	GoogleMap googlemap;
-
+	Marker addedMark;
 	public GeocoderTask(Context context, GoogleMap googlemap) {
 		this.baseContext = context;
 		this.googlemap = googlemap;
@@ -64,11 +65,19 @@ class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 			markerOptions.position(latLng);
 			markerOptions.title(addressText);
 
-			googlemap.addMarker(markerOptions);
+			addedMark = googlemap.addMarker(markerOptions);
 
 			// Locate the first location
 			if (i == 0)
 				googlemap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+		}
+	}
+	
+	public void removeMarkers()
+	{
+		if (addedMark != null)
+		{
+			addedMark.remove();
 		}
 	}
 }
