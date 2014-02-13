@@ -15,18 +15,15 @@ public class PlaceItController {
 	private iPlaceItModel db;
 	private iView view;
 	private List<PlaceIt> placeits;
-	private PlaceItScheduler scheduler;
 
-	public PlaceItController(iPlaceItModel db, iView view,
-			PlaceItScheduler scheduler) {
+	public PlaceItController(iPlaceItModel db, iView view) {
 		this.db = db;
 		this.view = view;
 
 		this.placeits = new Vector<PlaceIt>();
-		this.scheduler = scheduler;
 	}
 
-	public void initializeMarkers() {
+	public void initializeView() {
 
 		placeits = db.getAllPlaceIts();
 		for (PlaceIt pc : placeits) {
@@ -39,23 +36,30 @@ public class PlaceItController {
 	public void AddPlaceIt(String titleText, String descText,
 			final LatLng position) {
 
-		PlaceIt placeit = new PlaceIt(titleText, descText, position.longitude,
-				position.latitude);
+		PlaceIt placeit = new PlaceIt(titleText, descText, position.latitude,
+				position.longitude);
 		placeits.add(placeit);
 		db.addPlaceIt(placeit);
-
-
-		/* Add marker to the map */
 		view.addMarker(placeit);
-
+	}
+	
+	public void RemovePlaceIt(PlaceIt placeit){
+		placeits.remove(placeit);
+		db.deactivatePlaceit(placeit);
+		view.removeMarker(placeit);
+	}
+	
+	public List<PlaceIt> getList()
+	{
+		return placeits;
 	}
 
-	public void checkCoordinates(Location coords) {
+	public List<PlaceIt> checkCoordinates(Location coords) {
 		
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
-		
 		for (int i = 0; i < placeits.size(); i++) {
+			clean.add(placeits.get(i));
 			PlaceIt currMarker = placeits.get(i);
 			Location start = new Location("Start");
 			Location end = new Location("End");
@@ -73,8 +77,7 @@ public class PlaceItController {
 			}
 		}
 		
-		this.view.notifyUser(clean);
-		
+		return clean;
 
 	}
 
