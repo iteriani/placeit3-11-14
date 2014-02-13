@@ -1,5 +1,6 @@
 package PlaceItDB;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class PlaceItScheduler extends SQLiteOpenHelper implements
+public class PLScheduleHandler extends SQLiteOpenHelper implements
 		iPLScheduleModel {
 
 	// All Static variables
@@ -32,7 +33,7 @@ public class PlaceItScheduler extends SQLiteOpenHelper implements
 	private static final String KEY_PLACEITID = "placeItID";
 	private static final String KEY_PLACEITDAY = "day";
 
-	public PlaceItScheduler(Context context) {
+	public PLScheduleHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
@@ -44,8 +45,8 @@ public class PlaceItScheduler extends SQLiteOpenHelper implements
 		"CREATE TABLE " + TABLE_PLSCHEDULE + "(" + KEY_ID
 				+ " INTEGER PRIMARY KEY, " + KEY_PLACEITID
 				+ " INTEGER REFERENCES placeIts.id , " + KEY_PLACEITDAY
-				+ " VARCHAR(10), " + "FOREIGN KEY("
-				+ KEY_PLACEITID + ") REFERENCES placeIts(id) ON DELETE CASCADE)";
+				+ " VARCHAR(10), " + "FOREIGN KEY(" + KEY_PLACEITID
+				+ ") REFERENCES placeIts(id) ON DELETE CASCADE)";
 
 		db.execSQL(CREATE_PLACEITS_TABLE);
 	}
@@ -60,37 +61,21 @@ public class PlaceItScheduler extends SQLiteOpenHelper implements
 	}
 
 	@Override
-	public void setUpSchedules() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public PlaceIt initializeSchedule(PlaceIt placeit, List<Integer> schedules) {
-		Date currDate = placeit.getActiveDate();
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(currDate);
-		int weekday = cal.get(Calendar.DAY_OF_WEEK);
-		
-		
-		return null;
-	}
-
-	@Override
-	public PlaceIt addSchedule(PlaceIt placeit, Integer day) {
+	public PlaceIt addSchedule(PlaceIt placeit, List<Integer> day) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlaceIt removeSchedule(PlaceIt placeit, Integer day) {
+	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> day) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
+	public List<Integer> getSchedule(PlaceIt placeit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
