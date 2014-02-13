@@ -24,7 +24,7 @@ public class PlaceItScheduler {
 		for (PlaceIt placeit : placeits) {
 			if (placeit.isActive() == true) {
 				List<Integer> schedules = this.scheduleRepository
-						.getSchedule(placeit);
+						.getSchedule(placeit);	
 				placeit = this.initializeSchedule(placeit, schedules);
 			}
 		}

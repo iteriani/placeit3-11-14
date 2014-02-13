@@ -107,8 +107,8 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 				contact.setID(Integer.parseInt(cursor.getString(0)));
 				contact.setTitle(cursor.getString(1));
 				contact.setDescription(cursor.getString(2));
-				contact.setLatitude(Double.valueOf(cursor.getString(3)));
-				contact.setLongitude(Double.valueOf(cursor.getString(4)));
+				contact.setLatitude(Double.valueOf(cursor.getString(4)));
+				contact.setLongitude(Double.valueOf(cursor.getString(3)));
 				double ds = Double.parseDouble(cursor.getString(5));
 				long sd = (long) ds;
 				contact.setActiveDate(sd);
