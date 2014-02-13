@@ -73,11 +73,11 @@ public class mockPlaceItHandler implements iPlaceItModel{
 		    			&& ((Double)p.getLatitude()).equals(latitude)
 		    			&& ((Double)p.getLongitude()).equals(longitutde)
 		    			&& p.getActiveDate().equals(activeDate);
-		    	if (e){
-		    		num++;
-		    	}else{
-		    		return -1;
+		    	if (!e){
+		    		int i = mocklist.indexOf(p);
+		    		mocklist.set(i,placeit);
 		    	}
+		    	num++;
 		    }
 		}
 		return num;
@@ -86,7 +86,6 @@ public class mockPlaceItHandler implements iPlaceItModel{
 	@Override
 	public void deletePlaceIt(PlaceIt PlaceIt) {
 		// TODO Auto-generated method stub
-		int num = 0;
 		int id = PlaceIt.getID();
 		String title = PlaceIt.getTitle();
 		String description = PlaceIt.getDescription();
@@ -118,7 +117,31 @@ public class mockPlaceItHandler implements iPlaceItModel{
 	@Override
 	public int repostPlaceit(PlaceIt placeit) {
 		// TODO Auto-generated method stub
-		return 0;
+		int num = 0;
+		int id = placeit.getID();
+		String title = placeit.getTitle();
+		String description = placeit.getDescription();
+		Double latitude = placeit.getLatitude();
+		Double longitutde = placeit.getLongitude();
+		java.util.Date activeDate= placeit.getActiveDate();
+		
+		// TODO Auto-generated method stub
+		for (PlaceIt p:mocklist ) {
+		    if (p.getID() == id){
+		    	boolean e = p.getTitle().equals(title) 
+		    			&& p.getDescription().equals(description) 
+		    			&& ((Double)p.getLatitude()).equals(latitude)
+		    			&& ((Double)p.getLongitude()).equals(longitutde)
+		    			&& p.getActiveDate().equals(activeDate);
+		    	if (e){
+		    		int k = mocklist.indexOf(p);
+		    		p.setActiveDate(p.getActiveDate().getTime()+45);
+		    		mocklist.set(k, p);
+		    		num++;
+		    	}
+		    }
+		}
+		return num;
 	}
 
 	@Override
