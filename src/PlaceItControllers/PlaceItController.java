@@ -54,6 +54,12 @@ public class PlaceItController {
 	{
 		return placeits;
 	}
+	
+	public boolean checkViscinity (Location currLoc, Location checkLoc)
+	{
+		return false;
+		
+	}
 
 	public List<PlaceIt> checkCoordinates(Location coords) {
 		

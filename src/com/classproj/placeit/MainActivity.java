@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity implements
 	/* Controller */
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
-
+	ArrayList<String> newList = new ArrayList<String>();
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -144,7 +144,7 @@ public class MainActivity extends FragmentActivity implements
 		swipebarElements = new String[] { "No Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-		ArrayList<String> newList = new ArrayList<String>();
+		newList = new ArrayList<String>();
 		if (mMarkers.size() == 0) {
 			newList.add("No Reminders");
 		} else {
@@ -152,13 +152,6 @@ public class MainActivity extends FragmentActivity implements
 				newList.add(marker.getTitle());
 			}
 		}
-
-		/*
-		viewLists = (ListView) findViewById(R.id.left_drawer);
-		viewLists.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_left, newList));
-				*/
-
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
@@ -279,6 +272,7 @@ public class MainActivity extends FragmentActivity implements
 
 				PlaceIt placeit = controller.AddPlaceIt(titleText, descText, position);
 				setupTimeDialog(placeit);
+				setUpSideBar();
 			}
 		});
 		
