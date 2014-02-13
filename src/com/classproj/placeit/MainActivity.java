@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -151,6 +153,12 @@ public class MainActivity extends FragmentActivity implements
 			}
 		}
 
+		/*
+		viewLists = (ListView) findViewById(R.id.left_drawer);
+		viewLists.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_left, newList));
+				*/
+
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
@@ -183,7 +191,71 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onMapClick(final LatLng position) {
-		setUpDialog(position);
+		//setUpDialog(position);
+		setupTimeDialog();
+	}
+
+	public void setupTimeDialog() {
+		/*Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
+		startActivity(myIntent);*/
+
+		
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Set recurrence");
+		LayoutInflater inflater = getLayoutInflater();
+		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
+		
+		int checkedItem = -1;
+		
+		// Create single choice list
+		builder.setSingleChoiceItems(R.array.days_array, checkedItem, new DialogInterface.OnClickListener() {
+			@Override
+            public void onClick(DialogInterface dialog, int checkedItem) {
+				// do something with checkedItem
+            }
+		});
+		// Create textbox for number of weeks
+		TextView every = (TextView) dialog.findViewById(R.id.every);
+		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
+		TextView weeks = (TextView) dialog.findViewById(R.id.weeks);
+		
+		
+		// Set the action buttons
+        builder.setPositiveButton(R.string.recurrence_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK, so save the mSelectedItems results somewhere
+                // or return them to the component that opened the dialog
+                
+            }
+        });
+        builder.setNegativeButton(R.string.recurrence_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                
+            }
+        });
+		
+        builder.setView(dialog);
+        builder.show();
+		
+		/*
+		Spinner dayspinner = (Spinner) findViewById(R.id.days_spinner);
+		
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		        R.array.days_array, android.R.layout.simple_spinner_item);
+		// Specify the layout to use when the list of choices appears
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// Apply the adapter to the spinner
+		dayspinner.setAdapter(adapter);
+		
+		
+		alert.setView(dialog);
+		alert.show();
+		*/
+		
 	}
 
 	public void setUpDialog(final LatLng position) {
@@ -196,6 +268,7 @@ public class MainActivity extends FragmentActivity implements
 		final EditText description = (EditText) dialog
 				.findViewById(R.id.description);
 		alert.setView(dialog);
+		
 		/* Initialize submission button. */
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
@@ -210,6 +283,7 @@ public class MainActivity extends FragmentActivity implements
 
 			}
 		});
+		
 		/* Cancel button which does nothing when clicked and exits the dialog. */
 		alert.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {

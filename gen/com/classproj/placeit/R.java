@@ -8,6 +8,9 @@
 package com.classproj.placeit;
 
 public final class R {
+    public static final class array {
+        public static final int days_array=0x7f090000;
+    }
     public static final class attr {
         /** 
     The size of the ad. It must be one of BANNER, FULL_BANNER, LEADERBOARD,
@@ -226,6 +229,7 @@ containing a value of this type.
         public static final int ScrollView01=0x7f05000c;
         public static final int description=0x7f05000e;
         public static final int drawer_layout=0x7f050005;
+        public static final int every=0x7f05000f;
         public static final int find=0x7f050007;
         public static final int hybrid=0x7f050004;
         public static final int left_drawer=0x7f05000a;
@@ -234,10 +238,12 @@ containing a value of this type.
         public static final int myBack=0x7f050006;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
+        public static final int numweeks=0x7f050010;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
         public static final int textView=0x7f05000b;
         public static final int title=0x7f05000d;
+        public static final int weeks=0x7f050011;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -247,6 +253,7 @@ containing a value of this type.
         public static final int drawer_left=0x7f030001;
         public static final int placeit_form=0x7f030002;
         public static final int placeit_notification=0x7f030003;
+        public static final int placeit_time_form=0x7f030004;
     }
     public static final class string {
         public static final int action_settings=0x7f06001b;
@@ -345,9 +352,13 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
+        public static final int every=0x7f060021;
         public static final int hello_world=0x7f06001c;
         public static final int hnt_et_location=0x7f06001e;
+        public static final int recurrence_cancel=0x7f060020;
+        public static final int recurrence_ok=0x7f06001f;
         public static final int str_btn_find=0x7f06001d;
+        public static final int weeks=0x7f060022;
     }
     public static final class style {
         /** 
@@ -362,11 +373,11 @@ containing a value of this type.
  API 11 theme customizations can go here. 
  API 11 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f090000;
+        public static final int AppBaseTheme=0x7f0a0000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f090001;
+        public static final int AppTheme=0x7f0a0001;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.
