@@ -1,5 +1,6 @@
 package com.classproj.placeit;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -45,6 +46,11 @@ public class mockView implements iView{
 	@Override
 	public Marker getMarker(int id) {
 		// TODO Auto-generated method stub
+		for(Marker m : mMarkers){
+			if (m.getId().equals(id)){
+				return m;
+			}
+		}
 		return null;
 	}
 	}

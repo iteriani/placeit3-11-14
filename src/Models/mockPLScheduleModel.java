@@ -1,8 +1,8 @@
-package PlaceItDB;
+package Models;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import Models.PlaceIt;
+import PlaceItDB.iPLScheduleModel;
 
 /* Create a a private class that holds a place it and add to its list
  * And we can iterate through the name
@@ -18,12 +18,32 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	/*
 	 * (non-Javadoc)
 	 * @see PlaceItDB.iPLScheduleModel#addSchedule(Models.PlaceIt, java.util.List)
-	 * Addeds a schedule to a placeit based on teh 45 min/day
+	 * Addeds a schedule to a placeit based on the 45 min/day
 	 */
+	
+	List<PLSchedule> scheduleList = new ArrayList<PLSchedule>();
+	
+	private PLSchedule findSchedule(int placeitID){
+		for(PLSchedule s : scheduleList){
+			if (s.getPlaceItId()==placeitID){
+				return s;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public PlaceIt addSchedule(PlaceIt placeit, List<Integer> day) {
 		// TODO Auto-generated method stub
-		return null;
+		int id = placeit.getID();
+		PLSchedule ns = this.findSchedule(id);
+		if(ns != null){
+			ns.setInteger(day);
+		}else{
+			ns = new PLSchedule(id,day);
+		}
+		scheduleList.set(scheduleList.indexOf(ns), ns);
+		return placeit;
 	}
 	/*
 	 * (non-Javadoc)
@@ -33,7 +53,12 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	@Override
 	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> day) {
 		// TODO Auto-generated method stub
-		return null;
+		int id = placeit.getID();
+		PLSchedule rs = this.findSchedule(id);
+		if(rs!=null){
+			scheduleList.remove(rs);
+		}
+		return placeit;
 	}
 
 	/*
@@ -44,7 +69,8 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	@Override
 	public List<Integer> getSchedule(PlaceIt placeit) {
 		// TODO Auto-generated method stub
-		return null;
+		PLSchedule gs = this.findSchedule(placeit.getID());
+		return gs.getInteger();
 	}
 
 }
