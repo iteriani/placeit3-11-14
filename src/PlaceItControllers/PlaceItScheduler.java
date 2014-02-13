@@ -44,13 +44,7 @@ public class PlaceItScheduler {
 		Date minDate = min.getTime();
 
 		for (Integer schedule : schedules) {
-			Calendar date = null;
-			if (schedule > 0) { // schedule 0 is MINUTE
-				date = this.nextDayOfWeek(currDate, schedule);
-			} else {
-				date = Calendar.getInstance();
-				date.add(Calendar.MINUTE, 1);
-			}
+			Calendar date = this.nextDayOfWeek(currDate, schedule);
 			Date curr = date.getTime();
 			if (minDate.before(curr) == true) {
 				minDate = curr;
@@ -58,6 +52,53 @@ public class PlaceItScheduler {
 		}
 
 		placeit.setActiveDate(minDate.getTime());
+		this.PLrepository.updatePlaceIt(placeit);
+		return placeit;
+	}
+
+	public PlaceIt startSchedule(PlaceIt placeit, List<Integer> days) {
+		this.addSchedules(placeit, days);
+		return this.initializeSchedule(placeit, days);
+	}
+
+	/*
+	 * Will add schedule to PLSchedule database and return a new placeit to be
+	 * updated.
+	 */
+	public void addSchedules(PlaceIt placeit, List<Integer> days) {
+		this.scheduleRepository.addSchedule(placeit, days);
+	}
+
+	/* Will remove schedule from placeit and return a new placeit to be updated. */
+	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> days) {
+		return this.scheduleRepository.addSchedule(placeit, days);
+	}
+
+	/*
+	 * Upon receiving a placeit, it will look for the next scheduled time and
+	 * return the place it with the activated date.
+	 */
+	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
+		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
+		if (schedules.size() == 0) {
+			return this.repostPlaceit(placeit, Calendar.MINUTE, 45);
+		} else if (schedules.contains(0) == true) {
+			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
+		} else {
+			return this.initializeSchedule(placeit, schedules);
+		}
+	}
+
+	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
+
+		java.util.Date date = placeit.getActiveDate();
+		Calendar cal = Calendar.getInstance(); // creates calendar
+		cal.setTime(date); // sets calendar time/date
+		cal.add(TIMEVAL, timeAMT); // adds one hour
+		java.util.Date newDate = cal.getTime(); // returns new date object, one
+												// hour in the future
+		placeit.setActiveDate(newDate.getTime());
+		this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
 	}
 
@@ -70,45 +111,5 @@ public class PlaceItScheduler {
 		}
 		date.add(Calendar.DAY_OF_MONTH, diff);
 		return date;
-	}
-
-	public PlaceIt startSchedule(PlaceIt placeit, List<Integer> days) {
-		for (Integer num : days) {
-			this.addSchedule(placeit, num);
-		}
-		return this.initializeSchedule(placeit, days);
-	}
-
-	/*
-	 * Will add schedule to PLSchedule database and return a new placeit to be
-	 * updated.
-	 */
-	public void addSchedule(PlaceIt placeit, Integer day) {
-		Vector<Integer> ints = new Vector<Integer>();
-		ints.add(day);
-		this.scheduleRepository.addSchedule(placeit, ints);
-	}
-
-	/* Will remove schedule from placeit and return a new placeit to be updated. */
-	public PlaceIt removeSchedule(PlaceIt placeit, Integer day) {
-		Vector<Integer> ints = new Vector<Integer>();
-		ints.add(day);
-		return this.scheduleRepository.addSchedule(placeit, ints);
-	}
-
-	/*
-	 * Upon receiving a placeit, it will look for the next scheduled time and
-	 * return the place it with the activated date.
-	 */
-	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
-		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
-		if (schedules.size() == 0) {
-			return placeit;
-		} else {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.HOUR, 24);
-			return this.initializeSchedule(placeit, schedules);
-		}
-
 	}
 }

@@ -106,8 +106,8 @@ public class MainActivity extends FragmentActivity implements
 		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
 		PlaceItScheduler scheduler = new PlaceItScheduler(scheduleDB, db);
-		controller = new PlaceItController(db, this, scheduler);
-		controller.initializeMarkers();
+		controller = new PlaceItController(db, this);
+		controller.initializeView();
 		swipebarElements = new String[]{"No Reminders"};
 		ArrayList<String> newList = new ArrayList<String>();
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
