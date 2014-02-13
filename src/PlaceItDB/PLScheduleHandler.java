@@ -47,7 +47,7 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 
 		"CREATE TABLE " + TABLE_PLSCHEDULE + "(" + KEY_ID
 				+ " INTEGER PRIMARY KEY, " + KEY_PLACEITID
-				+ " INTEGER REFERENCES placeIts.id , " + KEY_PLACEITDAY
+				+ " INTEGER, " + KEY_PLACEITDAY
 				+ " INTEGER, " + "FOREIGN KEY(" + KEY_PLACEITID
 				+ ") REFERENCES placeIts(id) ON DELETE CASCADE)";
 
@@ -66,14 +66,12 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 	@Override
 	public PlaceIt addSchedule(PlaceIt placeit, List<Integer> days) {
 		SQLiteDatabase db = this.getWritableDatabase();
-
 		for (Integer day : days) {
 			ContentValues values = new ContentValues();
 			values.put(KEY_PLACEITID, Integer.toString(placeit.getID()));
 			values.put(KEY_PLACEITDAY, Integer.toString(day));
 			db.insert(TABLE_PLSCHEDULE, null, values);
 		}
-
 		return placeit;
 	}
 

@@ -163,6 +163,10 @@ public class MainActivity extends FragmentActivity implements
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
 				*/
+
+		viewLists = (ListView) findViewById(R.id.left_drawer);
+		viewLists.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_left, newList));
 	}
 
 	public void setUpFindButton() {

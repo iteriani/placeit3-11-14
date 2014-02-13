@@ -15,7 +15,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
@@ -107,8 +107,8 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 				contact.setID(Integer.parseInt(cursor.getString(0)));
 				contact.setTitle(cursor.getString(1));
 				contact.setDescription(cursor.getString(2));
-				contact.setLatitude(Double.valueOf(cursor.getString(3)));
-				contact.setLongitude(Double.valueOf(cursor.getString(4)));
+				contact.setLatitude(Double.valueOf(cursor.getString(4)));
+				contact.setLongitude(Double.valueOf(cursor.getString(3)));
 				double ds = Double.parseDouble(cursor.getString(5));
 				long sd = (long) ds;
 				contact.setActiveDate(sd);
@@ -160,18 +160,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		db.close();
 	}
 
-	@Override
-	public int repostPlaceit(PlaceIt placeit) {
-		
-		java.util.Date date = placeit.getActiveDate();
-	    Calendar cal = Calendar.getInstance(); // creates calendar
-	    cal.setTime(date); // sets calendar time/date
-	    cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
-	    java.util.Date newDate = cal.getTime(); // returns new date object, one hour in the future
-	    
-	    placeit.setActiveDate(newDate.getTime());
-		return this.updatePlaceIt(placeit);
-	}
+
 
 	@Override
 	public void deactivatePlaceit(PlaceIt placeit) {
