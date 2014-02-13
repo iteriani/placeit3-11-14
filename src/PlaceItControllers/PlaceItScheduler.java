@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import android.util.Log;
+
 import Models.PlaceIt;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
@@ -106,6 +108,17 @@ public class PlaceItScheduler {
 		placeit.setActiveDate(date.getTime());
 		this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
+	}
+	
+	public List<PlaceIt> checkActive(List<PlaceIt> placeits){
+		List<PlaceIt> newActive = new Vector<PlaceIt>();
+		for(PlaceIt placeit : placeits){
+			if(placeit.isActive() && placeit.getActiveDate().before(new Date())){
+				//Log.d("date?", placeit.getActiveDate().toLocaleString());		
+				newActive.add(placeit);
+			}
+		}
+		return newActive;
 	}
 
 	private Calendar nextDayOfWeek(Date curr, int dow) {

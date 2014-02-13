@@ -118,13 +118,7 @@ public class MainActivity extends FragmentActivity implements
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
-		Location coords = locationManager
-				.getLastKnownLocation(locationManager.GPS_PROVIDER);
-
-		if (coords != null) {
-			controller.checkCoordinates(coords);
-		}
-
+		
 		this.setUpSideBar();
 		this.setUpFindButton();
 
@@ -134,6 +128,7 @@ public class MainActivity extends FragmentActivity implements
 
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
+			checkList = scheduler.checkActive(checkList);
 		}
 
 		if (checkList != null && checkList.size() != 0) {
