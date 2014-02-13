@@ -58,8 +58,8 @@ public class PlaceItController {
 		
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
-		
 		for (int i = 0; i < placeits.size(); i++) {
+			clean.add(placeits.get(i));
 			PlaceIt currMarker = placeits.get(i);
 			Location start = new Location("Start");
 			Location end = new Location("End");
@@ -77,7 +77,6 @@ public class PlaceItController {
 			}
 		}
 		
-		this.view.notifyUser(clean);
 		return clean;
 
 	}

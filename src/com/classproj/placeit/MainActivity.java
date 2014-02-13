@@ -1,6 +1,8 @@
 package com.classproj.placeit;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +12,6 @@ import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.PLScheduleHandler;
 import PlaceItDB.PlaceItHandler;
 import PlaceItDB.iPLScheduleModel;
-import com.classproj.placeit.R;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -20,6 +21,7 @@ import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
@@ -32,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -65,13 +68,14 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Controller */
 	PlaceItController controller;
+	PlaceItScheduler scheduler;
 
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
 		// map.
 		if (googleMap == null) {
-			
+
 			googleMap = ((SupportMapFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.map)).getMap();
 			// Check if we were successful in obtaining the map.
@@ -81,14 +85,16 @@ public class MainActivity extends FragmentActivity implements
 		}
 		return googleMap;
 	}
-	public void expand() {
-	    String[] newArray = new String[swipebarElements.length + 1];
-	    System.arraycopy(swipebarElements, 0, newArray, 0, swipebarElements.length);
 
-	    //an alternative to using System.arraycopy would be a for-loop:
-	    // for(int i = 0; i < OrigArray.length; i++)
-	    //     newArray[i] = OrigArray[i];
-	    swipebarElements = newArray;
+	public void expand() {
+		String[] newArray = new String[swipebarElements.length + 1];
+		System.arraycopy(swipebarElements, 0, newArray, 0,
+				swipebarElements.length);
+
+		// an alternative to using System.arraycopy would be a for-loop:
+		// for(int i = 0; i < OrigArray.length; i++)
+		// newArray[i] = OrigArray[i];
+		swipebarElements = newArray;
 	}
 
 	@Override
@@ -98,56 +104,61 @@ public class MainActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_main);
 
 		mMarkers = new LinkedList<Marker>();
-
+		
 		GoogleMap map = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
 
 		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
-		PlaceItScheduler scheduler = new PlaceItScheduler(scheduleDB, db);
+		scheduler = new PlaceItScheduler(scheduleDB, db);
 		controller = new PlaceItController(db, this);
 		controller.initializeView();
-		swipebarElements = new String[]{"No Reminders"};
-		ArrayList<String> newList = new ArrayList<String>();
-		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		viewLists = (ListView) findViewById(R.id.left_drawer);
-		if (controller.getList()== null || controller.getList().size()== 0)
-		{	
-			newList.add("No Reminders");
-		}
-		else
-		{
-			for (int i =0; i < controller.getList().size(); i++)
-			{
-				newList.add(controller.getList().get(i).getTitle());
-			}
-	
-		}
 
-		viewLists.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_left, newList));
-		
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 		Location coords = locationManager
 				.getLastKnownLocation(locationManager.GPS_PROVIDER);
+
 		if (coords != null) {
 			controller.checkCoordinates(coords);
 		}
+
+		this.setUpSideBar();
 		this.setUpFindButton();
+
 		List<PlaceIt> checkList = null;
-		Location myLocationNow = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-	    if (myLocationNow != null) {
-	    	 checkList= controller.checkCoordinates(myLocationNow);
-	    }
-	    
-	    if (checkList != null)
-	    {
-	    	createNotifs(checkList);
-	    }
-	
+		Location myLocationNow = locationManager
+				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+		if (myLocationNow != null) {
+			checkList = controller.checkCoordinates(myLocationNow);
+		}
+
+		if (checkList != null && checkList.size() != 0) {
+			createNotifs(checkList);
+			this.setUpNotification(checkList);
+		}
+
+	}
+
+	public void setUpSideBar() {
+		swipebarElements = new String[] { "No Reminders" };
+		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+		ArrayList<String> newList = new ArrayList<String>();
+		if (mMarkers.size() == 0) {
+			newList.add("No Reminders");
+		} else {
+			for (Marker marker : mMarkers) {
+				newList.add(marker.getTitle());
+			}
+		}
+
+		viewLists = (ListView) findViewById(R.id.left_drawer);
+		viewLists.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_left, newList));
 	}
 
 	public void setUpFindButton() {
@@ -216,27 +227,57 @@ public class MainActivity extends FragmentActivity implements
 		alert.show();
 	}
 
-	public void setUpPlaceItNotification(List<PlaceIt> pc) {
+	public void setUpNotification(final List<PlaceIt> placeits) {
+		if (placeits.size() == 0) {
+			return;
+		}
+
+		createNotifs(placeits);
 		/* Initialize dialog box */
+		final PlaceIt placeit = placeits.get(0);
+		PlaceIt initial = scheduler.scheduleNextActivation(placeit);
+		Toast.makeText(MainActivity.this, "PlaceIt will be active at " + 
+		initial.getActiveDate().toLocaleString(),
+				Toast.LENGTH_SHORT).show();
+
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Create Place-It");
+		alert.setTitle("You got a Place-It!");
 		LayoutInflater inflater = getLayoutInflater();
-		final View dialog = inflater.inflate(R.layout.placeit_form, null);
-		final EditText title = (EditText) dialog.findViewById(R.id.title);
-		final EditText description = (EditText) dialog
+		final View dialog = inflater.inflate(R.layout.placeit_notification,
+				null);
+		TextView textViewTitle = (TextView) dialog.findViewById(R.id.title);
+		TextView textViewDescription = (TextView) dialog
 				.findViewById(R.id.description);
+		textViewTitle.setText(placeit.getTitle());
+		textViewDescription.setText(placeit.getDescription());
 		alert.setView(dialog);
 		/* Initialize submission button. */
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-
-			}
-		});
-		/* Cancel button which does nothing when clicked and exits the dialog. */
-		alert.setNegativeButton("Cancel",
+		alert.setPositiveButton("Repost",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						Toast.makeText(MainActivity.this, "Nothing added!",
+						Calendar cal = Calendar.getInstance();
+						cal.add(Calendar.MINUTE, 45);
+						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,cal.getTime());
+
+						Toast.makeText(MainActivity.this, "PlaceIt will be active at " + 
+						newplaceit.getActiveDate().toLocaleString(),
+								Toast.LENGTH_SHORT).show();
+
+						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
+						for (int i = 1; i < placeits.size(); i++) {
+							newplaceits.add(placeits.get(i));
+						}
+						setUpNotification(newplaceits);
+
+					}
+				});
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Discard",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,new Date(0));
+						Toast.makeText(MainActivity.this, "Placeit value has been set to "
+								+ newplaceit.getActiveDate().getTime(),
 								Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -247,7 +288,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.main, menu);
+		// getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
@@ -282,29 +323,31 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public Marker getMarker(int id) {
-		for(Marker marker : mMarkers){
-			if(marker.getId() == Integer.toString(id)){
+		for (Marker marker : mMarkers) {
+			if (marker.getId() == Integer.toString(id)) {
 				return marker;
 			}
 		}
 		return null;
-		
+
 	}
-	
-	public void createNotifs (List<PlaceIt> cleanList)
-	{
-		for (int i = 0; i < cleanList.size(); i++ )
-		{
-			NotificationCompat.Builder mBuilder =  new NotificationCompat.Builder(this)
-		    .setSmallIcon(R.drawable.cat)
-		    .setContentTitle(cleanList.get(i).getTitle())
-		    .setContentText(cleanList.get(i).getDescription());;
-			
+
+	public void createNotifs(List<PlaceIt> cleanList) {
+		for (int i = 0; i < cleanList.size(); i++) {
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+					this)
+					.setSmallIcon(R.drawable.cat)
+					.setSound(
+							RingtoneManager
+									.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+					.setContentTitle(cleanList.get(i).getTitle())
+					.setContentText(cleanList.get(i).getDescription());
+			;
+
 			// Sets an ID for the notification
 			int mNotificationId = 001;
 			// Gets an instance of the NotificationManager service
-			NotificationManager mNotifyMgr = 
-			        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+			NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 			// Builds the notification and issues it.
 			mNotifyMgr.notify(mNotificationId, mBuilder.build());
 		}
@@ -312,7 +355,6 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
-		// TODO Auto-generated method stub
 		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
 		createNotifs(cleanList);
 	}
@@ -320,19 +362,19 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

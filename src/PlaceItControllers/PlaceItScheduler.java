@@ -24,7 +24,7 @@ public class PlaceItScheduler {
 		for (PlaceIt placeit : placeits) {
 			if (placeit.isActive() == true) {
 				List<Integer> schedules = this.scheduleRepository
-						.getSchedule(placeit);	
+						.getSchedule(placeit);
 				placeit = this.initializeSchedule(placeit, schedules);
 			}
 		}
@@ -81,7 +81,7 @@ public class PlaceItScheduler {
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
 		if (schedules.size() == 0) {
-			return this.repostPlaceit(placeit, Calendar.MINUTE, 45);
+			return this.repostPlaceit(placeit, new Date(0));
 		} else if (schedules.contains(0) == true) {
 			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
 		} else {
@@ -94,10 +94,16 @@ public class PlaceItScheduler {
 		java.util.Date date = placeit.getActiveDate();
 		Calendar cal = Calendar.getInstance(); // creates calendar
 		cal.setTime(date); // sets calendar time/date
-		cal.add(TIMEVAL, timeAMT); // adds one hour
+		cal.add(TIMEVAL, timeAMT); // adds amt
 		java.util.Date newDate = cal.getTime(); // returns new date object, one
 												// hour in the future
 		placeit.setActiveDate(newDate.getTime());
+		this.PLrepository.updatePlaceIt(placeit);
+		return placeit;
+	}
+
+	public PlaceIt repostPlaceit(PlaceIt placeit, Date date) {
+		placeit.setActiveDate(date.getTime());
 		this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
 	}

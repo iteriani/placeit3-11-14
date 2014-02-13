@@ -15,7 +15,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
