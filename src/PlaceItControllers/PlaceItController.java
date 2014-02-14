@@ -38,8 +38,10 @@ public class PlaceItController {
 
 		PlaceIt placeit = new PlaceIt(titleText, descText, position.latitude,
 				position.longitude);
+		
+		int insertId = (int) db.addPlaceIt(placeit);
+		placeit.setID(insertId);
 		placeits.add(placeit);
-		db.addPlaceIt(placeit);
 		view.addMarker(placeit);
 		return placeit;
 	}

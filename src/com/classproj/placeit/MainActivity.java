@@ -236,9 +236,12 @@ public class MainActivity extends FragmentActivity implements
 						PlaceIt placeit = controller.AddPlaceIt(title,
 								description, location);
 						List<Integer> ints = new Vector<Integer>();
-						int ScheduleID = id + 1; // offset begins at -1
+						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
 						ints.add(Integer.valueOf(ScheduleID));
-						scheduler.addSchedules(placeit, ints);
+						Log.d("creation id ", ints.toString());
+						if(ScheduleID >= 0 ){
+							scheduler.addSchedules(placeit, ints);
+						}
 						scheduler.scheduleNextActivation(placeit);
 					}
 				});
@@ -302,7 +305,7 @@ public class MainActivity extends FragmentActivity implements
 		createNotifs(placeits);
 		/* Initialize dialog box */
 		final PlaceIt placeit = placeits.get(0);
-		PlaceIt initial = scheduler.scheduleNextActivation(placeit);
+		final PlaceIt initial = scheduler.scheduleNextActivation(placeit);
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("You got a Place-It!");
@@ -315,6 +318,8 @@ public class MainActivity extends FragmentActivity implements
 		textViewTitle.setText(placeit.getTitle());
 		textViewDescription.setText(placeit.getDescription());
 		alert.setView(dialog);
+		
+		
 		/* Initialize submission button. */
 		alert.setPositiveButton("Repost",
 				new DialogInterface.OnClickListener() {
@@ -332,12 +337,10 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// gotta rename
-						PlaceIt placeit2 = scheduler.scheduleNextActivation(placeit);
-						Toast.makeText(MainActivity.this, placeit2.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
+
+						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
 						
-						if(placeit2.isActive() == false){
-							controller.RemovePlaceIt(placeit);
-						}
+						MainActivity.this.removeMarker(initial);
 						
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {

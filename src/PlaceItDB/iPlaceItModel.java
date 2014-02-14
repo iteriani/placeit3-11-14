@@ -7,7 +7,7 @@ import Models.PlaceIt;
 public interface iPlaceItModel {
 
 	// Adding new PlaceIt
-	public void addPlaceIt(PlaceIt PlaceIt);
+	public long addPlaceIt(PlaceIt PlaceIt);
 
 	// Getting single PlaceIt
 	public PlaceIt getPlaceIt(int id);
