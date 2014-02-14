@@ -65,7 +65,10 @@ class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 			markerOptions.position(latLng);
 			markerOptions.title(addressText);
 
+			//addedMark = googlemap.addMarker(markerOptions);
+			googlemap.addMarker(markerOptions);
 			addedMark = googlemap.addMarker(markerOptions);
+
 
 			// Locate the first location
 			if (i == 0)
