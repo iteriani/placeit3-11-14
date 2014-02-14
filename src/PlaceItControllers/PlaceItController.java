@@ -45,7 +45,6 @@ public class PlaceItController {
 	}
 	
 	public void RemovePlaceIt(PlaceIt placeit){
-	//	placeits.remove(placeit);
 		db.deactivatePlaceit(placeit);
 		view.removeMarker(placeit);
 	}

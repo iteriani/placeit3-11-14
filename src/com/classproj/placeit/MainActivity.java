@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
@@ -210,14 +211,14 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void setupTimeDialog(PlaceIt placeit) {
+	public void setupTimeDialog(final String title, final String description, final LatLng location) {
 		/*
 		 * Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
 		 * startActivity(myIntent);
 		 */
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Set recurrence for PlaceIt " + placeit.getTitle());
+		builder.setTitle("Set recurrence for PlaceIt " + title);
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
 
@@ -241,10 +242,9 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						// User clicked OK, so save the mSelectedItems results
-						// somewhere
-						// or return them to the component that opened the
-						// dialog
+
+						PlaceIt placeit = controller.AddPlaceIt(title, description,
+								location);
 
 					}
 				});
@@ -258,22 +258,6 @@ public class MainActivity extends FragmentActivity implements
 
 		builder.setView(dialog);
 		builder.show();
-
-		/*
-		 * Spinner dayspinner = (Spinner) findViewById(R.id.days_spinner);
-		 * 
-		 * // Create an ArrayAdapter using the string array and a default
-		 * spinner layout ArrayAdapter<CharSequence> adapter =
-		 * ArrayAdapter.createFromResource(this, R.array.days_array,
-		 * android.R.layout.simple_spinner_item); // Specify the layout to use
-		 * when the list of choices appears
-		 * adapter.setDropDownViewResource(android
-		 * .R.layout.simple_spinner_dropdown_item); // Apply the adapter to the
-		 * spinner dayspinner.setAdapter(adapter);
-		 * 
-		 * 
-		 * alert.setView(dialog); alert.show();
-		 */
 
 	}
 
@@ -298,9 +282,7 @@ public class MainActivity extends FragmentActivity implements
 				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();
 
-				PlaceIt placeit = controller.AddPlaceIt(titleText, descText,
-						position);
-				setupTimeDialog(placeit);
+				setupTimeDialog(titleText, descText, position);
 				setUpSideBar();
 			}
 		});
@@ -395,8 +377,7 @@ public class MainActivity extends FragmentActivity implements
 		String log = "Id: " + pc.getID() + " ,Name: " + pc.getTitle()
 				+ " ,Desc: " + pc.getDescription() + "coords : "
 				+ pc.getLatitude() + "," + pc.getLongitude();
-		String descText = pc.getDescription() + "\r\n Set on "
-				+ pc.getActiveDate();
+		String descText = pc.getDescription();
 		Marker added = googleMap.addMarker(new MarkerOptions()
 				.position(new LatLng(pc.getLatitude(), pc.getLongitude()))
 				.title(pc.getTitle()).snippet(descText));
@@ -405,12 +386,23 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void removeMarker(PlaceIt pc) {
+
+		List<Marker> markersRemoved = new Vector<Marker>();
 		for (Marker marker : mMarkers) {
-			if (marker.getTitle() == pc.getTitle()
-					&& marker.getSnippet() == pc.getDescription()) {
-				marker.remove();
-				mMarkers.remove(marker);
+
+			Toast.makeText(MainActivity.this, "checking " + marker.getTitle() 
+					+ " with " + pc.getTitle() + " and ",Toast.LENGTH_SHORT).show();
+			
+			if (true) {
+				markersRemoved.add(marker);
 			}
+		}
+		Toast.makeText(MainActivity.this, "trying to rmeove markers of " + markersRemoved.size(),
+				Toast.LENGTH_SHORT).show();
+		for(int i = 0; i < markersRemoved.size(); i++){
+			mMarkers.remove(markersRemoved.get(i));
+			markersRemoved.get(i).remove();
+			
 		}
 
 	}
@@ -454,13 +446,25 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
+		Toast.makeText(MainActivity.this, "Location changed : " + arg0.getLatitude() + ","+arg0.getLongitude(),
+				Toast.LENGTH_SHORT).show();
 		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
+		Toast.makeText(MainActivity.this, "found PlaceIt found -- " + 
+				cleanList.size(),
+				Toast.LENGTH_SHORT).show();
 		cleanList = scheduler.checkActive(cleanList);
+		Toast.makeText(MainActivity.this, "active PlaceIt found -- " + 
+				cleanList.size(),
+				Toast.LENGTH_SHORT).show();
 		for (PlaceIt single : cleanList) {
+			Toast.makeText(MainActivity.this, "moving to " + single.getLatitude() + ","+single.getLongitude(),
+					Toast.LENGTH_SHORT).show();
 			googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(
 					single.getLatitude(), single.getLongitude())));
-			Log.d("PlaceIt found -- ",
-					single.getTitle() + "-" + single.getDescription());
+
+			Toast.makeText(MainActivity.this, "PlaceIt found -- " + 
+					single.getTitle() + "-" + single.getDescription(),
+					Toast.LENGTH_SHORT).show();
 		}
 
 		setUpNotification(cleanList);
