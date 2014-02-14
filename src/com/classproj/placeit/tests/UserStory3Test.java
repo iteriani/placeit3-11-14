@@ -14,6 +14,15 @@ public class UserStory3Test extends TestCase {
 
 	public void testNoDescrip() {
 		/*
+		 * Even if we put an empty space for description
+		 * it is okay. 
+		 * If they put an empty title it is okay
+		 * Test these three things THis will fail liek a lil bithc
+		 * if both are empty, not okay. 
+		 * Tese the contains. 
+		 */
+		
+		/*
 		iPlaceItModel mockdb;
 		iView mockview;
 		iPLScheduleModel db;
