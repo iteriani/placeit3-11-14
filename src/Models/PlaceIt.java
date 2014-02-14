@@ -16,7 +16,7 @@ public class PlaceIt {
      
     // Empty constructor
     public PlaceIt(){
-         
+         this._id = (int) Math.floor(Math.random()*100);
     }
     // constructor
     
