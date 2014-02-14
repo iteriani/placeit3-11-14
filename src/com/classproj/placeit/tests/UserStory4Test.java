@@ -16,6 +16,13 @@ import junit.framework.TestCase;
  * 
  */
 
+/*
+ * For each of these tests
+ * you should have a boolean 
+ * addedplaceit tester, and then 
+ * when the place it is changed from database, update variable and assert it. 
+ * method have been called and that the method has been called with right values. 
+ */
 /**
  * @author SKY
  *
@@ -24,7 +31,7 @@ public class UserStory4Test extends TestCase {
 	
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
-	private mockView mview4 = new mockView();
+	private mockView mview4 = new mockView(null);
 	protected PlaceItController pcontroller4 = new PlaceItController(mphandler4, mview4);
 	
 	private boolean[] added = new boolean[10];
@@ -49,6 +56,12 @@ public class UserStory4Test extends TestCase {
 		pcontroller4.checkCoordinates(mockUserLocation);
 		assertEquals(mockUserPosition.latitude,newPosition.latitude,0.5);
 		assertEquals(mockUserPosition.longitude,newPosition.longitude,0.5);
+		
+		/*
+		 * make some fake coords, make a placeit withint he 0.5 miles
+		 * then do controller check coordinates
+		 * the assert that place it got returned back. 
+		 */
 	}
 	
 	public void testIsActive(){
@@ -60,16 +73,35 @@ public class UserStory4Test extends TestCase {
 		}
 		PlaceIt np = pcontroller4.getList().get(pcontroller4.getList().size());
 		assertTrue(np.isActive());
+		/*
+		 * test that the place it is active
+		 * then do controller.checkactive
+		 * and assert that the thing returned is active and the same one
+		 * 
+		 */
 	}
 	
 	public void testNotification(){
 		//Verify that there is(not) a notification for this Place-It, that shows up in the Android notification tray.
 		//later~~
+		/*
+		 * test that the place it is active
+		 * then do controller.checkactive
+		 * and assert that the thing returned is active and the same one
+		 * check that notify user is called in the view. 
+		 * 
+		 */
 	}
 	
 	public void testMoveToPDList_DB(){
 		//Verify that the Place-It is moved to the pulled-down list, and this change is reflected in the database.
 		//after notification is done
+		/*
+		 * assert addplaceit to database
+		 * The map is gonna tell the controller the user moved it to the pull down list. 
+		 * The map is pulling down, the controller is: okay, controlelr tell view to remove marker
+		 * and conotrolelr suppose to pull down.
+		 */
 	}
 	
 }
