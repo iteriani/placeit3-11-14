@@ -104,8 +104,15 @@ public class UserStory3Test extends TestCase {
 	}
 		
 	public void testAllFieldsBlank() {
-		
-		
+		/*
+		 * this should fail when all fields are blank, it will will return null. 
+		 * When the placeit is made
+		 * controller will call add, and hte controller will call add place it
+		 * and it will return null
+		 * and the dataase did not do anything
+		 * and the view did not have a marker called
+		 * 
+		 */
 	}
 	
 	public void testPlaceitHandler() {
@@ -118,7 +125,13 @@ public class UserStory3Test extends TestCase {
 	}
 	
 	public void testEmptySchedule() {
-		
+		/*
+		 * If we replace a placeit
+		 * scheduler is going to call get schedule
+		 * Calling the the scheduleingnext method ehre to be rtested. 
+		 * but when it does schedule, it will try to go for the enxt date
+		 * for example test for a monday, like a next monday for a not empty schedule for a next test. 
+		 */
 		
 	}
 	

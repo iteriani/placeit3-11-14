@@ -92,7 +92,7 @@ public class PlaceItScheduler {
 	}
 
 	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
-
+												  //TIMEVAL IS NOT AN INT!
 		java.util.Date date = placeit.getActiveDate();
 		Calendar cal = Calendar.getInstance(); // creates calendar
 		cal.setTime(date); // sets calendar time/date

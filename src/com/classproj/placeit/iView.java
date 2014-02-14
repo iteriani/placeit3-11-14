@@ -15,5 +15,6 @@ public interface iView {
 	public void notifyUser(List<PlaceIt> pc);
 
 	public Marker getMarker(int id);
+
 	
 }
