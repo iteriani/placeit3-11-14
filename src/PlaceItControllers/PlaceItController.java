@@ -86,4 +86,12 @@ public class PlaceItController {
 
 	}
 
+	public iPlaceItModel getDB() {
+		return this.db;
+	}
+
+	public iView getView() {
+		return this.view;
+	}
+
 }
