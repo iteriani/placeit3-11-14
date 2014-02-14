@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import com.classproj.placeit.iView;
+import com.classproj.placeit.PlaceItSettings;
+
+import android.provider.SyncStateContract.Constants;
 import android.util.Log;
 
 import Models.PlaceIt;
@@ -15,10 +19,12 @@ public class PlaceItScheduler {
 
 	private iPlaceItModel PLrepository;
 	private iPLScheduleModel scheduleRepository;
+	private iView view;
 
-	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db) {
+	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db, iView view) {
 		this.PLrepository = db;
 		this.scheduleRepository = scheduleDB;
+		this.view = view;
 	}
 
 	public void setUpSchedules() {
@@ -85,6 +91,7 @@ public class PlaceItScheduler {
 		if (schedules.size() == 0) {
 			return this.repostPlaceit(placeit, new Date(0));
 		} else if (schedules.contains(0) == true) {
+			Log.d("IN THE MINUTE SCHEUDLER", "TRUE");
 			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
 		} else {
 			return this.initializeSchedule(placeit, schedules);
@@ -96,12 +103,12 @@ public class PlaceItScheduler {
 		java.util.Date date = placeit.getActiveDate();
 		Calendar cal = Calendar.getInstance(); // creates calendar
 		cal.setTime(date); // sets calendar time/date
-		cal.add(TIMEVAL, timeAMT); // adds amt
+		cal.add(TIMEVAL, timeAMT*2); // adds amt
 		java.util.Date newDate = cal.getTime(); // returns new date object, one
 												// hour in the future
 		placeit.setActiveDate(newDate.getTime());
 		this.PLrepository.updatePlaceIt(placeit);
-		return placeit;
+		 return placeit;
 	}
 
 	public PlaceIt repostPlaceit(PlaceIt placeit, Date date) {
@@ -110,13 +117,24 @@ public class PlaceItScheduler {
 		return placeit;
 	}
 	
+	public PlaceIt repostPlaceit(PlaceIt placeit) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(PlaceItSettings.INTERVAL_TYPE, PlaceItSettings.INTERVAL_NUMBER);
+		placeit.setActiveDate(cal.getTimeInMillis());
+		this.PLrepository.updatePlaceIt(placeit);
+		return placeit;
+	}
+	
 	public List<PlaceIt> checkActive(List<PlaceIt> placeits){
 		List<PlaceIt> newActive = new Vector<PlaceIt>();
 		for(PlaceIt placeit : placeits){
-			if(placeit.isActive()){		
+			Log.d("CHECKING ID", Integer.toString(placeit.getID()));
+			PlaceIt plDB = this.PLrepository.getPlaceIt(placeit.getID());
+			if(plDB.isActive()){		
 				newActive.add(placeit);
 			}
 		}
+		view.notifyUser(newActive, "Scheduler");
 		return newActive;
 	}
 

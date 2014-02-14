@@ -81,7 +81,7 @@ public class PlaceItController {
 				}	
 			}
 		}
-		
+		view.notifyUser(clean,"Controller");
 		return clean;
 
 	}

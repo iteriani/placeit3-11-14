@@ -37,11 +37,6 @@ public class mockView implements iView{
 			}
 		}
 
-	@Override
-	public void notifyUser(List<PlaceIt> pc) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public Marker getMarker(int id) {
@@ -52,5 +47,11 @@ public class mockView implements iView{
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
+		// TODO Auto-generated method stub
+		
 	}
 	}

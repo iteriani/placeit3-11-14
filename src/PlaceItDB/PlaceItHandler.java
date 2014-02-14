@@ -10,12 +10,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 8;
+	private static final int DATABASE_VERSION = 9;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
@@ -79,22 +80,31 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_PLACEITS, new String[] { KEY_ID,
-				KEY_TITLE, KEY_DESCRIPTION }, KEY_ID + "=?",
+				KEY_TITLE, KEY_DESCRIPTION, KEY_LONGITUDE, KEY_LATITUDE, KEY_ACTIVEDATE}, KEY_ID + "=?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
+		
 		if (cursor != null) {
 			cursor.moveToFirst();
 
-			PlaceIt placeit = new PlaceIt(cursor.getString(1),
-					cursor.getString(2),
-					Double.parseDouble(cursor.getString(3)),
-					Double.parseDouble(cursor.getString(4)),
-					Long.valueOf(cursor.getString(5)));
+			PlaceIt contact = new PlaceIt();
+			contact.setID(Integer.parseInt(cursor.getString(0)));
+
+			Log.d("placeit created had id", Integer.toString(contact.getID()));
+			contact.setTitle(cursor.getString(1));
+			contact.setDescription(cursor.getString(2));
+			contact.setLatitude(Double.valueOf(cursor.getString(4)));
+			contact.setLongitude(Double.valueOf(cursor.getString(3)));
+			double ds = Double.parseDouble(cursor.getString(5));
+			long sd = (long) ds;
+			contact.setActiveDate(sd);
 			// return contact
-			return placeit;
+			return contact;
 		}else{
 			return null;
 		}
 	}
+	
+	
 
 	@Override
 	public List<PlaceIt> getAllPlaceIts() {
@@ -110,6 +120,8 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 			do {
 				PlaceIt contact = new PlaceIt();
 				contact.setID(Integer.parseInt(cursor.getString(0)));
+
+				Log.d("placeit created had id", Integer.toString(contact.getID()));
 				contact.setTitle(cursor.getString(1));
 				contact.setDescription(cursor.getString(2));
 				contact.setLatitude(Double.valueOf(cursor.getString(4)));

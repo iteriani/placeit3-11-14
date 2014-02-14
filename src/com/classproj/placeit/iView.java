@@ -12,8 +12,8 @@ public interface iView {
 	
 	public void removeMarker(PlaceIt pc);
 
-	public void notifyUser(List<PlaceIt> pc);
-
 	public Marker getMarker(int id);
+
+	void notifyUser(List<PlaceIt> placeits, String ControllerType);
 	
 }

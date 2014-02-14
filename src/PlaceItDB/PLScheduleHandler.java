@@ -19,7 +19,7 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 8;
+	private static final int DATABASE_VERSION = 9;
 
 	// Database Name
 	private static final String DATABASE_NAME = "CSE110";
