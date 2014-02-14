@@ -65,17 +65,11 @@ class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 			markerOptions.position(latLng);
 			markerOptions.title(addressText);
 
-<<<<<<< HEAD
 			//addedMark = googlemap.addMarker(markerOptions);
 			googlemap.addMarker(markerOptions);
-=======
-<<<<<<< HEAD:src/com/classproj/placeit/GeoCoder.java
-		//	googlemap.addMarker(markerOptions);
-=======
->>>>>>> parent of 7744d9f... dwdsds
 			addedMark = googlemap.addMarker(markerOptions);
->>>>>>> 200680e8a79b436974bf105f6bab83e65df8a9d0:src/com/classproj/placeit/GeocodeTask.java
-
+		//	googlemap.addMarker(markerOptions);
+			addedMark = googlemap.addMarker(markerOptions);
 
 			// Locate the first location
 			if (i == 0)

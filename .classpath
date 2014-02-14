@@ -6,7 +6,5 @@
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="src" path="/Copy of PlaceIt"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
