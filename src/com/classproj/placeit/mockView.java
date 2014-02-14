@@ -1,6 +1,7 @@
 package com.classproj.placeit;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -15,6 +16,13 @@ public class mockView implements iView{
 	
 	List<Marker> mMarkers;
 	
+	public mockView (List<Marker> userInput) {
+		mMarkers = userInput; 
+	}
+	
+	List<PlaceIt> testMarker = new LinkedList<PlaceIt>(); 
+	
+
 	@Override
 	public void addMarker(PlaceIt pc) {
 		String mockText = "fake"; 

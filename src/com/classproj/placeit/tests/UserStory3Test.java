@@ -29,7 +29,10 @@ public class UserStory3Test extends TestCase {
 		iPlaceItModel mockdb = null;
 		iView mockview = null;
 		iPLScheduleModel mockschedule = null;
+		
 		PlaceItScheduler mockscheduler = new PlaceItScheduler(mockschedule, mockdb, mockview);
+=======
+
 		PlaceItController controller = new PlaceItController(mockdb, mockview);
 		
 		// Test that controller has been implemented correctly.

@@ -88,13 +88,14 @@ public class PlaceItController {
 
 	}
 
+
+	public iPlaceItModel getDB() {
+		return this.db;
+	}
+
 	public iView getView() {
-		// TODO Auto-generated method stub
 		return this.view;
 	}
 	
-	public iPlaceItModel getDB(){
-		return this.db;
-	}
 
 }

@@ -18,12 +18,20 @@ public class UserStory2Test extends TestCase {
 	private PlaceItController controller;
 	private LatLng mockUserPosition = new LatLng(mockUserLocation.getLatitude(), mockUserLocation.getLongitude());
 	public void testOnMapClick(){
-		
-		
+		/*
+		 * how to test the geocoder and how to test 
+		 * geocoder when u click find it will find it. 
+		 * assume that google is rihgt
+		 * okray
+		 * !yar
+		 */
 		
 	}
 	
 	public void testGeocoderTask(){
-		
+		/*
+		 * We can't test this because we assume google de god, but we can do errr..
+		 * a system test maybe. yarr...
+		 */
 	}
 }

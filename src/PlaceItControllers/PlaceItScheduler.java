@@ -102,7 +102,7 @@ public class PlaceItScheduler {
 	}
 
 	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
-
+												  //TIMEVAL IS NOT AN INT!
 		java.util.Date date = placeit.getActiveDate();
 		int increment = 0;
 		if(TIMEVAL == Calendar.MINUTE){
