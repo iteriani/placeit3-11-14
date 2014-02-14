@@ -2,7 +2,6 @@ package com.classproj.placeit;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -36,10 +34,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -49,7 +50,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements
-		OnMapClickListener, LocationListener, iView {
+		GooglePlayServicesClient.ConnectionCallbacks,
+		GooglePlayServicesClient.OnConnectionFailedListener,
+		OnMapClickListener, LocationListener, iView, com.google.android.gms.location.LocationListener {
 	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -62,6 +65,9 @@ public class MainActivity extends FragmentActivity implements
 	Location location;
 
 	/* */
+	LocationRequest mLocationRequest;
+    LocationClient mLocationClient;
+    com.google.android.gms.location.LocationListener mListener = this;
 
 	/* Markers on the map */
 	List<Marker> mMarkers;
@@ -74,6 +80,7 @@ public class MainActivity extends FragmentActivity implements
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
 	ArrayList<String> newList = new ArrayList<String>();
+
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -108,7 +115,7 @@ public class MainActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_main);
 
 		mMarkers = new LinkedList<Marker>();
-		
+
 		GoogleMap map = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
@@ -122,15 +129,16 @@ public class MainActivity extends FragmentActivity implements
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
-		
+
 		this.setUpSideBar();
 		this.setUpFindButton();
 
 		List<PlaceIt> checkList = null;
 		Location myLocationNow = locationManager
 				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-		
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50*1000, 1, this);
+
+		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+		// 50*1000, 1, this);
 
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
@@ -141,6 +149,14 @@ public class MainActivity extends FragmentActivity implements
 			createNotifs(checkList);
 			this.setUpNotification(checkList);
 		}
+
+		mLocationRequest = LocationRequest.create();
+		// Use high accuracy
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		// Set the update interval to 5 seconds
+		mLocationRequest.setInterval(80*1000);
+        mLocationClient = new LocationClient(this, this, this);
+        mLocationClient.connect();
 
 	}
 
@@ -177,7 +193,7 @@ public class MainActivity extends FragmentActivity implements
 
 				if (location != null && !location.equals("")) {
 					findPlace = new GeocoderTask(getBaseContext(), googleMap);
-							findPlace.execute(location);
+					findPlace.execute(location);
 				}
 			}
 		};
@@ -189,71 +205,76 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onMapClick(final LatLng position) {
 		setUpDialog(position);
-		if (findPlace != null)
-		{
+		if (findPlace != null) {
 			findPlace.removeMarkers();
 		}
 	}
 
 	public void setupTimeDialog(PlaceIt placeit) {
-		/*Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
-		startActivity(myIntent);*/
-		
+		/*
+		 * Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
+		 * startActivity(myIntent);
+		 */
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Set recurrence for PlaceIt " + placeit.getTitle());
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
-		
+
 		int checkedItem = -1;
-		
+
 		// Create single choice list
-		builder.setSingleChoiceItems(R.array.days_array, checkedItem, new DialogInterface.OnClickListener() {
-			@Override
-            public void onClick(DialogInterface dialog, int checkedItem) {
-				// do something with checkedItem
-            }
-		});
+		builder.setSingleChoiceItems(R.array.days_array, checkedItem,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int checkedItem) {
+						// do something with checkedItem
+					}
+				});
 		// Create textbox for number of weeks
 		TextView every = (TextView) dialog.findViewById(R.id.every);
 		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
 		TextView weeks = (TextView) dialog.findViewById(R.id.weeks);
-		
-		
+
 		// Set the action buttons
-        builder.setPositiveButton(R.string.recurrence_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK, so save the mSelectedItems results somewhere
-                // or return them to the component that opened the dialog
-                
-            }
-        });
-        builder.setNegativeButton(R.string.recurrence_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                
-            }
-        });
-		
-        builder.setView(dialog);
-        builder.show();
-		
+		builder.setPositiveButton(R.string.recurrence_ok,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// User clicked OK, so save the mSelectedItems results
+						// somewhere
+						// or return them to the component that opened the
+						// dialog
+
+					}
+				});
+		builder.setNegativeButton(R.string.recurrence_cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+
+					}
+				});
+
+		builder.setView(dialog);
+		builder.show();
+
 		/*
-		Spinner dayspinner = (Spinner) findViewById(R.id.days_spinner);
-		
-		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-		        R.array.days_array, android.R.layout.simple_spinner_item);
-		// Specify the layout to use when the list of choices appears
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// Apply the adapter to the spinner
-		dayspinner.setAdapter(adapter);
-		
-		
-		alert.setView(dialog);
-		alert.show();
-		*/
-		
+		 * Spinner dayspinner = (Spinner) findViewById(R.id.days_spinner);
+		 * 
+		 * // Create an ArrayAdapter using the string array and a default
+		 * spinner layout ArrayAdapter<CharSequence> adapter =
+		 * ArrayAdapter.createFromResource(this, R.array.days_array,
+		 * android.R.layout.simple_spinner_item); // Specify the layout to use
+		 * when the list of choices appears
+		 * adapter.setDropDownViewResource(android
+		 * .R.layout.simple_spinner_dropdown_item); // Apply the adapter to the
+		 * spinner dayspinner.setAdapter(adapter);
+		 * 
+		 * 
+		 * alert.setView(dialog); alert.show();
+		 */
+
 	}
 
 	public void setUpDialog(final LatLng position) {
@@ -266,7 +287,7 @@ public class MainActivity extends FragmentActivity implements
 		final EditText description = (EditText) dialog
 				.findViewById(R.id.description);
 		alert.setView(dialog);
-		
+
 		/* Initialize submission button. */
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
@@ -277,12 +298,13 @@ public class MainActivity extends FragmentActivity implements
 				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();
 
-				PlaceIt placeit = controller.AddPlaceIt(titleText, descText, position);
+				PlaceIt placeit = controller.AddPlaceIt(titleText, descText,
+						position);
 				setupTimeDialog(placeit);
 				setUpSideBar();
 			}
 		});
-		
+
 		/* Cancel button which does nothing when clicked and exits the dialog. */
 		alert.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
@@ -304,8 +326,10 @@ public class MainActivity extends FragmentActivity implements
 		/* Initialize dialog box */
 		final PlaceIt placeit = placeits.get(0);
 		PlaceIt initial = scheduler.scheduleNextActivation(placeit);
-		Toast.makeText(MainActivity.this, "PlaceIt will be active at " + 
-		initial.getActiveDate().toLocaleString(),
+		Toast.makeText(
+				MainActivity.this,
+				"PlaceIt will be active at "
+						+ initial.getActiveDate().toLocaleString(),
 				Toast.LENGTH_SHORT).show();
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -324,11 +348,16 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						Calendar cal = Calendar.getInstance();
-						cal.add(Constants.INTERVAL_TYPE, Constants.INTERVAL_NUMBER);
-						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,cal.getTime());
+						cal.add(Constants.INTERVAL_TYPE,
+								Constants.INTERVAL_NUMBER);
+						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,
+								cal.getTime());
 
-						Toast.makeText(MainActivity.this, "PlaceIt will be active at " + 
-						newplaceit.getActiveDate().toLocaleString(),
+						Toast.makeText(
+								MainActivity.this,
+								"PlaceIt will be active at "
+										+ newplaceit.getActiveDate()
+												.toLocaleString(),
 								Toast.LENGTH_SHORT).show();
 
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
@@ -343,10 +372,11 @@ public class MainActivity extends FragmentActivity implements
 		alert.setNegativeButton("Discard",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-	//gotta rename
+						// gotta rename
 						controller.RemovePlaceIt(placeit);
-						
-						Toast.makeText(MainActivity.this, "Placeit value has been removed",
+
+						Toast.makeText(MainActivity.this,
+								"Placeit value has been removed",
 								Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -424,12 +454,13 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
-		Log.d("LOCATION COORDS", arg0.toString());
 		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
 		cleanList = scheduler.checkActive(cleanList);
-		for(PlaceIt single : cleanList){
-			googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(single.getLatitude(), single.getLongitude())));
-			Log.d("PlaceIt found -- ", single.getTitle() + "-" + single.getDescription());		
+		for (PlaceIt single : cleanList) {
+			googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(
+					single.getLatitude(), single.getLongitude())));
+			Log.d("PlaceIt found -- ",
+					single.getTitle() + "-" + single.getDescription());
 		}
 
 		setUpNotification(cleanList);
@@ -449,6 +480,26 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		Toast.makeText(MainActivity.this, "Place-it connected!",
+				Toast.LENGTH_SHORT).show();
+		mLocationClient.requestLocationUpdates(mLocationRequest, mListener);
+
+	}
+
+	@Override
+	public void onDisconnected() {
 		// TODO Auto-generated method stub
 
 	}
