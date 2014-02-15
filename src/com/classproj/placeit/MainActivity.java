@@ -242,6 +242,10 @@ public class MainActivity extends FragmentActivity implements
 							scheduler.addSchedules(placeit, ints);
 						}
 						scheduler.scheduleNextActivation(placeit);
+						
+						/* Notification of added place-it */
+						Toast.makeText(MainActivity.this, "Place-it added!",
+								Toast.LENGTH_SHORT).show();
 					}
 				});
 		
@@ -275,12 +279,14 @@ public class MainActivity extends FragmentActivity implements
 				/* User submits his/her placeit and this method is called */
 				String descText = description.getText().toString();
 				String titleText = title.getText().toString();
-				/* Notification of added place-it */
-				Toast.makeText(MainActivity.this, "Place-it added!",
-						Toast.LENGTH_SHORT).show();
-
-				setupTimeDialog(titleText, descText, position);
-				setUpSideBar();
+				if (descText.matches("") && titleText.matches("")) {
+					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					setupTimeDialog(titleText, descText, position);
+					setUpSideBar(); 
+				}
 			}
 		});
 

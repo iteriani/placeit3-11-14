@@ -29,9 +29,7 @@ public class UserStory3Test extends TestCase {
 		iPlaceItModel mockdb = null;
 		iView mockview = null;
 		iPLScheduleModel mockschedule = null;
-		
 		PlaceItScheduler mockscheduler = new PlaceItScheduler(mockschedule, mockdb, mockview);
-=======
 
 		PlaceItController controller = new PlaceItController(mockdb, mockview);
 		
@@ -79,7 +77,8 @@ public class UserStory3Test extends TestCase {
 		descrip = "This is a description. It is very descriptive.";
 		pos = new LatLng(0,0);
 		long date = 0;
-		placeit = new PlaceIt(title, descrip, pos.latitude, pos.longitude, date);
+		int recurrence = 2;
+		placeit = new PlaceIt(title, descrip, pos.latitude, pos.longitude);
 		addedPL = controller.AddPlaceIt(title, descrip, pos);
 		assertNotNull(addedPL);
 		verifyPlaceItDetails(title, descrip, pos, addedPL);
@@ -108,24 +107,23 @@ public class UserStory3Test extends TestCase {
 			PlaceIt placeit) {
 		// verify that Place-It's info is correct. disregards recurrence.
 		
-				if(title == null) {
-					assertTrue(descrip.contains(title));
-				}
-				else {
-					assertEquals(placeit.getTitle(), title);
-				}
-				assertEquals(placeit.getDescription(), descrip);
-				assertEquals(placeit.getLatitude(), pos.latitude);
-				assertEquals(placeit.getLongitude(), pos.longitude);
-				
+		if(title == null) {
+			assertTrue(descrip.contains(title));
+		}
+		else {
+			assertEquals(placeit.getTitle(), title);
+		}
+		assertEquals(placeit.getDescription(), descrip);
+		assertEquals(placeit.getLatitude(), pos.latitude);
+		assertEquals(placeit.getLongitude(), pos.longitude);
+		
 	}
 
 	private void verifyPlaceItRecurrence(long date, PlaceIt placeit) {
-		// verify that Place-It's recurrence info is correct
-		// the recurrence information goes into the scheduler.
+		// verify that the recurrence information goes into the scheduler.
+		// don't need to check if it's correct; that will be for userstory7test
 		
-		// check that a schedule has been created
-		// check the next scheduled activation
+		
 		
 		if(date == 0) {
 			// wat do?
