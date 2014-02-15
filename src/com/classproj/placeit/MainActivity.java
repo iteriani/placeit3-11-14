@@ -77,11 +77,12 @@ public class MainActivity extends FragmentActivity implements
 	/* Reference to items in swipe-bar */
 	String[] swipebarElements;
 	private ListView viewLists;
-
+	private ListView rightList;
 	/* Controller */
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
 	ArrayList<String> newList = new ArrayList<String>();
+	ArrayList<String> nonActive = new ArrayList<String>();
 
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
@@ -154,20 +155,42 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void setUpSideBar() {
-		swipebarElements = new String[] { "No Reminders" };
+		swipebarElements = new String[] { "Active Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		newList = new ArrayList<String>();
-		if (mMarkers.size() == 0) {
+		newList.add ("Active Reminders");
+		nonActive = new ArrayList<String>();
+		this.nonActive.add("Non Active Remidners");
+		List<PlaceIt> activeOne = new Vector<PlaceIt>();
+		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
+		activeOne = controller.getActiveList();
+		nonActiveOne = controller.getNonActivePlaceIts();
+		if (activeOne.size() == 0) {
 			newList.add("No Reminders");
 		} else {
-			for (Marker marker : mMarkers) {
-				newList.add(marker.getTitle());
+			for (PlaceIt now : activeOne) {
+				newList.add(now.getTitle());
 			}
 		}
+		
+		if (nonActiveOne.size()==0)
+		{
+			nonActive.add("No Reminders");
+		}
+		else{
+			for (PlaceIt now: nonActiveOne)
+			{
+				nonActive.add(now.getTitle());
+			}
+		}
+		
+		
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
+		rightList = (ListView)findViewById(R.id.right_drawer);
+		rightList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_left,nonActive));
 	}
 
 	public void setUpFindButton() {

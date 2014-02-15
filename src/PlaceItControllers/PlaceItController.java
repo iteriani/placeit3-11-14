@@ -87,7 +87,33 @@ public class PlaceItController {
 		return clean;
 
 	}
-
+	public List<PlaceIt> getNonActivePlaceIts()
+	{
+		List<PlaceIt> nonActive = new Vector<PlaceIt>();
+		for (PlaceIt i : placeits)
+		{
+			if (!i.isActive())
+			{
+				nonActive.add(i);
+			}
+		}
+		
+		return nonActive;
+	}
+	
+	public List<PlaceIt> getActiveList()
+	{
+		List<PlaceIt> active = new Vector<PlaceIt>();
+		for (PlaceIt i : placeits)
+		{
+			if (i.isActive())
+			{
+				active.add(i);
+			}
+		}
+		
+		return active;
+	}
 	public iView getView() {
 		// TODO Auto-generated method stub
 		return this.view;

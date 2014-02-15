@@ -31,7 +31,7 @@ public class UserStory4Test extends TestCase {
 	
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
-	private mockView mview4 = new mockView(null);
+	private mockView mview4 = new mockView();
 	protected PlaceItController pcontroller4 = new PlaceItController(mphandler4, mview4);
 	
 	private boolean[] added = new boolean[10];

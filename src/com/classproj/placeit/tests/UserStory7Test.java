@@ -28,7 +28,7 @@ public class UserStory7Test extends TestCase {
 	mockPlaceItHandler mockList = new mockPlaceItHandler(testList);
 	PlaceIt justAPlaceit = new PlaceIt(title, desc, lat, longt, date); 
 	mockPLScheduleModel testscheduleModel = new mockPLScheduleModel(); 
-	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList);
+	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, null);
 	
 	public void testRepostPlaceit() {
 	 /*
@@ -47,7 +47,7 @@ public class UserStory7Test extends TestCase {
 		assertNotNull(whatisdate);
 		assertEquals(whatisdate, justAPlaceit.getActiveDate());
 		System.out.println("this is what date is: " + whatisdate); 
-		testScheduler.repostPlaceit(justAPlaceit, new Date() ); 
+		testScheduler.repostPlaceit(justAPlaceit ); 
 		Date whatisnewdate = justAPlaceit.getActiveDate(); 
 		System.out.println("this is the updated date: " + whatisnewdate); 
 		assertNull(whatisdate); 
