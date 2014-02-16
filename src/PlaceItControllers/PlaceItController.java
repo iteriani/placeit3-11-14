@@ -15,7 +15,8 @@ public class PlaceItController {
 	private iPlaceItModel db;
 	private iView view;
 	private List<PlaceIt> placeits;
-
+	List<PlaceIt> nonActive = new Vector<PlaceIt>();
+	List<PlaceIt> active = new Vector<PlaceIt>();
 	public PlaceItController(iPlaceItModel db, iView view) {
 		this.db = db;
 		this.view = view;
@@ -46,10 +47,11 @@ public class PlaceItController {
 		return placeit;
 	}
 	
-	public void RemovePlaceIt(PlaceIt placeit){
+	public void deactivatePlaceIt(PlaceIt placeit){
 		db.deactivatePlaceit(placeit);
 		view.removeMarker(placeit);
 	}
+	
 	
 	public List<PlaceIt> getList()
 	{
@@ -89,7 +91,7 @@ public class PlaceItController {
 	}
 	public List<PlaceIt> getNonActivePlaceIts()
 	{
-		List<PlaceIt> nonActive = new Vector<PlaceIt>();
+		nonActive = new Vector<PlaceIt>();
 		for (PlaceIt i : placeits)
 		{
 			if (!i.isActive())
@@ -103,7 +105,7 @@ public class PlaceItController {
 	
 	public List<PlaceIt> getActiveList()
 	{
-		List<PlaceIt> active = new Vector<PlaceIt>();
+		active = new Vector<PlaceIt>();
 		for (PlaceIt i : placeits)
 		{
 			if (i.isActive())
@@ -113,6 +115,14 @@ public class PlaceItController {
 		}
 		
 		return active;
+	}
+	
+	public void movePlaceIts(int id)
+	{
+		if (id != 0 && id != 1)
+		{
+			deactivatePlaceIt(placeits.get(id));
+		}
 	}
 	public iView getView() {
 		// TODO Auto-generated method stub

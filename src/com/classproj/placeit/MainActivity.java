@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,7 +55,8 @@ public class MainActivity extends FragmentActivity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener,
 		OnMapClickListener, LocationListener, iView,
-		com.google.android.gms.location.LocationListener {
+		com.google.android.gms.location.LocationListener,
+		 ListView.OnItemClickListener{
 	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -189,10 +191,11 @@ public class MainActivity extends FragmentActivity implements
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
+		viewLists.setOnItemClickListener(this);
 		rightList = (ListView)findViewById(R.id.right_drawer);
 		rightList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_left,nonActive));
 	}
-
+	
 	public void setUpFindButton() {
 		// Getting reference to btn_find of the layout activity_main
 		Button btn_find = (Button) findViewById(R.id.find);
@@ -502,6 +505,12 @@ public class MainActivity extends FragmentActivity implements
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		controller.movePlaceIts(arg2);
+		setUpSideBar();
 	}
 
 }
