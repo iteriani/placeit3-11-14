@@ -146,6 +146,7 @@ public class PlaceIt {
 		this._activeDate = sd;
 	}
 
+	
 	public boolean isActive() {
 		return this._activeDate != 0;
 	}

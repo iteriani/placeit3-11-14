@@ -543,11 +543,12 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		
-		if (arg3 != 0 && arg3 != 1)
+		if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
 		{
 			this.setUpDiscard();
 			if (discard == true)
 			{
+			
 				controller.movePlaceIts(arg2);
 				this.setUpSideBar();
 			}

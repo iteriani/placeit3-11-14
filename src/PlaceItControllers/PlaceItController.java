@@ -124,10 +124,8 @@ public class PlaceItController {
 	
 	public void movePlaceIts(int id)
 	{
-		if (id != 0 && id != 1)
-		{
 			deactivatePlaceIt(placeits.get(id));
-		}
+		
 	}
 	public iView getView() {
 		// TODO Auto-generated method stub
