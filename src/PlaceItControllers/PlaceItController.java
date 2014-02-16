@@ -2,11 +2,10 @@ package PlaceItControllers;
 
 import java.util.List;
 import java.util.Vector;
-
 import Models.PlaceIt;
 import PlaceItDB.iPlaceItModel;
+import android.annotation.SuppressLint;
 import android.location.Location;
-
 import com.classproj.placeit.iView;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -34,8 +33,25 @@ public class PlaceItController {
 		}
 	}
 
+	@SuppressLint("NewApi")
 	public PlaceIt AddPlaceIt(String titleText, String descText,
 			final LatLng position) {
+		
+		// If title and description empty. no Place-It is created, and return null.
+		if (titleText.isEmpty() && descText.isEmpty()) {
+			return null;
+		}
+		
+		// If title is empty but description is not, take first 10 chars of the description to be the title.
+		if (titleText.isEmpty()) {
+			int descLength = descText.length();
+			if (descLength < 10) {
+				titleText = descText.substring(0, descLength);
+			}
+			else {
+				titleText = descText.substring(0, 10);
+			}
+		}
 
 		PlaceIt placeit = new PlaceIt(titleText, descText, position.latitude,
 				position.longitude);
