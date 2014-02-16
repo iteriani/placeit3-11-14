@@ -2,19 +2,20 @@ package com.classproj.placeit.tests;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
+import junit.framework.TestCase;
+import Models.PlaceIt;
+import Models.mockPLScheduleModel;
+import PlaceItControllers.PlaceItController;
+import PlaceItControllers.PlaceItScheduler;
+import PlaceItDB.mockPlaceItHandler;
 import android.location.Location;
 
 import com.classproj.placeit.mockView;
 import com.classproj.placeit.skyMockView;
 import com.google.android.gms.maps.model.LatLng;
 
-import Models.PlaceIt;
-import Models.mockPLScheduleModel;
-import PlaceItControllers.PlaceItController;
-import PlaceItControllers.PlaceItScheduler;
-import PlaceItDB.mockPlaceItHandler;
-import junit.framework.TestCase;
 
 /**
  * 
@@ -35,9 +36,11 @@ public class UserStory4Test extends TestCase {
 	
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
+
 	private skyMockView mview4 = new skyMockView(plist4);
 	private mockPLScheduleModel mschedule4 = new mockPLScheduleModel();
 	
+
 	protected PlaceItController pcontroller4 = new PlaceItController(mphandler4, mview4);
 	protected PlaceItScheduler pscheduler4 = new PlaceItScheduler(mschedule4, mphandler4, mview4);
 	
@@ -146,7 +149,7 @@ public class UserStory4Test extends TestCase {
 		 * and conotrolelr suppose to pull down.
 		 */
 		assertEquals(1,mphandler4.addPlaceIt(expectPL));
-		pcontroller4.RemovePlaceIt(expectPL);
+		pcontroller4.removePlaceIt(expectPL);
 		assertFalse(pcontroller4.getList().contains(expectPL));
 		pcontroller4.getView().removeMarker(expectPL);
 		assertEquals(null,pcontroller4.getView().getMarker(expectPL.getID()));

@@ -15,7 +15,8 @@ public class PlaceItController {
 	private iPlaceItModel db;
 	private iView view;
 	private List<PlaceIt> placeits;
-
+	List<PlaceIt> nonActive = new Vector<PlaceIt>();
+	List<PlaceIt> active = new Vector<PlaceIt>();
 	public PlaceItController(iPlaceItModel db, iView view) {
 		this.db = db;
 		this.view = view;
@@ -46,9 +47,14 @@ public class PlaceItController {
 		return placeit;
 	}
 	
-	public void RemovePlaceIt(PlaceIt placeit){
-		//db.deactivatePlaceit(placeit); 
-		db.deletePlaceIt(placeit); 
+	public void deactivatePlaceIt(PlaceIt placeit){
+		db.deactivatePlaceit(placeit);
+		view.removeMarker(placeit);
+	}
+	
+	public void removePlaceIt(PlaceIt placeit){
+		
+		db.deletePlaceIt(placeit);
 		view.removeMarker(placeit);
 	}
 	
@@ -91,7 +97,39 @@ public class PlaceItController {
 		return clean;
 
 	}
-
+	public List<PlaceIt> getNonActivePlaceIts()
+	{
+		nonActive = new Vector<PlaceIt>();
+		for (PlaceIt i : placeits)
+		{
+			if (!i.isActive())
+			{
+				nonActive.add(i);
+			}
+		}
+		
+		return nonActive;
+	}
+	
+	public List<PlaceIt> getActiveList()
+	{
+		active = new Vector<PlaceIt>();
+		for (PlaceIt i : placeits)
+		{
+			if (i.isActive())
+			{
+				active.add(i);
+			}
+		}
+		
+		return active;
+	}
+	
+	public void movePlaceIts(int id)
+	{
+			deactivatePlaceIt(placeits.get(id));
+		
+	}
 
 	public iPlaceItModel getDB() {
 		return this.db;

@@ -79,13 +79,14 @@ public class UserStory5Test extends TestCase {
 	assertFalse(mockList.getCall()); 
 	assertFalse(testList2.getCaller());
 	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
-	testControllerWithList.RemovePlaceIt(justAPlaceit2); 
+	testControllerWithList.removePlaceIt(justAPlaceit2); 
 	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
 		
 	assertTrue(mockList.getCall()); //Checking that the delete from database is called
 	assertTrue(testList2.getCaller()); //Check that the delete from view is called
 	int b = testList2.getPlaceItsCountInView();
 	System.out.println("Size of the deleted view is currently: " + b); 	
+
 	}
 		
 	public void testdeletePlaceit() {
@@ -110,7 +111,7 @@ public class UserStory5Test extends TestCase {
 	int a = mockList.getPlaceItsCount(); 
 	System.out.println("Size of the db is currently: " + a); 
 	assertEquals(a, 5);
-	testController.RemovePlaceIt(justAPlaceit3); 
+	testController.removePlaceIt(justAPlaceit3); 
 	int b = mockList.getPlaceItsCount(); 
 	System.out.println("Size of the deleted db is currently: " + b); 
 	assertEquals(mockList.getPlaceItsCount(), 4); 	
@@ -137,7 +138,7 @@ public class UserStory5Test extends TestCase {
 		int a = testView.getPlaceItsCountInView(); 
 		System.out.println("Size of the view is currently: " + a); 
 		assertEquals(a, 5);
-		testController.RemovePlaceIt(justAPlaceit2); 
+		testController.removePlaceIt(justAPlaceit2); 
 		int b = testView.getPlaceItsCountInView();
 		System.out.println("Size of the deleted view is currently: " + b); 		
 	}
@@ -164,7 +165,7 @@ public class UserStory5Test extends TestCase {
 		int a = testList2.getPlaceItsCountInView(); // Should be a list instead
 		System.out.println("Size of the view is currently: " + a); 
 		assertEquals(a, 5);
-		testControllerWithList.RemovePlaceIt(justAPlaceit2); //Uses a mock for both
+		testControllerWithList.removePlaceIt(justAPlaceit2); //Uses a mock for both
 		int b = testList2.getPlaceItsCountInView();
 		System.out.println("Size of the deleted view is currently: " + b); 		
 	}

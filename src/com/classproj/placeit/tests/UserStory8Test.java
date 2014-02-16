@@ -53,7 +53,7 @@ public class UserStory8Test extends TestCase {
 		 */
 		
 		this.testViewLists_addPlaceIt();
-		pcontroller8.RemovePlaceIt(np);
+		pcontroller8.removePlaceIt(np);
 		mview8.removeMarker(np);
 		assertFalse(pcontroller8.getList().contains(np));
 		assertEquals(null,mview8.getMarker(np.getID()));

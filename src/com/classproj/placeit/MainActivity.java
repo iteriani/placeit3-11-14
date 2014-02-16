@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,7 +54,8 @@ public class MainActivity extends FragmentActivity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener,
 		OnMapClickListener, LocationListener, iView,
-		com.google.android.gms.location.LocationListener {
+		com.google.android.gms.location.LocationListener,
+		 ListView.OnItemClickListener{
 	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -64,7 +66,8 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Current location of user */
 	Location location;
-
+	boolean discard = false;
+	boolean delete = false	;
 	/* */
 	LocationRequest mLocationRequest;
 	LocationClient mLocationClient;
@@ -76,11 +79,12 @@ public class MainActivity extends FragmentActivity implements
 	/* Reference to items in swipe-bar */
 	String[] swipebarElements;
 	private ListView viewLists;
-
+	private ListView rightList;
 	/* Controller */
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
 	ArrayList<String> newList = new ArrayList<String>();
+	ArrayList<String> nonActive = new ArrayList<String>();
 
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
@@ -152,23 +156,51 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	
 	public void setUpSideBar() {
-		swipebarElements = new String[] { "No Reminders" };
+		swipebarElements = new String[] { "Active Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		newList = new ArrayList<String>();
-		if (mMarkers.size() == 0) {
+		newList.add ("Active Reminders");
+		nonActive = new ArrayList<String>();
+		this.nonActive.add("Non Active Remidners");
+		List<PlaceIt> activeOne = new Vector<PlaceIt>();
+		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
+		activeOne = controller.getActiveList();
+		nonActiveOne = controller.getNonActivePlaceIts();
+		Toast.makeText(this, ""+activeOne.size()+"", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, ""+nonActiveOne.size()+"", Toast.LENGTH_LONG).show();
+
+		if (activeOne.size() == 0) {
 			newList.add("No Reminders");
+			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
 		} else {
-			for (Marker marker : mMarkers) {
-				newList.add(marker.getTitle());
+			for (PlaceIt now : activeOne) {
+				newList.add(now.getTitle());
 			}
 		}
+		
+		if (nonActiveOne.size()==0)
+		{
+			nonActive.add("No Reminders");
+		}
+		else{
+			for (PlaceIt now: nonActiveOne)
+			{
+				nonActive.add(now.getTitle());
+			}
+		}
+		
+		
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
+		viewLists.setOnItemClickListener(this);
+		rightList = (ListView)findViewById(R.id.right_drawer);
+		rightList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_left,nonActive));
 	}
-
+	
 	public void setUpFindButton() {
 		// Getting reference to btn_find of the layout activity_main
 		Button btn_find = (Button) findViewById(R.id.find);
@@ -242,10 +274,12 @@ public class MainActivity extends FragmentActivity implements
 							scheduler.addSchedules(placeit, ints);
 						}
 						scheduler.scheduleNextActivation(placeit);
-						
+						setUpSideBar();
+		
 						/* Notification of added place-it */
 						Toast.makeText(MainActivity.this, "Place-it added!",
 								Toast.LENGTH_SHORT).show();
+
 					}
 				});
 		
@@ -253,15 +287,39 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-
+						setUpSideBar();
 					}
 				});
 
 		builder.setView(dialog);
 		builder.show();
-
 	}
 
+	public void setUpDiscard()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Discard or Delete");
+		LayoutInflater inflater = getLayoutInflater();
+	
+		
+		alert.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+					discard = true;
+					delete= true;
+			}
+		});
+
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Delete",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						delete = true;
+						discard = false;
+					}
+				});
+
+		alert.show();
+	}
 	public void setUpDialog(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -279,6 +337,10 @@ public class MainActivity extends FragmentActivity implements
 				/* User submits his/her placeit and this method is called */
 				String descText = description.getText().toString();
 				String titleText = title.getText().toString();
+				/* Notification of added place-it */
+				Toast.makeText(MainActivity.this, "Place-it added!",
+						Toast.LENGTH_SHORT).show();				
+				setupTimeDialog(titleText, descText, position);
 				if (descText.matches("") && titleText.matches("")) {
 					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
 							Toast.LENGTH_SHORT).show();
@@ -346,7 +408,7 @@ public class MainActivity extends FragmentActivity implements
 						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
 						
 						MainActivity.this.removeMarker(initial);
-						
+						controller.deactivatePlaceIt(initial);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));
@@ -483,6 +545,26 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
+
+	}
+	
+	public GoogleMap getViewMap(){
+		return googleMap;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		
+		if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
+		{
+			this.setUpDiscard();
+			if (discard == true)
+			{
+			
+				controller.movePlaceIts(arg2);
+				this.setUpSideBar();
+			}
+		}
 
 	}
 

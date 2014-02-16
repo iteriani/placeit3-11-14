@@ -1,16 +1,12 @@
 package com.classproj.placeit;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import Models.PlaceIt;
-
 public class mockView implements iView{
 	GoogleMap googleMap; 
 	
@@ -22,7 +18,6 @@ public class mockView implements iView{
 	
 	List<PlaceIt> testMarker = new LinkedList<PlaceIt>(); 
 	
-
 	@Override
 	public void addMarker(PlaceIt pc) {
 		String mockText = "fake"; 
@@ -34,7 +29,6 @@ public class mockView implements iView{
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
 	public void removeMarker(PlaceIt pc) {
 		for(Marker marker : mMarkers){
@@ -44,8 +38,6 @@ public class mockView implements iView{
 		// TODO Auto-generated method stub
 			}
 		}
-
-
 	@Override
 	public Marker getMarker(int id) {
 		// TODO Auto-generated method stub
@@ -56,7 +48,6 @@ public class mockView implements iView{
 		}
 		return null;
 	}
-
 	@Override
 	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
 		// TODO Auto-generated method stub
