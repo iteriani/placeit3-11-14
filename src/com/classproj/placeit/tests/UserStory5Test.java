@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 public class UserStory5Test extends TestCase {
 	
+	
 	String title1 = "hello";
 	String title2 = "helloworld";
 	String title3 = "superhello"; 
@@ -40,6 +41,45 @@ public class UserStory5Test extends TestCase {
 	//Used to test the list portion instead of the view portion
 	PlaceItController testControllerWithList = new PlaceItController(mockList, testList2); 
 	
+	public void testDeleteCurrentPlaceit() {
+	
+	/*
+	 * the view sends back a marker, 
+     * view calls controller method to delete a marker on the ma
+	 * 
+	 * The controller will call itself to delete the stuff ion the view. We need to
+	 * test to make sure the two delete functions called are actually called, assert that.
+	 * Added a flag in delete to make sure that the delete function is called 
+	 */		 
+		
+	testView.addMarker(justAPlaceit); 
+	testView.addMarker(justAPlaceit4); 
+	testView.addMarker(justAPlaceit3); 
+	testView.addMarker(justAPlaceit2); 
+	testView.addMarker(justAPlaceit1);
+			
+	mockList.addPlaceIt(justAPlaceit); 
+	mockList.addPlaceIt(justAPlaceit4); 
+	mockList.addPlaceIt(justAPlaceit3); 
+	mockList.addPlaceIt(justAPlaceit2); 
+	mockList.addPlaceIt(justAPlaceit1);
+			
+	int a = testList2.getPlaceItsCountInView(); 
+	System.out.println("Size of the view is currently: " + a); 
+	
+	assertEquals(a, 5);
+	assertFalse(mockList.getCall()); 
+	assertFalse(testList2.getCaller());
+	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
+	testControllerWithList.RemovePlaceIt(justAPlaceit2); 
+	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
+		
+	assertTrue(mockList.getCall()); //Checking that the delete from database is called
+	assertTrue(testList2.getCaller()); //Check that the delete from view is called
+	int b = testList2.getPlaceItsCountInView();
+	System.out.println("Size of the deleted view is currently: " + b); 	
+	}
+		
 	public void testdeletePlaceit() {
 	/*
 	 * controller calls delete Placeit, and it needs to be gone 
@@ -97,7 +137,7 @@ public class UserStory5Test extends TestCase {
 	
 	public void testNoPlaceItOnList() {
 	/*
-	 * when call delete, wthere should be a call for remove from list
+	 * when call delete, there should be a call for remove from list
 	 * test that
 	 * 
 	 */
@@ -120,43 +160,6 @@ public class UserStory5Test extends TestCase {
 		int b = testList2.getPlaceItsCountInView();
 		System.out.println("Size of the deleted view is currently: " + b); 		
 	}
-	
-	public void testDeleteCurrentPlaceit() {
-	/*
-	 * the view sends back a marker, 
-	 * view calls controller method to delete a marker on the ma
-	 * 
-	 * The controller will call itself to delete the stuff ion the view. We need to
-	 * test to make sure the two delete functions called are actually called, assert that.
-	 * Added a flag in delete to make sure that the delete function is called 
-	 */
-		testView.addMarker(justAPlaceit); 
-		testView.addMarker(justAPlaceit4); 
-		testView.addMarker(justAPlaceit3); 
-		testView.addMarker(justAPlaceit2); 
-		testView.addMarker(justAPlaceit1);
-		
-		mockList.addPlaceIt(justAPlaceit); 
-		mockList.addPlaceIt(justAPlaceit4); 
-		mockList.addPlaceIt(justAPlaceit3); 
-		mockList.addPlaceIt(justAPlaceit2); 
-		mockList.addPlaceIt(justAPlaceit1);
-		
-		int a = testList2.getPlaceItsCountInView(); 
-		System.out.println("Size of the view is currently: " + a); 
-		
-		assertEquals(a, 5);
-		assertFalse(mockList.getCall()); 
-		assertFalse(testList2.getCaller());
-		System.out.println("This is what checks for the call: "+ mockList.getCall()); 
-		testControllerWithList.RemovePlaceIt(justAPlaceit2); 
-		System.out.println("This is what checks for the call: "+ mockList.getCall()); 
-		
-		assertTrue(mockList.getCall()); //Checking that the delete from database is called
-		assertTrue(testList2.getCaller()); //Check that the delete from view is called
-		int b = testList2.getPlaceItsCountInView();
-		System.out.println("Size of the deleted view is currently: " + b); 
-	}ls
 	
 	
 }
