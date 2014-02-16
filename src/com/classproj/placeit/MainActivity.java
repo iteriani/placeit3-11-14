@@ -305,15 +305,13 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
+
+						int interval  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
+						int week = Integer.valueOf(numweeks.getText().toString());
 					
-						PlaceIt placeit = controller.AddPlaceIt(title,
-								description, location);
-						List<Integer> ints = new Vector<Integer>();
-						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
-						ints.add(Integer.valueOf(ScheduleID));
-						Log.d("creation id ", ints.toString());
-						if(ScheduleID >= 0 ){
-							scheduler.addSchedules(placeit, ints);
+						PlaceIt placeit = controller.AddPlaceIt(title,description, location);
+						if(interval >= 0 ){
+							scheduler.addSchedules(placeit, interval, week);
 						}
 						scheduler.scheduleNextActivation(placeit);
 						setUpSideBar();

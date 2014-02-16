@@ -9,18 +9,25 @@ public class PLSchedule {
 	// private variables
 	int _id;
 	int placeitID; // this is a foreign key to placeIt
-	List<Integer> schedules;
+	int day;
+	int week;
+	//List<Integer> schedules;
 
-	protected PLSchedule(int placeitID) {
+	//// constructors ////
+	public PLSchedule(int placeitID) {
 		this.placeitID = placeitID;
-		this.schedules = new LinkedList<Integer>();
+		this.day = -1;
+		this.week = -1;
 	}
 
-	protected PLSchedule(int placeitID, List<Integer> schedules) {
-		this(placeitID);
-		this.schedules = schedules;
+	public PLSchedule(int placeitID, int day, int week) {
+		this.placeitID = placeitID;
+		this.day = day;
+		this.week = week;
 	}
 
+	//// methods ////
+	
 	public int getPlaceItId() {
 		return this.placeitID;
 	}
@@ -28,7 +35,24 @@ public class PLSchedule {
 	public void setPlaceItId(int placeitID) {
 		this.placeitID = placeitID;
 	}
+	
+	public int getDay() {
+		return this.day;
+	}
+	
+	public void setDay(int newDay) {
+		this.day = newDay;
+	}
+	
+	public int getWeek() {
+		return this.week;
+	}
+	
+	public void setWeek(int newWeek) {
+		this.week = newWeek;
+	}
 
+	/*  no longer needed functions
 	public List<Integer> getInteger() {
 		return this.schedules;
 	}
@@ -54,4 +78,5 @@ public class PLSchedule {
 		}
 
 	}
+	*/
 }
