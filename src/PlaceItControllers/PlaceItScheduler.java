@@ -53,6 +53,10 @@ public class PlaceItScheduler {
 
 		for (Integer schedule : schedules) {
 			Calendar date = this.nextDayOfWeek(currDate, schedule);
+			date.set(Calendar.HOUR_OF_DAY, 0);
+			date.set(Calendar.MINUTE, 0);
+			date.set(Calendar.SECOND, 0);
+			date.set(Calendar.MILLISECOND, 0);
 			Date curr = date.getTime();
 			if (minDate.before(curr) == true) {
 				minDate = curr;
@@ -89,15 +93,13 @@ public class PlaceItScheduler {
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
 		Log.d("schedules for " + placeit.getID(), schedules.toString());
-		if (schedules.size() == 0) {
+		if (schedules.contains(0) == false) {
 			return this.repostPlaceit(placeit, 
 					PlaceItSettings.INTERVAL_TYPE, 
 					PlaceItSettings.INTERVAL_NUMBER);
-		} else if (schedules.contains(0) == true) {
+		} else{
 			Log.d("IN THE MINUTE SCHEUDLER", "TRUE");
 			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
-		} else {
-			return this.initializeSchedule(placeit, schedules);
 		}
 	}
 
@@ -138,8 +140,14 @@ public class PlaceItScheduler {
 		for(PlaceIt placeit : placeits){
 			PlaceIt plDB = this.PLrepository.getPlaceIt(placeit.getID());
 			Log.d(plDB.getActiveDate().toLocaleString(), new Date().toLocaleString());
-			if(plDB.isActive() && plDB.getActiveDate().getTime() - new Date().getTime() < 0){		
-				newActive.add(placeit);
+			if(plDB.isActive() && plDB.getActiveDate().getTime() - new Date().getTime() < 0){	
+				
+				List<Integer> schedules = this.scheduleRepository.getSchedule(plDB);
+				Integer day = Calendar.DAY_OF_WEEK;
+				if(schedules.size() == 0 || schedules.contains(day)){
+					newActive.add(placeit);
+				}
+				
 			}
 		}
 		view.notifyUser(newActive, "Scheduler");
