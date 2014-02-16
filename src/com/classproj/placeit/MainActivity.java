@@ -233,6 +233,48 @@ public class MainActivity extends FragmentActivity implements
 			findPlace.removeMarkers();
 		}
 	}
+	
+	public void setUpDialog(final LatLng position) {
+		/* Initialize dialog box */
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Create Place-It");
+		LayoutInflater inflater = getLayoutInflater();
+		final View dialog = inflater.inflate(R.layout.placeit_form, null);
+		final EditText title = (EditText) dialog.findViewById(R.id.title);
+		final EditText description = (EditText) dialog
+				.findViewById(R.id.description);
+		alert.setView(dialog);
+
+		/* Initialize submission button. */
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				/* User submits his/her placeit and this method is called */
+				String descText = description.getText().toString();
+				String titleText = title.getText().toString();
+				
+				// Check that user has entered a title or description
+				if (descText.matches("") && titleText.matches("")) {
+					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					setupTimeDialog(titleText, descText, position);
+					setUpSideBar(); 
+				}
+			}
+		});
+
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						Toast.makeText(MainActivity.this, "Nothing added!",
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+
+		alert.show();
+	}
 
 	public void setupTimeDialog(final String title, final String description,
 			final LatLng location) {
@@ -315,49 +357,6 @@ public class MainActivity extends FragmentActivity implements
 					public void onClick(DialogInterface dialog, int whichButton) {
 						delete = true;
 						discard = false;
-					}
-				});
-
-		alert.show();
-	}
-	public void setUpDialog(final LatLng position) {
-		/* Initialize dialog box */
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Create Place-It");
-		LayoutInflater inflater = getLayoutInflater();
-		final View dialog = inflater.inflate(R.layout.placeit_form, null);
-		final EditText title = (EditText) dialog.findViewById(R.id.title);
-		final EditText description = (EditText) dialog
-				.findViewById(R.id.description);
-		alert.setView(dialog);
-
-		/* Initialize submission button. */
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				/* User submits his/her placeit and this method is called */
-				String descText = description.getText().toString();
-				String titleText = title.getText().toString();
-				/* Notification of added place-it */
-				Toast.makeText(MainActivity.this, "Place-it added!",
-						Toast.LENGTH_SHORT).show();				
-				setupTimeDialog(titleText, descText, position);
-				if (descText.matches("") && titleText.matches("")) {
-					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
-							Toast.LENGTH_SHORT).show();
-				}
-				else {
-					setupTimeDialog(titleText, descText, position);
-					setUpSideBar(); 
-				}
-			}
-		});
-
-		/* Cancel button which does nothing when clicked and exits the dialog. */
-		alert.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						Toast.makeText(MainActivity.this, "Nothing added!",
-								Toast.LENGTH_SHORT).show();
 					}
 				});
 
