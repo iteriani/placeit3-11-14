@@ -52,7 +52,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainActivity extends FragmentActivity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener,
-		OnMapClickListener, LocationListener, iView, com.google.android.gms.location.LocationListener {
+		OnMapClickListener, LocationListener, iView,
+		com.google.android.gms.location.LocationListener {
 	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
@@ -66,8 +67,8 @@ public class MainActivity extends FragmentActivity implements
 
 	/* */
 	LocationRequest mLocationRequest;
-    LocationClient mLocationClient;
-    com.google.android.gms.location.LocationListener mListener = this;
+	LocationClient mLocationClient;
+	com.google.android.gms.location.LocationListener mListener = this;
 
 	/* Markers on the map */
 	List<Marker> mMarkers;
@@ -122,7 +123,7 @@ public class MainActivity extends FragmentActivity implements
 
 		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
 		iPlaceItModel db = new PlaceItHandler(record);
-		scheduler = new PlaceItScheduler(scheduleDB, db);
+		scheduler = new PlaceItScheduler(scheduleDB, db, this);
 		controller = new PlaceItController(db, this);
 		controller.initializeView();
 
@@ -137,26 +138,17 @@ public class MainActivity extends FragmentActivity implements
 		Location myLocationNow = locationManager
 				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
-		// locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-		// 50*1000, 1, this);
-
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
-			checkList = scheduler.checkActive(checkList);
-		}
-
-		if (checkList != null && checkList.size() != 0) {
-			createNotifs(checkList);
-			this.setUpNotification(checkList);
 		}
 
 		mLocationRequest = LocationRequest.create();
 		// Use high accuracy
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		// Set the update interval to 5 seconds
-		mLocationRequest.setInterval(80*1000);
-        mLocationClient = new LocationClient(this, this, this);
-        mLocationClient.connect();
+		mLocationRequest.setInterval(PlaceItSettings.NOTIFICATION_INTERVAL);
+		mLocationClient = new LocationClient(this, this, this);
+		mLocationClient.connect();
 
 	}
 
@@ -210,18 +202,15 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
-	public void setupTimeDialog(final String title, final String description, final LatLng location) {
-		/*
-		 * Intent myIntent = new Intent(this, RecurrencePickerActivity.class);
-		 * startActivity(myIntent);
-		 */
-
+	public void setupTimeDialog(final String title, final String description,
+			final LatLng location) {
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Set recurrence for PlaceIt " + title);
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
 
-		int checkedItem = -1;
+		int checkedItem = 0;
 
 		// Create single choice list
 		builder.setSingleChoiceItems(R.array.days_array, checkedItem,
@@ -231,6 +220,7 @@ public class MainActivity extends FragmentActivity implements
 						// do something with checkedItem
 					}
 				});
+		
 		// Create textbox for number of weeks
 		TextView every = (TextView) dialog.findViewById(R.id.every);
 		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
@@ -241,12 +231,24 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-
-						PlaceIt placeit = controller.AddPlaceIt(title, description,
-								location);
-
+					
+						PlaceIt placeit = controller.AddPlaceIt(title,
+								description, location);
+						List<Integer> ints = new Vector<Integer>();
+						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
+						ints.add(Integer.valueOf(ScheduleID));
+						Log.d("creation id ", ints.toString());
+						if(ScheduleID >= 0 ){
+							scheduler.addSchedules(placeit, ints);
+						}
+						scheduler.scheduleNextActivation(placeit);
+						
+						/* Notification of added place-it */
+						Toast.makeText(MainActivity.this, "Place-it added!",
+								Toast.LENGTH_SHORT).show();
 					}
 				});
+		
 		builder.setNegativeButton(R.string.recurrence_cancel,
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -277,12 +279,14 @@ public class MainActivity extends FragmentActivity implements
 				/* User submits his/her placeit and this method is called */
 				String descText = description.getText().toString();
 				String titleText = title.getText().toString();
-				/* Notification of added place-it */
-				Toast.makeText(MainActivity.this, "Place-it added!",
-						Toast.LENGTH_SHORT).show();
-
-				setupTimeDialog(titleText, descText, position);
-				setUpSideBar();
+				if (descText.matches("") && titleText.matches("")) {
+					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					setupTimeDialog(titleText, descText, position);
+					setUpSideBar(); 
+				}
 			}
 		});
 
@@ -306,12 +310,7 @@ public class MainActivity extends FragmentActivity implements
 		createNotifs(placeits);
 		/* Initialize dialog box */
 		final PlaceIt placeit = placeits.get(0);
-		PlaceIt initial = scheduler.scheduleNextActivation(placeit);
-		Toast.makeText(
-				MainActivity.this,
-				"PlaceIt will be active at "
-						+ initial.getActiveDate().toLocaleString(),
-				Toast.LENGTH_SHORT).show();
+		final PlaceIt initial = scheduler.scheduleNextActivation(placeit);
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("You got a Place-It!");
@@ -324,29 +323,18 @@ public class MainActivity extends FragmentActivity implements
 		textViewTitle.setText(placeit.getTitle());
 		textViewDescription.setText(placeit.getDescription());
 		alert.setView(dialog);
+		
+		
 		/* Initialize submission button. */
 		alert.setPositiveButton("Repost",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						Calendar cal = Calendar.getInstance();
-						cal.add(Constants.INTERVAL_TYPE,
-								Constants.INTERVAL_NUMBER);
-						PlaceIt newplaceit = scheduler.repostPlaceit(placeit,
-								cal.getTime());
-
-						Toast.makeText(
-								MainActivity.this,
-								"PlaceIt will be active at "
-										+ newplaceit.getActiveDate()
-												.toLocaleString(),
-								Toast.LENGTH_SHORT).show();
-
+						scheduler.repostPlaceit(placeit);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));
 						}
 						setUpNotification(newplaceits);
-
 					}
 				});
 		/* Cancel button which does nothing when clicked and exits the dialog. */
@@ -354,11 +342,16 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// gotta rename
-						controller.RemovePlaceIt(placeit);
 
-						Toast.makeText(MainActivity.this,
-								"Placeit value has been removed",
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
+						
+						MainActivity.this.removeMarker(initial);
+						
+						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
+						for (int i = 1; i < placeits.size(); i++) {
+							newplaceits.add(placeits.get(i));
+						}
+						setUpNotification(newplaceits);
 					}
 				});
 
@@ -373,13 +366,11 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void addMarker(PlaceIt pc) {
-		String log = "Id: " + pc.getID() + " ,Name: " + pc.getTitle()
-				+ " ,Desc: " + pc.getDescription() + "coords : "
-				+ pc.getLatitude() + "," + pc.getLongitude();
+		String title = pc.getTitle();
 		String descText = pc.getDescription();
 		Marker added = googleMap.addMarker(new MarkerOptions()
 				.position(new LatLng(pc.getLatitude(), pc.getLongitude()))
-				.title(pc.getTitle()).snippet(descText));
+				.title(title).snippet(descText));
 		mMarkers.add(added);
 	}
 
@@ -388,26 +379,17 @@ public class MainActivity extends FragmentActivity implements
 
 		List<Marker> markersRemoved = new Vector<Marker>();
 		for (Marker marker : mMarkers) {
-
-			Toast.makeText(MainActivity.this, "checking " + marker.getTitle() 
-					+ " with " + pc.getTitle() + " and ",Toast.LENGTH_SHORT).show();
 			
-			if (true) {
+			if (pc.equals(marker)) {
 				markersRemoved.add(marker);
 			}
 		}
-		Toast.makeText(MainActivity.this, "trying to rmeove markers of " + markersRemoved.size(),
-				Toast.LENGTH_SHORT).show();
-		for(int i = 0; i < markersRemoved.size(); i++){
+		
+		for (int i = 0; i < markersRemoved.size(); i++) {
 			mMarkers.remove(markersRemoved.get(i));
 			markersRemoved.get(i).remove();
-			
+
 		}
-
-	}
-
-	@Override
-	public void notifyUser(List<PlaceIt> pc) {
 
 	}
 
@@ -445,28 +427,13 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
-		Toast.makeText(MainActivity.this, "Location changed : " + arg0.getLatitude() + ","+arg0.getLongitude(),
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(
+				MainActivity.this,
+				"Location changed : " + arg0.getLatitude() + ","
+						+ arg0.getLongitude(), Toast.LENGTH_SHORT).show();
+
 		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
-		Toast.makeText(MainActivity.this, "found PlaceIt found -- " + 
-				cleanList.size(),
-				Toast.LENGTH_SHORT).show();
-		cleanList = scheduler.checkActive(cleanList);
-		Toast.makeText(MainActivity.this, "active PlaceIt found -- " + 
-				cleanList.size(),
-				Toast.LENGTH_SHORT).show();
-		for (PlaceIt single : cleanList) {
-			Toast.makeText(MainActivity.this, "moving to " + single.getLatitude() + ","+single.getLongitude(),
-					Toast.LENGTH_SHORT).show();
-			googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(
-					single.getLatitude(), single.getLongitude())));
 
-			Toast.makeText(MainActivity.this, "PlaceIt found -- " + 
-					single.getTitle() + "-" + single.getDescription(),
-					Toast.LENGTH_SHORT).show();
-		}
-
-		setUpNotification(cleanList);
 	}
 
 	@Override
@@ -498,6 +465,18 @@ public class MainActivity extends FragmentActivity implements
 		Toast.makeText(MainActivity.this, "Place-it connected!",
 				Toast.LENGTH_SHORT).show();
 		mLocationClient.requestLocationUpdates(mLocationRequest, mListener);
+
+	}
+
+	@Override
+	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
+		Toast.makeText(MainActivity.this, "Place-it notified by " + ControllerType + " with " + placeits.size() + " placeits",
+				Toast.LENGTH_SHORT).show();
+		if (ControllerType.equals("Controller")) {
+			scheduler.checkActive(placeits);
+		} else if (ControllerType.equals("Scheduler")) {
+			setUpNotification(placeits);
+		}
 
 	}
 

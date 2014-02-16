@@ -29,7 +29,7 @@ public class charlieMockView implements iView{
 
 	@Override
 	public void removeMarker(PlaceIt pc) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stuff
 		for(int i = 0; i<mMarkers.size(); i++){
 			System.out.println("sizeis: " + mMarkers.size()); 
 			PlaceIt pc1 = mMarkers.get(i); 
@@ -43,14 +43,14 @@ public class charlieMockView implements iView{
 		}
 
 	@Override
-	public void notifyUser(List<PlaceIt> pc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Marker getMarker(int id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
+		// TODO Auto-generated method stub
+		
 	}
 }

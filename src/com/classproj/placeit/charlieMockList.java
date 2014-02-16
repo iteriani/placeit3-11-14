@@ -49,16 +49,17 @@ public static boolean methodCaller = false;
 			}
 		}
 
-	@Override
-	public void notifyUser(List<PlaceIt> pc) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public Marker getMarker(int id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

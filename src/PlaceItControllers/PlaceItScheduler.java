@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import com.classproj.placeit.iView;
+import com.classproj.placeit.PlaceItSettings;
+
+import android.provider.SyncStateContract.Constants;
 import android.util.Log;
 
 import Models.PlaceIt;
@@ -15,10 +19,12 @@ public class PlaceItScheduler {
 
 	private iPlaceItModel PLrepository;
 	private iPLScheduleModel scheduleRepository;
+	private iView view;
 
-	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db) {
+	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db, iView view) {
 		this.PLrepository = db;
 		this.scheduleRepository = scheduleDB;
+		this.view = view;
 	}
 
 	public void setUpSchedules() {
@@ -82,9 +88,13 @@ public class PlaceItScheduler {
 	 */
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		List<Integer> schedules = this.scheduleRepository.getSchedule(placeit);
+		Log.d("schedules for " + placeit.getID(), schedules.toString());
 		if (schedules.size() == 0) {
-			return this.repostPlaceit(placeit, new Date(0));
+			this.PLrepository.deactivatePlaceit(placeit);
+			placeit.setActiveDate(0);
+			return placeit;
 		} else if (schedules.contains(0) == true) {
+			Log.d("IN THE MINUTE SCHEUDLER", "TRUE");
 			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
 		} else {
 			return this.initializeSchedule(placeit, schedules);
@@ -94,18 +104,28 @@ public class PlaceItScheduler {
 	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
 												  //TIMEVAL IS NOT AN INT!
 		java.util.Date date = placeit.getActiveDate();
-		Calendar cal = Calendar.getInstance(); // creates calendar
-		cal.setTime(date); // sets calendar time/date
-		cal.add(TIMEVAL, timeAMT); // adds amt
-		java.util.Date newDate = cal.getTime(); // returns new date object, one
-												// hour in the future
+		int increment = 0;
+		if(TIMEVAL == Calendar.MINUTE){
+			increment = 60000;
+		}else if(Calendar.HOUR == TIMEVAL){
+			increment = 60000 * 60;
+		}else{
+			increment = 60000*60*24;
+		}
+		
+		Date newDate = new Date(date.getTime() + increment * timeAMT);
 		placeit.setActiveDate(newDate.getTime());
+		//Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
 		this.PLrepository.updatePlaceIt(placeit);
-		return placeit;
+		 return placeit;
 	}
-
-	public PlaceIt repostPlaceit(PlaceIt placeit, Date date) {
-		placeit.setActiveDate(date.getTime());
+	
+	
+	
+	public PlaceIt repostPlaceit(PlaceIt placeit) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(PlaceItSettings.INTERVAL_TYPE, PlaceItSettings.INTERVAL_NUMBER);
+		placeit.setActiveDate(cal.getTime().getTime());
 		this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
 	}
@@ -113,10 +133,13 @@ public class PlaceItScheduler {
 	public List<PlaceIt> checkActive(List<PlaceIt> placeits){
 		List<PlaceIt> newActive = new Vector<PlaceIt>();
 		for(PlaceIt placeit : placeits){
-			if(placeit.isActive()){		
+		//	Log.d("CHECKING ID", Integer.toString(placeit.getID()));
+			PlaceIt plDB = this.PLrepository.getPlaceIt(placeit.getID());
+			if(placeit.isActive() && placeit.getActiveDate().before(new Date())){		
 				newActive.add(placeit);
 			}
 		}
+		view.notifyUser(newActive, "Scheduler");
 		return newActive;
 	}
 

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.classproj.placeit.charlieMockView;
+
 import Models.PlaceIt;
 import Models.mockPLScheduleModel;
 import PlaceItControllers.PlaceItScheduler;
@@ -28,7 +30,8 @@ public class UserStory7Test extends TestCase {
 	mockPlaceItHandler mockList = new mockPlaceItHandler(testList);
 	PlaceIt justAPlaceit = new PlaceIt(title, desc, lat, longt, date); 
 	mockPLScheduleModel testscheduleModel = new mockPLScheduleModel(); 
-	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList);
+	charlieMockView testView; 
+	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, testView);
 	
 	public void testRepostPlaceit() {
 	 /*
@@ -41,17 +44,15 @@ public class UserStory7Test extends TestCase {
 		testList.add(justAPlaceit1); 
 		
 	
-		Date setdate = null;
 		System.out.println(new Date(0).toString());
 		Date whatisdate = justAPlaceit.getActiveDate(); 
 		assertNotNull(whatisdate);
 		assertEquals(whatisdate, justAPlaceit.getActiveDate());
 		System.out.println("this is what date is: " + whatisdate); 
-		testScheduler.repostPlaceit(justAPlaceit, new Date() ); 
+		testScheduler.repostPlaceit(justAPlaceit ); 
 		Date whatisnewdate = justAPlaceit.getActiveDate(); 
 		System.out.println("this is the updated date: " + whatisnewdate); 
-		assertNull(whatisdate); 
-		assertSame(whatisdate, whatisnewdate); 
+		assertNotSame(whatisdate, whatisnewdate); 
 		
 	}
 	
@@ -68,7 +69,6 @@ public class UserStory7Test extends TestCase {
 		int a = Calendar.MINUTE; 
 		int b = 45; 
 		
-		Date setdate = null;
 		System.out.println(new Date(0).toString());
 		Date date1 = justAPlaceit.getActiveDate(); 
 		assertNotNull(date1);
@@ -77,8 +77,7 @@ public class UserStory7Test extends TestCase {
 		testScheduler.repostPlaceit(justAPlaceit, a, b ); 
 		Date date2 = justAPlaceit.getActiveDate(); 
 		System.out.println("this is the updated date: " + date2); 
-		assertNull(date1); 
-		assertSame(date1, date2); 
+		assertNotSame(date1, date2); 
 		assertTrue(date1.before(date2)); 
 		assertFalse(date1.after(date2)); 
 		

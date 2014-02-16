@@ -27,9 +27,10 @@ public class mockPlaceItHandler implements iPlaceItModel{
 	}
 
 	@Override
-	public void addPlaceIt(PlaceIt PlaceIt) {
+	public long addPlaceIt(PlaceIt PlaceIt) {
 		// TODO Auto-generated method stub
 		mocklist.add(PlaceIt);
+		return 1;
 	}
 
 	@Override
