@@ -1,16 +1,17 @@
 package com.classproj.placeit.tests;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import junit.framework.TestCase;
+import Models.PlaceIt;
+import PlaceItControllers.PlaceItController;
+import PlaceItDB.mockPlaceItHandler;
 import android.location.Location;
 
 import com.classproj.placeit.mockView;
 import com.google.android.gms.maps.model.LatLng;
-
-import Models.PlaceIt;
-import PlaceItControllers.PlaceItController;
-import PlaceItDB.mockPlaceItHandler;
-import junit.framework.TestCase;
+import com.google.android.gms.maps.model.Marker;
 
 /**
  * 
@@ -31,7 +32,7 @@ public class UserStory4Test extends TestCase {
 	
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
-	private mockView mview4 = new mockView();
+	private mockView mview4 = new mockView(new Vector<Marker>());
 	protected PlaceItController pcontroller4 = new PlaceItController(mphandler4, mview4);
 	
 	private boolean[] added = new boolean[10];
