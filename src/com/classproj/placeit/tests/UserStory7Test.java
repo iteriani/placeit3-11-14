@@ -55,10 +55,9 @@ public class UserStory7Test extends TestCase {
 		testScheduler.repostPlaceit(justAPlaceit ); 
 		Date whatisnewdate = justAPlaceit.getActiveDate(); 
 		System.out.println("this is the updated date: " + whatisnewdate); 
-<<<<<<< HEAD
+
 		assertNull(whatisdate); 
-=======
->>>>>>> 48e5103722ef3570a21ba6bc60d66045e73d43f1
+
 		assertNotSame(whatisdate, whatisnewdate); 
 		
 	}

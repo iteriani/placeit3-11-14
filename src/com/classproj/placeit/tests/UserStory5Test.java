@@ -20,20 +20,6 @@ import junit.framework.TestCase;
  * @author SKY
  *
  */
-<<<<<<< HEAD
-public class UserStory5Test extends TestCase {
-	public void testRepostWhenReminded(){
-		//When the user is reminded about a place-it, user sees an option to repost it.
-		/*
-		 * initalize a bunch of a placeits
-		 * when we feed the coordinates into the method
-		 * he will see the option to repost it
-		 * use coordinates, controller check coordinates, to check for placeits
-		 * return back placeits from controller, the view will take these place its and 
-		 * the view will allow for the repost. 
-		 * the iview, it should be able to repost. 
-		 */
-=======
 
 public class UserStory5Test extends TestCase {
 	
@@ -93,7 +79,7 @@ public class UserStory5Test extends TestCase {
 	assertFalse(mockList.getCall()); 
 	assertFalse(testList2.getCaller());
 	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
-	testControllerWithList.RemovePlaceIt(justAPlaceit2); 
+	testControllerWithList.removePlaceIt(justAPlaceit2); 
 	System.out.println("This is what checks for the call: "+ mockList.getCall()); 
 		
 	assertTrue(mockList.getCall()); //Checking that the delete from database is called
@@ -125,7 +111,7 @@ public class UserStory5Test extends TestCase {
 	int a = mockList.getPlaceItsCount(); 
 	System.out.println("Size of the db is currently: " + a); 
 	assertEquals(a, 5);
-	testController.RemovePlaceIt(justAPlaceit3); 
+	testController.removePlaceIt(justAPlaceit3); 
 	int b = mockList.getPlaceItsCount(); 
 	System.out.println("Size of the deleted db is currently: " + b); 
 	assertEquals(mockList.getPlaceItsCount(), 4); 	
@@ -152,7 +138,7 @@ public class UserStory5Test extends TestCase {
 		int a = testView.getPlaceItsCountInView(); 
 		System.out.println("Size of the view is currently: " + a); 
 		assertEquals(a, 5);
-		testController.RemovePlaceIt(justAPlaceit2); 
+		testController.removePlaceIt(justAPlaceit2); 
 		int b = testView.getPlaceItsCountInView();
 		System.out.println("Size of the deleted view is currently: " + b); 		
 	}
@@ -179,7 +165,7 @@ public class UserStory5Test extends TestCase {
 		int a = testList2.getPlaceItsCountInView(); // Should be a list instead
 		System.out.println("Size of the view is currently: " + a); 
 		assertEquals(a, 5);
-		testControllerWithList.RemovePlaceIt(justAPlaceit2); //Uses a mock for both
+		testControllerWithList.removePlaceIt(justAPlaceit2); //Uses a mock for both
 		int b = testList2.getPlaceItsCountInView();
 		System.out.println("Size of the deleted view is currently: " + b); 		
 	}
