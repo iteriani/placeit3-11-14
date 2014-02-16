@@ -396,7 +396,7 @@ public class MainActivity extends FragmentActivity implements
 						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
 						
 						MainActivity.this.removeMarker(initial);
-						controller.RemovePlaceIt(initial);
+						controller.deactivatePlaceIt(initial);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));

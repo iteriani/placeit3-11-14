@@ -52,16 +52,8 @@ public class PlaceIt {
 		this._activeDate = new java.util.Date().getTime();
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof PlaceIt) {
-			PlaceIt placeit = (PlaceIt) o;
-			if (placeit.getID() == this.getID()) {
-				return true;
-			} else {
-				return false;
-			}
-		} else if (o instanceof Marker) {
+	public boolean equals(Marker o) {
+
 			Marker marker = (Marker) o;
 			LatLng position = marker.getPosition();
 			if (position.latitude == this.getLatitude()
@@ -75,9 +67,6 @@ public class PlaceIt {
 			} else {
 				return false;
 			}
-		} else {
-			return false;
-		}
 	}
 
 	// constructor
