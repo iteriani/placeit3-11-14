@@ -39,8 +39,6 @@ public class charlieMockView implements iView{
 				mMarkers.remove(pc1);
 			}
 		// TODO Auto-generated method stub
-			}
-		}
 
 	@Override
 	public Marker getMarker(int id) {
@@ -48,7 +46,6 @@ public class charlieMockView implements iView{
 		return null;
 	}
 
-	@Override
 	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
 		// TODO Auto-generated method stub
 		

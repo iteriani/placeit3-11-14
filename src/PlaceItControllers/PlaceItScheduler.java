@@ -116,6 +116,7 @@ public class PlaceItScheduler {
 		Date newDate = new Date(date.getTime() + increment * timeAMT);
 		placeit.setActiveDate(newDate.getTime());
 		//Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
+		Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
 		this.PLrepository.updatePlaceIt(placeit);
 		 return placeit;
 	}

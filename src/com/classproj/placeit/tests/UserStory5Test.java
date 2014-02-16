@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package com.classproj.placeit.tests;
 
 import java.util.LinkedList;
@@ -12,6 +15,11 @@ import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
 import PlaceItDB.mockPlaceItHandler;
 import junit.framework.TestCase;
+
+/**
+ * @author SKY
+ *
+ */
 
 public class UserStory5Test extends TestCase {
 	
