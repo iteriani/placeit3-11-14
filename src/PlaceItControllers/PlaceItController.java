@@ -45,7 +45,8 @@ public class PlaceItController {
 	}
 	
 	public void RemovePlaceIt(PlaceIt placeit){
-		db.deactivatePlaceit(placeit);
+		//db.deactivatePlaceit(placeit); 
+		db.deletePlaceIt(placeit); 
 		view.removeMarker(placeit);
 	}
 	
@@ -57,6 +58,9 @@ public class PlaceItController {
 	public boolean checkViscinity (Location currLoc, Location checkLoc)
 	{
 		return false;
+		
+	}
+	public void deleteFromList(PlaceIt placeit) {
 		
 	}
 

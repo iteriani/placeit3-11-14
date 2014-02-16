@@ -5,16 +5,22 @@ import java.util.List;
 
 import Models.PlaceIt;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-public class charlieMockView implements iView{
+/*
+ * Should just model over what the view does, instead be implemented towards a list
+ */
+public class charlieMockList implements iView{
 
-	List<PlaceIt> mMarkers = new LinkedList<PlaceIt>();
-	
-	public charlieMockView (List<PlaceIt> userInput) {
+List<PlaceIt> mMarkers = new LinkedList<PlaceIt>();
+public static boolean methodCaller = false; 
+
+	public charlieMockList (List<PlaceIt> userInput) {
 		mMarkers = userInput; 
+	}
+	
+	public boolean getCaller() {
+	 return methodCaller; 
 	}
 	
 	public int getPlaceItsCountInView() {
@@ -30,6 +36,7 @@ public class charlieMockView implements iView{
 	@Override
 	public void removeMarker(PlaceIt pc) {
 		// TODO Auto-generated method stub
+		methodCaller = true; 
 		for(int i = 0; i<mMarkers.size(); i++){
 			System.out.println("sizeis: " + mMarkers.size()); 
 			PlaceIt pc1 = mMarkers.get(i); 
@@ -54,3 +61,5 @@ public class charlieMockView implements iView{
 		return null;
 	}
 }
+
+
