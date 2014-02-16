@@ -2,6 +2,7 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import PlaceItDB.iPLScheduleModel;
 
 /* Create a a private class that holds a place it and add to its list
@@ -33,16 +34,16 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	}
 	
 	@Override
-	public PlaceIt addSchedule(PlaceIt placeit, List<Integer> day) {
+	public PlaceIt addSchedule(PlaceIt placeit, int day, int week) {
 		// TODO Auto-generated method stub
-		int id = placeit.getID();
+		/*int id = placeit.getID();
 		PLSchedule ns = this.findSchedule(id);
 		if(ns != null){
 			ns.setInteger(day);
 		}else{
 			ns = new PLSchedule(id,day);
 		}
-		scheduleList.set(scheduleList.indexOf(ns), ns);
+		scheduleList.set(scheduleList.indexOf(ns), ns); */
 		return placeit;
 	}
 	/*
@@ -51,7 +52,7 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	 * This will remove the schedule for the placeit
 	 */
 	@Override
-	public PlaceIt removeSchedule(PlaceIt placeit, List<Integer> day) {
+	public PlaceIt removeSchedule(PlaceIt placeit, int day, int week) {
 		// TODO Auto-generated method stub
 		int id = placeit.getID();
 		PLSchedule rs = this.findSchedule(id);
@@ -67,10 +68,10 @@ public class mockPLScheduleModel implements iPLScheduleModel {
 	 * This will get the schedule of the placeit
 	 */
 	@Override
-	public List<Integer> getSchedule(PlaceIt placeit) {
+	public PLSchedule getSchedule(PlaceIt placeit) {
 		// TODO Auto-generated method stub
 		PLSchedule gs = this.findSchedule(placeit.getID());
-		return gs.getInteger();
+		return gs;
 	}
 
 }

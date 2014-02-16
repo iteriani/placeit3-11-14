@@ -143,12 +143,12 @@ public class PlaceItScheduler {
 			PlaceIt plDB = this.PLrepository.getPlaceIt(placeit.getID());
 			Log.d(plDB.getActiveDate().toLocaleString(), new Date().toLocaleString());
 			if(plDB.isActive() && plDB.getActiveDate().getTime() - new Date().getTime() < 0){	
-				
+				/*
 				List<Integer> schedules = this.scheduleRepository.getSchedule(plDB);
 				Integer day = Calendar.DAY_OF_WEEK;
 				if(schedules.size() == 0 || schedules.contains(day)){
 					newActive.add(placeit);
-				}
+				}*/
 				
 			}
 		}

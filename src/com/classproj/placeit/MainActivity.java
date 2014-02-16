@@ -256,6 +256,7 @@ public class MainActivity extends FragmentActivity implements
 				if (descText.matches("") && titleText.matches("")) {
 					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
 							Toast.LENGTH_SHORT).show();
+					setUpDialog(position);
 				}
 				else {
 					setupTimeDialog(titleText, descText, position);
@@ -299,6 +300,7 @@ public class MainActivity extends FragmentActivity implements
 		TextView every = (TextView) dialog.findViewById(R.id.every);
 		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
 		TextView weeks = (TextView) dialog.findViewById(R.id.weeks);
+		
 
 		// Set the action buttons
 		builder.setPositiveButton(R.string.recurrence_ok,
@@ -307,9 +309,18 @@ public class MainActivity extends FragmentActivity implements
 					public void onClick(DialogInterface dialog, int id) {
 
 						int interval  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
-						int week = Integer.valueOf(numweeks.getText().toString());
-					
-						PlaceIt placeit = controller.AddPlaceIt(title,description, location);
+						// subtract 1 from interval because 1st option is "no interval"
+						int week = 0;
+						Toast.makeText(MainActivity.this, "the checkeditemposition is " + interval,
+								Toast.LENGTH_SHORT).show();
+						if (numweeks.getText().toString().matches("")) {
+							week = 0;
+						}
+						else {
+							week = Integer.valueOf(numweeks.getText().toString());
+						}
+						
+						PlaceIt placeit = controller.AddPlaceIt(title, description, location);
 						if(interval >= 0 ){
 							scheduler.addSchedules(placeit, interval, week);
 						}
