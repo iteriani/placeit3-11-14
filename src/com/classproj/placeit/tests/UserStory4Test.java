@@ -1,14 +1,18 @@
 package com.classproj.placeit.tests;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.location.Location;
 
 import com.classproj.placeit.mockView;
+import com.classproj.placeit.skyMockView;
 import com.google.android.gms.maps.model.LatLng;
 
 import Models.PlaceIt;
+import Models.mockPLScheduleModel;
 import PlaceItControllers.PlaceItController;
+import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.mockPlaceItHandler;
 import junit.framework.TestCase;
 
@@ -31,12 +35,15 @@ public class UserStory4Test extends TestCase {
 	
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
-	private mockView mview4 = new mockView(null);
+	private skyMockView mview4 = new skyMockView(plist4);
+	private mockPLScheduleModel mschedule4 = new mockPLScheduleModel();
+	
 	protected PlaceItController pcontroller4 = new PlaceItController(mphandler4, mview4);
+	protected PlaceItScheduler pscheduler4 = new PlaceItScheduler(mschedule4, mphandler4, mview4);
 	
 	private boolean[] added = new boolean[10];
-	private Location mockUserLocation = new Location("user story 4");
-	private LatLng mockUserPosition = new LatLng(mockUserLocation.getLatitude(), mockUserLocation.getLongitude());
+	//private Location mockUserLocation = new Location("user story 4");
+	//private LatLng mockUserPosition = new LatLng(mockUserLocation.getLatitude(), mockUserLocation.getLongitude());
 	
 	//**********place-it repository**********
 	private String title1 = "user story for place-it no.1";
@@ -44,24 +51,52 @@ public class UserStory4Test extends TestCase {
 	
 	private String title2 = "user story 4 place-it no.2";
 	private String desc2 = "this place-it is newly created and should be active";
-	//**********/**********/**********/**********
+	//**********/faked coordinates/**********
+	private LatLng fakeCo = new LatLng(11.1,22.2);	
+
+	private PlaceIt expectPL;
 	
+	
+	private double toMiles(double d){
+		return (d * 0.000621371);
+	}
+	 
+	private double fromMiles(double d){
+		return (d / 0.000621371);
+	}
 	
 	public void testAddPlaceItMiles(){
-		//Create a Place-It within(further than) 0.5 miles of the user°Øs location.
-		LatLng newPosition = new LatLng(mockUserPosition.latitude+0.1,mockUserPosition.longitude+0.1);
+		//Create a Place-It within(further than) 0.5 miles of the user’s location.
+		//LatLng newPosition = new LatLng(mockUserPosition.latitude+0.1,mockUserPosition.longitude+0.1);
 		
-		pcontroller4.AddPlaceIt(title1,desc1, newPosition);
-		added[0] = true;
-		pcontroller4.checkCoordinates(mockUserLocation);
-		assertEquals(mockUserPosition.latitude,newPosition.latitude,0.5);
-		assertEquals(mockUserPosition.longitude,newPosition.longitude,0.5);
+		//pcontroller4.AddPlaceIt(title1,desc1, newPosition);
+		//added[0] = true;
+		//pcontroller4.checkCoordinates(mockUserLocation);
+		//assertEquals(mockUserPosition.latitude,newPosition.latitude,0.5);
+		//assertEquals(mockUserPosition.longitude,newPosition.longitude,0.5);
 		
 		/*
-		 * make some fake coords, make a placeit withint he 0.5 miles
+		 * make some fake coords, make a placeit within 0.5 miles
 		 * then do controller check coordinates
 		 * the assert that place it got returned back. 
 		 */
+		
+		Location fakeLo = new Location("within 0.5");
+		double lat = fromMiles(toMiles(fakeCo.latitude)+0.1);
+		double log = fromMiles(toMiles(fakeCo.longitude)+0.1);
+		fakeLo.setLatitude(lat);
+		fakeLo.setLongitude(log);
+		fakeLo.setTime(new Date().getTime());
+		
+		pcontroller4.initializeView();
+		//verify initialization is successful
+		assertEquals(mview4.getMarkerCount(),0);
+		LatLng nco = new LatLng(lat,log);
+		expectPL = pcontroller4.AddPlaceIt(title1, desc1, nco);
+		
+		//verify the placeit is added and within 0.5 miles
+		added[0] = pcontroller4.checkCoordinates(fakeLo).contains(expectPL);
+		assertTrue(added[0]);
 	}
 	
 	public void testIsActive(){
@@ -79,6 +114,12 @@ public class UserStory4Test extends TestCase {
 		 * and assert that the thing returned is active and the same one
 		 * 
 		 */
+		List<PlaceIt> activeList = pscheduler4.checkActive(plist4);
+		for (PlaceIt p : activeList){
+			assertTrue(p.isActive());
+		}
+		
+		
 	}
 	
 	public void testNotification(){
@@ -91,6 +132,8 @@ public class UserStory4Test extends TestCase {
 		 * check that notify user is called in the view. 
 		 * 
 		 */
+		
+		
 	}
 	
 	public void testMoveToPDList_DB(){
@@ -102,6 +145,12 @@ public class UserStory4Test extends TestCase {
 		 * The map is pulling down, the controller is: okay, controlelr tell view to remove marker
 		 * and conotrolelr suppose to pull down.
 		 */
+		assertEquals(1,mphandler4.addPlaceIt(expectPL));
+		pcontroller4.RemovePlaceIt(expectPL);
+		assertFalse(pcontroller4.getList().contains(expectPL));
+		pcontroller4.getView().removeMarker(expectPL);
+		assertEquals(null,pcontroller4.getView().getMarker(expectPL.getID()));
+		
 	}
 	
 }

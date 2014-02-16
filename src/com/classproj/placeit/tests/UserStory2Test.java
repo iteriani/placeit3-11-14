@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.location.Location;
+import android.test.ActivityUnitTestCase;
 
+import com.classproj.placeit.MainActivity;
 import com.classproj.placeit.mockView;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -13,10 +15,23 @@ import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
 import PlaceItDB.mockPlaceItHandler;
 
-public class UserStory2Test extends TestCase {
+
+/*
+ * This test is mainly supported as a BDD test, so we will test this using that
+ * Okray. 
+ */
+public class UserStory2Test extends ActivityUnitTestCase<MainActivity> {
+	
+	public UserStory2Test(Class<MainActivity> activityClass) {
+		super(MainActivity.class);
+		// TODO Auto-generated constructor stub
+	}
+
 	private Location mockUserLocation = new Location("user story 2");
 	private PlaceItController controller;
 	private LatLng mockUserPosition = new LatLng(mockUserLocation.getLatitude(), mockUserLocation.getLongitude());
+	
+	
 	public void testOnMapClick(){
 		/*
 		 * how to test the geocoder and how to test 

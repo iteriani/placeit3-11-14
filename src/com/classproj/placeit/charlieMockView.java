@@ -26,18 +26,31 @@ public class charlieMockView implements iView{
 		
 		mMarkers.add(pc);
 	}
+	
+	public PlaceIt getPlaceIt(int index){
+		return mMarkers.get(index);
+	}
+	
+	public List<PlaceIt> getPlaceItList(){
+		return mMarkers;
+	}
 
 	@Override
-	public void removeMarker(PlaceIt pc) {
+	public void removeMarker(PlaceIt pc) {	
 		// TODO Auto-generated method stuff
 		for(int i = 0; i<mMarkers.size(); i++){
 			System.out.println("sizeis: " + mMarkers.size()); 
 			PlaceIt pc1 = mMarkers.get(i); 
 			if(pc.getID() == pc1.getID() && pc.getTitle() == pc1.getTitle() 
-					&& pc.getDescription() == pc1.getDescription() && pc.getLongitude() == pc1.getLongitude())  {
+					&& pc.getDescription() == pc1.getDescription()
+					&& pc.getLongitude() == pc1.getLongitude()) {
+			
 			System.out.println("The deleted placeit is ID: " + pc1.getID()); 
 				mMarkers.remove(pc1);
 			}
+		}
+	}
+	
 		// TODO Auto-generated method stub
 
 	@Override

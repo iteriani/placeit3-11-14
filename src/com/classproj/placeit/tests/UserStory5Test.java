@@ -17,7 +17,7 @@ import PlaceItDB.mockPlaceItHandler;
 import junit.framework.TestCase;
 
 /**
- * @author SKY
+ * @author Charlie
  *
  */
 

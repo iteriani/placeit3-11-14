@@ -80,8 +80,6 @@ public class UserStory7Test extends TestCase {
 		assertNotSame(date1, date2); 
 		assertTrue(date1.before(date2)); 
 		assertFalse(date1.after(date2)); 
-		
-		
 	}
 	
 	public void testMoveList() {
