@@ -170,7 +170,9 @@ public class MainActivity extends FragmentActivity implements
 		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
 		activeOne = controller.getActiveList();
 		nonActiveOne = controller.getNonActivePlaceIts();
-		
+		Toast.makeText(this, ""+activeOne.size()+"", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, ""+nonActiveOne.size()+"", Toast.LENGTH_LONG).show();
+
 		if (activeOne.size() == 0) {
 			newList.add("No Reminders");
 			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
@@ -273,6 +275,7 @@ public class MainActivity extends FragmentActivity implements
 							scheduler.addSchedules(placeit, ints);
 						}
 						scheduler.scheduleNextActivation(placeit);
+						setUpSideBar();
 					}
 				});
 		
@@ -280,13 +283,12 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-
+						setUpSideBar();
 					}
 				});
 
 		builder.setView(dialog);
 		builder.show();
-
 	}
 
 	public void setUpDiscard()
@@ -333,10 +335,8 @@ public class MainActivity extends FragmentActivity implements
 				String titleText = title.getText().toString();
 				/* Notification of added place-it */
 				Toast.makeText(MainActivity.this, "Place-it added!",
-						Toast.LENGTH_SHORT).show();
-
+						Toast.LENGTH_SHORT).show();				
 				setupTimeDialog(titleText, descText, position);
-				setUpSideBar();
 			}
 		});
 
@@ -396,7 +396,7 @@ public class MainActivity extends FragmentActivity implements
 						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
 						
 						MainActivity.this.removeMarker(initial);
-						controller.RemovePlaceIt(initial);
+						controller.removePlaceIt(initial);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));

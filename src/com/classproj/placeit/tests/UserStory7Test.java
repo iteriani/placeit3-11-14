@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import com.classproj.placeit.mockView;
 
@@ -30,7 +31,7 @@ public class UserStory7Test extends TestCase {
 	mockPlaceItHandler mockList = new mockPlaceItHandler(testList);
 	PlaceIt justAPlaceit = new PlaceIt(title, desc, lat, longt, date); 
 	mockPLScheduleModel testscheduleModel = new mockPLScheduleModel(); 
-	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, new mockView());
+	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, new mockView(null));
 	public void testRepostPlaceit() {
 	 /*
 	  * call repost, and check that the new one updated in database has time 
