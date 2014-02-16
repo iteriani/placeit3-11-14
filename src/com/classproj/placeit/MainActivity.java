@@ -170,7 +170,9 @@ public class MainActivity extends FragmentActivity implements
 		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
 		activeOne = controller.getActiveList();
 		nonActiveOne = controller.getNonActivePlaceIts();
-		
+		Toast.makeText(this, ""+activeOne.size()+"", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, ""+nonActiveOne.size()+"", Toast.LENGTH_LONG).show();
+
 		if (activeOne.size() == 0) {
 			newList.add("No Reminders");
 			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
@@ -273,6 +275,7 @@ public class MainActivity extends FragmentActivity implements
 							scheduler.addSchedules(placeit, ints);
 						}
 						scheduler.scheduleNextActivation(placeit);
+						setUpSideBar();
 					}
 				});
 		
@@ -280,13 +283,12 @@ public class MainActivity extends FragmentActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-
+						setUpSideBar();
 					}
 				});
 
 		builder.setView(dialog);
 		builder.show();
-
 	}
 
 	public void setUpDiscard()
@@ -333,10 +335,8 @@ public class MainActivity extends FragmentActivity implements
 				String titleText = title.getText().toString();
 				/* Notification of added place-it */
 				Toast.makeText(MainActivity.this, "Place-it added!",
-						Toast.LENGTH_SHORT).show();
-
+						Toast.LENGTH_SHORT).show();				
 				setupTimeDialog(titleText, descText, position);
-				setUpSideBar();
 			}
 		});
 
@@ -543,11 +543,12 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		
-		if (arg3 != 0 && arg3 != 1)
+		if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
 		{
 			this.setUpDiscard();
 			if (discard == true)
 			{
+			
 				controller.movePlaceIts(arg2);
 				this.setUpSideBar();
 			}
