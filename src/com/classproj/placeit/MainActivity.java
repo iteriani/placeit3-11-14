@@ -67,7 +67,8 @@ public class MainActivity extends FragmentActivity implements
 
 	/* Current location of user */
 	Location location;
-
+	boolean discard = false;
+	boolean delete = false	;
 	/* */
 	LocationRequest mLocationRequest;
 	LocationClient mLocationClient;
@@ -259,16 +260,6 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 					
-						PlaceIt placeit = controller.AddPlaceIt(title,
-								description, location);
-						List<Integer> ints = new Vector<Integer>();
-						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
-						ints.add(Integer.valueOf(ScheduleID));
-						Log.d("creation id ", ints.toString());
-						if(ScheduleID >= 0 ){
-							scheduler.addSchedules(placeit, ints);
-						}
-						scheduler.scheduleNextActivation(placeit);
 					}
 				});
 		
@@ -285,6 +276,31 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	public void setUpDiscard()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Discard or Delete");
+		LayoutInflater inflater = getLayoutInflater();
+	
+		
+		alert.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+					discard = true;
+					delete= true;
+			}
+		});
+
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Delete",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						delete = true;
+						discard = false;
+					}
+				});
+
+		alert.show();
+	}
 	public void setUpDialog(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -509,8 +525,12 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		controller.movePlaceIts(arg2);
-		setUpSideBar();
+		
+		if (arg3 != 0 && arg3 != 1)
+		{
+			this.setUpDiscard();
+		}
+
 	}
 
 }

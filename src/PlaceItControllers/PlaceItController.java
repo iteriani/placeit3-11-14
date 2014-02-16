@@ -52,6 +52,11 @@ public class PlaceItController {
 		view.removeMarker(placeit);
 	}
 	
+	public void removePlaceIt(PlaceIt placeit){
+		
+		db.deletePlaceIt(placeit);
+		view.removeMarker(placeit);
+	}
 	
 	public List<PlaceIt> getList()
 	{
