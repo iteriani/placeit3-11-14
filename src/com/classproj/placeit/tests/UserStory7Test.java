@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.classproj.placeit.mockView;
+
 import Models.PlaceIt;
 import Models.mockPLScheduleModel;
 import PlaceItControllers.PlaceItScheduler;
@@ -28,7 +30,7 @@ public class UserStory7Test extends TestCase {
 	mockPlaceItHandler mockList = new mockPlaceItHandler(testList);
 	PlaceIt justAPlaceit = new PlaceIt(title, desc, lat, longt, date); 
 	mockPLScheduleModel testscheduleModel = new mockPLScheduleModel(); 
-	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList);
+	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, new mockView());
 	
 	public void testRepostPlaceit() {
 	 /*
@@ -47,11 +49,11 @@ public class UserStory7Test extends TestCase {
 		assertNotNull(whatisdate);
 		assertEquals(whatisdate, justAPlaceit.getActiveDate());
 		System.out.println("this is what date is: " + whatisdate); 
-		testScheduler.repostPlaceit(justAPlaceit, new Date() ); 
+		testScheduler.repostPlaceit(justAPlaceit); 
 		Date whatisnewdate = justAPlaceit.getActiveDate(); 
 		System.out.println("this is the updated date: " + whatisnewdate); 
 		assertNull(whatisdate); 
-		assertSame(whatisdate, whatisnewdate); 
+		assertNotSame(whatisdate, whatisnewdate); 
 		
 	}
 	

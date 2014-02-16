@@ -9,7 +9,7 @@ import junit.framework.TestCase;
  * @author SKY
  *
  */
-public class UserStory6Test extends TestCase {
+public class UserStory5Test extends TestCase {
 	public void testRepostWhenReminded(){
 		//When the user is reminded about a place-it, user sees an option to repost it.
 		/*
