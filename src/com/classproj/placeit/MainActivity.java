@@ -157,6 +157,7 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	
 	public void setUpSideBar() {
 		swipebarElements = new String[] { "Active Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -169,8 +170,10 @@ public class MainActivity extends FragmentActivity implements
 		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
 		activeOne = controller.getActiveList();
 		nonActiveOne = controller.getNonActivePlaceIts();
+		
 		if (activeOne.size() == 0) {
 			newList.add("No Reminders");
+			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
 		} else {
 			for (PlaceIt now : activeOne) {
 				newList.add(now.getTitle());
@@ -260,6 +263,16 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 					
+						PlaceIt placeit = controller.AddPlaceIt(title,
+								description, location);
+						List<Integer> ints = new Vector<Integer>();
+						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
+						ints.add(Integer.valueOf(ScheduleID));
+						Log.d("creation id ", ints.toString());
+						if(ScheduleID >= 0 ){
+							scheduler.addSchedules(placeit, ints);
+						}
+						scheduler.scheduleNextActivation(placeit);
 					}
 				});
 		
@@ -529,6 +542,11 @@ public class MainActivity extends FragmentActivity implements
 		if (arg3 != 0 && arg3 != 1)
 		{
 			this.setUpDiscard();
+			if (discard == true)
+			{
+				controller.movePlaceIts(arg2);
+				this.setUpSideBar();
+			}
 		}
 
 	}
