@@ -38,7 +38,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -276,6 +275,11 @@ public class MainActivity extends FragmentActivity implements
 						}
 						scheduler.scheduleNextActivation(placeit);
 						setUpSideBar();
+		
+						/* Notification of added place-it */
+						Toast.makeText(MainActivity.this, "Place-it added!",
+								Toast.LENGTH_SHORT).show();
+
 					}
 				});
 		
@@ -337,6 +341,14 @@ public class MainActivity extends FragmentActivity implements
 				Toast.makeText(MainActivity.this, "Place-it added!",
 						Toast.LENGTH_SHORT).show();				
 				setupTimeDialog(titleText, descText, position);
+				if (descText.matches("") && titleText.matches("")) {
+					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					setupTimeDialog(titleText, descText, position);
+					setUpSideBar(); 
+				}
 			}
 		});
 

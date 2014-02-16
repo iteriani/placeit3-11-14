@@ -15,5 +15,5 @@ public interface iView {
 	public Marker getMarker(int id);
 
 	void notifyUser(List<PlaceIt> placeits, String ControllerType);
-	
+
 }

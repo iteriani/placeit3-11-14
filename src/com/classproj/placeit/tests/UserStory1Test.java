@@ -50,5 +50,15 @@ public class UserStory1Test extends TestCase {
 		assertEquals( ((testMarker.get(3)).getPosition()).latitude, (testList.get(3)).getLongitude() );
 		//assertEquals( ((testMarker.get(4)).getPosition()).latitude, (testList.get(4)).getLongitude() );
 		
+		//check the api key and see if it validates
+		fail();
+		/*
+		 * Test the initalize view that all the placeits to do the controller are 
+		 * in the proper location. 
+		 * Create the controller - add placeits, 
+		 * make sure that the view has added all of its markers. 
+		 * After initalize view, check the marker. 
+		 * basic idea is that the map will reappear or appear with what we expect. 
+		 */
 	}
 }

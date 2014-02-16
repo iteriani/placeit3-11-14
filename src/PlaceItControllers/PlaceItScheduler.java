@@ -104,7 +104,7 @@ public class PlaceItScheduler {
 	}
 
 	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
-
+												  //TIMEVAL IS NOT AN INT!
 		java.util.Date date = placeit.getActiveDate();
 		int increment = 0;
 		if(TIMEVAL == Calendar.MINUTE){
@@ -120,6 +120,7 @@ public class PlaceItScheduler {
 		
 		Date newDate = new Date(date.getTime() + increment * timeAMT);
 		placeit.setActiveDate(newDate.getTime());
+		//Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
 		Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
 		this.PLrepository.updatePlaceIt(placeit);
 		 return placeit;

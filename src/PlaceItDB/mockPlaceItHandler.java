@@ -10,18 +10,22 @@ import Models.PlaceIt;
 
 /**
  * @author SKY
- *
+ * @author Charlie
  */
 public class mockPlaceItHandler implements iPlaceItModel{
-
 	public List<PlaceIt> mocklist;
-	
+	public static boolean deletecall = false; 
 	//constructor
+	
+	//Used for when the db calls delete, checks if it was called. 
+	public boolean getCall() {
+		return deletecall; 
+	}
 	
 	public mockPlaceItHandler (List<PlaceIt> userInput){
 		mocklist = userInput;
 	}
-	
+
 	@Override
 	public long addPlaceIt(PlaceIt PlaceIt) {
 		// TODO Auto-generated method stub
@@ -86,6 +90,7 @@ public class mockPlaceItHandler implements iPlaceItModel{
 
 	@Override
 	public void deletePlaceIt(PlaceIt PlaceIt) {
+		deletecall = true; 
 		// TODO Auto-generated method stub
 		int id = PlaceIt.getID();
 		String title = PlaceIt.getTitle();
@@ -95,7 +100,8 @@ public class mockPlaceItHandler implements iPlaceItModel{
 		java.util.Date activeDate= PlaceIt.getActiveDate();
 		
 		// TODO Auto-generated method stub
-		for (PlaceIt p:mocklist ) {
+		for (int i = 0; i < mocklist.size() -1; i++ ) {
+			PlaceIt p = mocklist.get(i); 
 		    if (p.getID() == id){
 		    	boolean e = p.getTitle().equals(title) 
 		    			&& p.getDescription().equals(description) 

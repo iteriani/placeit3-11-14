@@ -47,8 +47,14 @@ public class PlaceItController {
 		return placeit;
 	}
 	
+<<<<<<< HEAD
 	public void deactivatePlaceIt(PlaceIt placeit){
 		db.deactivatePlaceit(placeit);
+=======
+	public void RemovePlaceIt(PlaceIt placeit){
+		//db.deactivatePlaceit(placeit); 
+		db.deletePlaceIt(placeit); 
+>>>>>>> 48e5103722ef3570a21ba6bc60d66045e73d43f1
 		view.removeMarker(placeit);
 	}
 	
@@ -66,6 +72,9 @@ public class PlaceItController {
 	public boolean checkViscinity (Location currLoc, Location checkLoc)
 	{
 		return false;
+		
+	}
+	public void deleteFromList(PlaceIt placeit) {
 		
 	}
 
@@ -94,6 +103,7 @@ public class PlaceItController {
 		return clean;
 
 	}
+<<<<<<< HEAD
 	public List<PlaceIt> getNonActivePlaceIts()
 	{
 		nonActive = new Vector<PlaceIt>();
@@ -127,13 +137,17 @@ public class PlaceItController {
 			deactivatePlaceIt(placeits.get(id));
 		
 	}
+=======
+
+
+	public iPlaceItModel getDB() {
+		return this.db;
+	}
+
+>>>>>>> 48e5103722ef3570a21ba6bc60d66045e73d43f1
 	public iView getView() {
-		// TODO Auto-generated method stub
 		return this.view;
 	}
 	
-	public iPlaceItModel getDB(){
-		return this.db;
-	}
 
 }
