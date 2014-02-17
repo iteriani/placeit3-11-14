@@ -412,7 +412,7 @@ public class MainActivity extends FragmentActivity implements
 							index = (newList.size() - nonActive.size())+1;
 						}
 						
-						Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
 						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
 						deleteCalled = true;
 						deleteId = tempInd;
@@ -454,7 +454,7 @@ public class MainActivity extends FragmentActivity implements
 							index = (newList.size() - nonActive.size())+1;
 						}
 						
-						Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
 						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
 						deleteCalled = true;
 						deleteId = tempInd;
@@ -506,7 +506,7 @@ public class MainActivity extends FragmentActivity implements
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// gotta rename
 
-						Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
+						//Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
 						
 						MainActivity.this.removeMarker(initial);
 						controller.deactivatePlaceIt(initial);
@@ -662,7 +662,7 @@ public class MainActivity extends FragmentActivity implements
 		}
 		else
 		{
-			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
 			this.reportIndex = arg2;
 			this.setupRepost();
 		}
