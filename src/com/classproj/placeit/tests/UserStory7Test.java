@@ -18,7 +18,17 @@ import PlaceItDB.mockPlaceItHandler;
 import junit.framework.TestCase;
 
 public class UserStory7Test extends TestCase {
+	/*
+	 * User Story 7: A Place-It can be automatically re-posted based on a schedule.
+	 * Given the user wants to create a recurring Place-It
+	 * When the user is creating the Place-It
+	 * Then there is an option to make it a recurring Place-It
+	 * And can choose how often it will be reposted
+	 * And that Place-It will function as an “active” Place-It each time it’s posted
+	 */
 
+	//// Variables ////
+	
 	String title = "just a title";
 	String desc = "just a description"; 
 	double lat = 20; 
@@ -29,13 +39,12 @@ public class UserStory7Test extends TestCase {
 	PlaceIt justAPlaceit2 = new PlaceIt(title, desc, lat+3, longt+3, date);  
 	PlaceIt justAPlaceit1 = new PlaceIt(title, desc, lat-4, longt-4, date);  
 	List<PlaceIt>testList = new LinkedList<PlaceIt>();  
-	
 	mockPlaceItHandler mockList = new mockPlaceItHandler(testList);
 	PlaceIt justAPlaceit = new PlaceIt(title, desc, lat, longt, date); 
 	mockPLScheduleModel testscheduleModel = new mockPLScheduleModel(); 
-
-
 	PlaceItScheduler testScheduler = new PlaceItScheduler(testscheduleModel, mockList, new mockView(null));
+	
+	
 	public void testRepostPlaceit() {
 	 /*
 	  * call repost, and check that the new one updated in database has time 
