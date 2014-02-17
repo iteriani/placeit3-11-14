@@ -33,7 +33,11 @@ import com.google.android.gms.maps.model.LatLng;
  *
  */
 public class UserStory4Test extends TestCase {
+	/*
+	 * User Story 4: User can be notified by Place-It when close to its location and the Place-It is moved to the pulled-down list.
+	 */
 	
+	//// variables ////
 	private List<PlaceIt> plist4 = new ArrayList<PlaceIt>();
 	private mockPlaceItHandler mphandler4 = new mockPlaceItHandler(plist4);
 
@@ -67,22 +71,29 @@ public class UserStory4Test extends TestCase {
 	private double fromMiles(double d){
 		return (d / 0.000621371);
 	}
-	
-	public void testAddPlaceItMiles(){
-		//Create a Place-It within(further than) 0.5 miles of the user’s location.
-		//LatLng newPosition = new LatLng(mockUserPosition.latitude+0.1,mockUserPosition.longitude+0.1);
 		
-		//pcontroller4.AddPlaceIt(title1,desc1, newPosition);
-		//added[0] = true;
-		//pcontroller4.checkCoordinates(mockUserLocation);
-		//assertEquals(mockUserPosition.latitude,newPosition.latitude,0.5);
-		//assertEquals(mockUserPosition.longitude,newPosition.longitude,0.5);
+	public void testNotificationOfPlaceIt() {
+		/* Given there is a Place-It on the map
+		 * And that Place-It is active
+		 * When the user is within 0.5 miles of the active Place-It
+		 * (the Place-It was created within 0.5 miles of the user position)
+		 */
+		addPlaceIt();
+		testIsActive();
 		
 		/*
-		 * make some fake coords, make a placeit within 0.5 miles
-		 * then do controller check coordinates
-		 * the assert that place it got returned back. 
+		 *  Then a notification is given via the Android interface
+		 *  And the user can see which Place-It is notifying him
+		 *  And the Place-It is moved to the Pulled-Down list
+		 *  And the user can take further action (repost or discard) from notification.
 		 */
+		testNotification();
+		testMoveToPDList_DB();
+		
+	}
+	
+	public void addPlaceIt() {
+		//Create a Place-It within(further than) 0.5 miles of the user’s location.
 		
 		Location fakeLo = new Location("within 0.5");
 		double lat = fromMiles(toMiles(fakeCo.latitude)+0.1);
@@ -100,6 +111,25 @@ public class UserStory4Test extends TestCase {
 		//verify the placeit is added and within 0.5 miles
 		added[0] = pcontroller4.checkCoordinates(fakeLo).contains(expectPL);
 		assertTrue(added[0]);
+	}
+	
+	
+	public void testAddPlaceItMiles(){
+		//LatLng newPosition = new LatLng(mockUserPosition.latitude+0.1,mockUserPosition.longitude+0.1);
+		
+		//pcontroller4.AddPlaceIt(title1,desc1, newPosition);
+		//added[0] = true;
+		//pcontroller4.checkCoordinates(mockUserLocation);
+		//assertEquals(mockUserPosition.latitude,newPosition.latitude,0.5);
+		//assertEquals(mockUserPosition.longitude,newPosition.longitude,0.5);
+		
+		/*
+		 * make some fake coords, make a placeit within 0.5 miles
+		 * then do controller check coordinates
+		 * the assert that place it got returned back. 
+		 */
+		
+		
 	}
 	
 	public void testIsActive(){
