@@ -39,6 +39,7 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 
 	private static final String KEY_ID = "id";
 	private static final String KEY_PLACEITID = "placeItID";
+	private static final String KEY_PLACEITSTARTWEEK = "startweek";
 	private static final String KEY_PLACEITDAY = "day";
 	private static final String KEY_PLACEITWEEK = "week";
 
@@ -56,13 +57,13 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_PLACEITS_TABLE =
 
-		"CREATE TABLE " + TABLE_PLSCHEDULE + "(" + KEY_ID
-				+ " INTEGER PRIMARY KEY, " + KEY_PLACEITID + " INTEGER, "
+		"CREATE TABLE " + TABLE_PLSCHEDULE + "(" 
+				+ KEY_ID + " INTEGER PRIMARY KEY, " 
+				+ KEY_PLACEITID + " INTEGER, "
+				+ KEY_PLACEITSTARTWEEK + " INTEGER, "
 				+ KEY_PLACEITDAY + " INTEGER, " 
-				+ KEY_PLACEITWEEK + " INTEGER, "
-				+ "FOREIGN KEY("
-				+ KEY_PLACEITID
-				+ ") REFERENCES placeIts(id) ON DELETE CASCADE)";
+				+ KEY_PLACEITWEEK + " INTEGER, " + "FOREIGN KEY("
+				+ KEY_PLACEITID + ") REFERENCES placeIts(id) ON DELETE CASCADE)";
 
 		db.execSQL(CREATE_PLACEITS_TABLE);
 	}
@@ -76,12 +77,19 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 		onCreate(db);
 	}
 
+	/* 
+	 * Called from the PlaceItScheduler's addSchedule method.
+	 * Adds the given schedule to the SQLiteDatabase.
+	 */
 	@Override
 	public PlaceIt addSchedule(PlaceIt placeit, int day, int week) {
+		int startweek = Calendar.WEEK_OF_YEAR;
+		
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
 			ContentValues values = new ContentValues();
 			values.put(KEY_PLACEITID, Integer.toString(placeit.getID()));
+			values.put(KEY_PLACEITSTARTWEEK, Integer.toString(startweek));;
 			values.put(KEY_PLACEITDAY, Integer.toString(day));
 			values.put(KEY_PLACEITWEEK, Integer.toString(week));
 			db.insert(TABLE_PLSCHEDULE, null, values);
@@ -121,9 +129,15 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 		return null;
 	}
 
+	/*
+	 * Finds the entry in the SQLiteDatabase that contains the schedule of the given Place-It.
+	 * Takes the Place-It's scheduled day and week, and creates a PLSchedule item to contain them.
+	 * Returns that PLSchedule item.
+	 */
 	@Override
 	public PLSchedule getSchedule(PlaceIt placeit) {
 		try {
+			int startweek;
 			int day;
 			int week;
 			PLSchedule schedule = null;
@@ -137,9 +151,10 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 			// If a schedule is found, return it
 			if (cursor.moveToFirst()) {
 				do {
-					day = Integer.valueOf(cursor.getString(0));
-					week = Integer.valueOf(cursor.getString(1));
-					schedule = new PLSchedule(placeit.getID(), day, week);
+					startweek = Integer.valueOf(cursor.getString(0));
+					day = Integer.valueOf(cursor.getString(1));
+					week = Integer.valueOf(cursor.getString(2));
+					schedule = new PLSchedule(placeit.getID(), startweek, day, week);
 
 				} while (cursor.moveToNext());
 			}

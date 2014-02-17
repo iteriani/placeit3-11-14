@@ -308,24 +308,32 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 
-						int interval  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
+						int selectedDay  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
 						// subtract 1 from interval because 1st option is "no interval"
-						int week = 0;
-						Toast.makeText(MainActivity.this, "the checkeditemposition is " + interval,
+						String weekString = numweeks.getText().toString();
+						int week = -1;
+						
+						Toast.makeText(MainActivity.this, "the checkeditemposition is " + selectedDay,
 								Toast.LENGTH_SHORT).show();
-						if (numweeks.getText().toString().matches("")) {
-							week = 0;
+						if (selectedDay > 0 && weekString.matches("")) {
+							Toast.makeText(MainActivity.this, "Please enter a week interval.",
+									Toast.LENGTH_SHORT).show();
+							setupTimeDialog(title, description, location);
+						}
+						else if (weekString.matches("")) {
+							week = 1;
 						}
 						else {
-							week = Integer.valueOf(numweeks.getText().toString());
+							week = Integer.valueOf(weekString);
 						}
 						
+						
 						PlaceIt placeit = controller.AddPlaceIt(title, description, location);
-						if(interval >= 0 ){
-							scheduler.addSchedules(placeit, interval, week);
+						if(selectedDay >= 0){
+							scheduler.addSchedules(placeit, selectedDay, week);
 						}
 						scheduler.scheduleNextActivation(placeit);
-						setUpSideBar();
+						setUpSideBar(); 
 		
 						/* Notification of added place-it */
 						Toast.makeText(MainActivity.this, "Place-it added!",

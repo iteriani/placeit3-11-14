@@ -9,6 +9,7 @@ public class PLSchedule {
 	// private variables
 	int _id;
 	int placeitID; // this is a foreign key to placeIt
+	int startweek;
 	int day;
 	int week;
 	//List<Integer> schedules;
@@ -20,8 +21,9 @@ public class PLSchedule {
 		this.week = -1;
 	}
 
-	public PLSchedule(int placeitID, int day, int week) {
+	public PLSchedule(int placeitID, int startweek, int day, int week) {
 		this.placeitID = placeitID;
+		this.startweek = startweek;
 		this.day = day;
 		this.week = week;
 	}
@@ -34,6 +36,14 @@ public class PLSchedule {
 
 	public void setPlaceItId(int placeitID) {
 		this.placeitID = placeitID;
+	}
+	
+	public int getStartWeek() {
+		return this.startweek;
+	}
+	
+	public void setStartWeek(int newStartWeek) {
+		this.startweek = newStartWeek;
 	}
 	
 	public int getDay() {
