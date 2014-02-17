@@ -177,6 +177,7 @@ public class PlaceItHandler extends SQLiteOpenHelper implements iPlaceItModel {
 	@Override
 	public void deletePlaceIt(PlaceIt placeit) {
 		SQLiteDatabase db = this.getWritableDatabase();
+		
 		db.delete(TABLE_PLACEITS, KEY_ID + " = ?",
 				new String[] { String.valueOf(placeit.getID()) });
 		db.close();

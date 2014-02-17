@@ -5,7 +5,9 @@ import java.util.Vector;
 
 import Models.PlaceIt;
 import PlaceItDB.iPlaceItModel;
+import android.content.Context;
 import android.location.Location;
+import android.widget.Toast;
 
 import com.classproj.placeit.iView;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,8 +49,15 @@ public class PlaceItController {
 		return placeit;
 	}
 	
+
 	public void deactivatePlaceIt(PlaceIt placeit){
 		db.deactivatePlaceit(placeit);
+		view.removeMarker(placeit);
+	}
+
+	public void RemovePlaceIt(PlaceIt placeit){
+		//db.deactivatePlaceit(placeit); 		
+		db.deletePlaceIt(placeit); 
 		view.removeMarker(placeit);
 	}
 	
@@ -66,6 +75,9 @@ public class PlaceItController {
 	public boolean checkViscinity (Location currLoc, Location checkLoc)
 	{
 		return false;
+		
+	}
+	public void deleteFromList(PlaceIt placeit) {
 		
 	}
 
@@ -94,6 +106,7 @@ public class PlaceItController {
 		return clean;
 
 	}
+
 	public List<PlaceIt> getNonActivePlaceIts()
 	{
 		nonActive = new Vector<PlaceIt>();
@@ -122,18 +135,25 @@ public class PlaceItController {
 		return active;
 	}
 	
-	public void movePlaceIts(int id)
+	public String movePlaceIts(int id)
 	{
-			deactivatePlaceIt(placeits.get(id));
-		
+		deactivatePlaceIt(placeits.get(id));
+		return placeits.get(id).getTitle();
 	}
+
+	public void deletePlaceIts(int id, Context cont)
+	{
+		Toast.makeText(cont, "Did it", Toast.LENGTH_LONG).show();
+		this.RemovePlaceIt(placeits.get(id));
+	}
+
+	public iPlaceItModel getDB() {
+		return this.db;
+	}
+
 	public iView getView() {
-		// TODO Auto-generated method stub
 		return this.view;
 	}
 	
-	public iPlaceItModel getDB(){
-		return this.db;
-	}
 
 }
