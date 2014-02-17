@@ -455,6 +455,7 @@ public class MainActivity extends FragmentActivity implements
 							newplaceits.add(placeits.get(i));
 						}
 						setUpNotification(newplaceits);
+						MainActivity.this.setUpSideBar();
 					}
 				});
 
