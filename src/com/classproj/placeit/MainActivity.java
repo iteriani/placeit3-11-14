@@ -256,6 +256,7 @@ public class MainActivity extends FragmentActivity implements
 				if (descText.matches("") && titleText.matches("")) {
 					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
 							Toast.LENGTH_SHORT).show();
+					setUpDialog(position);
 				}
 				else {
 					setupTimeDialog(titleText, descText, position);
@@ -299,24 +300,40 @@ public class MainActivity extends FragmentActivity implements
 		TextView every = (TextView) dialog.findViewById(R.id.every);
 		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
 		TextView weeks = (TextView) dialog.findViewById(R.id.weeks);
+		
 
 		// Set the action buttons
 		builder.setPositiveButton(R.string.recurrence_ok,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-					
-						PlaceIt placeit = controller.AddPlaceIt(title,
-								description, location);
-						List<Integer> ints = new Vector<Integer>();
-						int ScheduleID  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
-						ints.add(Integer.valueOf(ScheduleID));
-						Log.d("creation id ", ints.toString());
-						if(ScheduleID >= 0 ){
-							scheduler.addSchedules(placeit, ints);
+
+						int selectedDay  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
+						// subtract 1 from interval because 1st option is "no interval"
+						String weekString = numweeks.getText().toString();
+						int week = -1;
+						
+						Toast.makeText(MainActivity.this, "the checkeditemposition is " + selectedDay,
+								Toast.LENGTH_SHORT).show();
+						if (selectedDay > 0 && weekString.matches("")) {
+							Toast.makeText(MainActivity.this, "Please enter a week interval.",
+									Toast.LENGTH_SHORT).show();
+							setupTimeDialog(title, description, location);
+						}
+						else if (weekString.matches("")) {
+							week = 1;
+						}
+						else {
+							week = Integer.valueOf(weekString);
+						}
+						
+						
+						PlaceIt placeit = controller.AddPlaceIt(title, description, location);
+						if(selectedDay >= 0){
+							scheduler.addSchedules(placeit, selectedDay, week);
 						}
 						scheduler.scheduleNextActivation(placeit);
-						setUpSideBar();
+						setUpSideBar(); 
 		
 						/* Notification of added place-it */
 						Toast.makeText(MainActivity.this, "Place-it added!",
