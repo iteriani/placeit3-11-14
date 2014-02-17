@@ -73,7 +73,7 @@ public class PlaceItController {
 	}
 	
 	public void removePlaceIt(PlaceIt placeit){
-		
+		placeits.remove(placeit);
 		db.deletePlaceIt(placeit);
 		view.removeMarker(placeit);
 	}
@@ -88,9 +88,7 @@ public class PlaceItController {
 		return false;
 		
 	}
-	public void deleteFromList(PlaceIt placeit) {
-		
-	}
+
 
 	public List<PlaceIt> checkCoordinates(Location coords) {
 		
@@ -150,12 +148,18 @@ public class PlaceItController {
 		deactivatePlaceIt(placeits.get(id));
 		return placeits.get(id).getTitle();
 	}
+	
+	public PlaceIt repostIt(int id)
+	{
+		return placeits.get(id);
+	}
 
 	public void deletePlaceIts(int id, Context cont)
 	{
-		Toast.makeText(cont, "Did it", Toast.LENGTH_LONG).show();
 		this.removePlaceIt(placeits.get(id));
 	}
+	
+	
 
 	public iPlaceItModel getDB() {
 		return this.db;

@@ -63,12 +63,13 @@ public class MainActivity extends FragmentActivity implements
 	int deleteId = 0;
 	/* googleMap is our singleton map to add ui elements to. */
 	GoogleMap googleMap;
-
+	int reportIndex = 0;
 	/* Current location of user */
 	Location location;
 	boolean discard = false;
 	boolean delete = false	;
 	int index = 0;
+	int counter = 1;
 	/* */
 	LocationRequest mLocationRequest;
 	LocationClient mLocationClient;
@@ -82,7 +83,6 @@ public class MainActivity extends FragmentActivity implements
 	private ListView viewLists;
 	private ListView rightList;
 	/* Controller */
-	
 	PlaceItController controller;
 	PlaceItScheduler scheduler;
 	ArrayList<String> newList = new ArrayList<String>();
@@ -170,11 +170,7 @@ public class MainActivity extends FragmentActivity implements
 		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
 		activeOne = controller.getActiveList();
 		nonActiveOne = controller.getNonActivePlaceIts();
-		if (this.deleteCalled)
-		{
-			Toast.makeText(this, ""+deleteId+"", Toast.LENGTH_LONG).show();
-			activeOne.remove(deleteId-1);
-		}
+		
 		if (activeOne.size() == 0) {
 			
 			
@@ -183,6 +179,7 @@ public class MainActivity extends FragmentActivity implements
 				newList.add(now.getTitle());
 			}
 		}
+		
 		
 		if (nonActiveOne.size()==0)
 		{
@@ -202,6 +199,7 @@ public class MainActivity extends FragmentActivity implements
 		viewLists.setOnItemClickListener(this);
 		rightList = (ListView)findViewById(R.id.right_drawer);
 		rightList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_left,nonActive));
+		rightList.setOnItemClickListener(this);
 	}
 	
 	public void setUpFindButton() {
@@ -360,23 +358,41 @@ public class MainActivity extends FragmentActivity implements
 	public void setUpDiscard()
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
 		alert.setTitle("Discard or Delete");
 		LayoutInflater inflater = getLayoutInflater();
 	
 		
-		alert.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				
-				if (MainActivity.this.nonActive.size()!= 0)
+				if (MainActivity.this.nonActive.size()!= 1)
 				{
-					index = (index+ nonActive.size())-2;
+					
+					if (index == 1)
+					{
+						index = 0;
+					}
+					else
+					{
+						index = (newList.size() + nonActive.size()-index-2-counter);
+						counter+=2;
+					}
+					
+					
+					
 				}
 				else
 				{
-					index = index - 1;
+				
+
+					index = index-1;
 				}
-				//Toast.makeText(MainActivity.this, "" + index + "", Toast.LENGTH_SHORT).show();
+
+				
+				Log.d("Test = PlaceIt", ""+index+"");
 				String temp = controller.movePlaceIts(index);
+				//Toast.makeText(MainActivity.this, "" + temp + "", Toast.LENGTH_SHORT).show();
 				setUpSideBar();
 			}
 		});
@@ -385,6 +401,7 @@ public class MainActivity extends FragmentActivity implements
 		alert.setNegativeButton("Delete",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
+						
 						int tempInd = index;
 						if (nonActive.size()==1)
 						{
@@ -394,7 +411,50 @@ public class MainActivity extends FragmentActivity implements
 						{
 							index = (newList.size() - nonActive.size())+1;
 						}
-						//Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+"", Toast.LENGTH_SHORT).show();
+						
+						Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
+						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
+						deleteCalled = true;
+						deleteId = tempInd;
+						setUpSideBar();
+					}
+				});
+
+		alert.show();
+	}
+	
+	public void setupRepost()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Repost or Delete");
+		LayoutInflater inflater = getLayoutInflater();
+	
+		
+		alert.setPositiveButton("Repost", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			
+				PlaceIt correct = scheduler.scheduleNextActivation(controller.repostIt(reportIndex-1));
+				
+				setUpSideBar();
+			}
+		});
+
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Delete",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						
+						int tempInd = index;
+						if (nonActive.size()==1)
+						{
+							index = index - 1;
+						}
+						else 
+						{
+							index = (newList.size() - nonActive.size())+1;
+						}
+						
+						Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
 						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
 						deleteCalled = true;
 						deleteId = tempInd;
@@ -531,12 +591,8 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
-		Toast.makeText(
-				MainActivity.this,
-				"Location changed : " + arg0.getLatitude() + ","
-						+ arg0.getLongitude(), Toast.LENGTH_SHORT).show();
-
-		List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
+	
+	//	List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
 
 	}
 
@@ -596,13 +652,22 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		
-		if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
+		if (viewLists == arg0)
 		{
-			index = arg2;
-			this.setUpDiscard();	
+			if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
+			{
+				index = arg2;
+				this.setUpDiscard();
+			}
+		}
+		else
+		{
+			Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
+			this.reportIndex = arg2;
+			this.setupRepost();
 		}
 
+		
 	}
 
 }
