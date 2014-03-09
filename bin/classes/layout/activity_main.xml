@@ -15,20 +15,31 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <Button
+ 
+           <EditText
+        android:id="@+id/location"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Type a location or an address"
+        android:inputType="text" >
+        
+
+        <requestFocus />
+    </EditText>
+           <Button
             android:id="@+id/find"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/location"
             android:text="Search" />
-
-        <EditText
-            android:id="@+id/location"
+           
+            <Button
+            android:id="@+id/add"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/find"
-            android:hint="Type a location or an address"
-            android:inputType="text" />
+            android:layout_toRightOf="@id/find"
+            android:text="+" />
     </RelativeLayout>
     <fragment
         android:id="@+id/map"
@@ -58,4 +69,37 @@
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />
+        
+          <RelativeLayout
+android:id="@+id/mainLyt"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent">
+<!-- Some layout things -->
+
+<ScrollView
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+android:layout_above="@+id/bottomBar">
+
+<!-- some scrolling content -->
+
+ 
+</ScrollView>
+
+<LinearLayout
+android:id="@+id/bottomBar"
+android:layout_height="wrap_content"
+android:layout_width="fill_parent"
+android:orientation="horizontal"
+android:layout_alignParentBottom="true">
+
+<Button
+     android:id="@+id/logout"
+     android:layout_height="wrap_content"
+     android:layout_width="wrap_content"
+     android:text="Log out"
+     />
+</LinearLayout>
+
+</RelativeLayout>
 </android.support.v4.widget.DrawerLayout>
