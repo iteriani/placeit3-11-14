@@ -270,6 +270,7 @@ public class MainActivity extends FragmentActivity implements
 		int checkedItem1 = 0;
 		 int checkCOunt= 0;
 		final boolean[]checked=null;
+		selectedThree = new String[3];
 		// Create single choice list
 		alert.setMultiChoiceItems(R.array.categories, checkItems,
 				new DialogInterface.OnMultiChoiceClickListener() {
@@ -314,6 +315,7 @@ public class MainActivity extends FragmentActivity implements
 					}
 				}
 				Toast.makeText(MainActivity.this, selectedThree[0] + "" +selectedThree[1] + "" + selectedThree[2], Toast.LENGTH_LONG).show();
+				
 			}
 			
 		});
