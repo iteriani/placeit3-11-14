@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/black_background"
+    android:padding="30dp" >
+
+    <TextView
+        android:id="@+id/createUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter a User Name"
+        android:textColor="#ffffffff"
+        android:paddingBottom="15dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/enterUserName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:paddingBottom="15dp"
+        android:inputType="textPersonName" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/createPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create a Password"
+        android:textColor="#ffffffff"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/enterPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:paddingBottom="15dp"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/confirmPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Re-enter the Password"
+        android:textColor="#ffffffff"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/enterConfirmPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:paddingBottom="15dp"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/createAcctBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Create Account" />
+
+</LinearLayout>
