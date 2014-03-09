@@ -36,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -60,6 +61,7 @@ public class MainActivity extends FragmentActivity implements
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
 	LocationManager locationManager;
+	
 	int deleteId = 0;
 	/* googleMap is our singleton map to add ui elements to. */
 	GoogleMap googleMap;
@@ -68,8 +70,14 @@ public class MainActivity extends FragmentActivity implements
 	Location location;
 	boolean discard = false;
 	boolean delete = false	;
+	Button addButton;
 	int index = 0;
 	int counter = 1;
+	Spinner categories;
+	Button spinnerSubmit;
+	String[] selectedThree = new String [3];
+	View dialog;
+	Button logoutButton;
 	/* */
 	LocationRequest mLocationRequest;
 	LocationClient mLocationClient;
@@ -87,7 +95,7 @@ public class MainActivity extends FragmentActivity implements
 	PlaceItScheduler scheduler;
 	ArrayList<String> newList = new ArrayList<String>();
 	ArrayList<String> nonActive = new ArrayList<String>();
-
+	String[] categoryList;
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -131,11 +139,22 @@ public class MainActivity extends FragmentActivity implements
 		scheduler = new PlaceItScheduler(scheduleDB, db, this);
 		controller = new PlaceItController(db, this);
 		controller.initializeView();
-
+		categoryList = getResources().getStringArray(R.array.categories);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
+		addButton = (Button) findViewById(R.id.add);
+		logoutButton = (Button)findViewById(R.id.logout);
+		addButton.setOnClickListener(new OnClickListener()
+		{
 
+			@Override
+			public void onClick(View v) {
+				setupCategoryDialog();
+				
+			}
+			
+		});
 		this.setUpSideBar();
 		this.setUpFindButton();
 
@@ -154,8 +173,9 @@ public class MainActivity extends FragmentActivity implements
 		mLocationRequest.setInterval(PlaceItSettings.NOTIFICATION_INTERVAL);
 		mLocationClient = new LocationClient(this, this, this);
 		mLocationClient.connect();
-
+	
 	}
+
 
 	
 	public void setUpSideBar() {
@@ -235,6 +255,74 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 	
+	public void setupCategoryDialog()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Create Place-It");
+		LayoutInflater inflater = getLayoutInflater();
+		dialog = inflater.inflate(R.layout.placeit_category, null);
+		final boolean[] checkItems = new boolean[100];
+		for (int i = 0; i < 100; i++)
+		{
+			checkItems[i] = false;
+		}
+
+		int checkedItem1 = 0;
+		 int checkCOunt= 0;
+		final boolean[]checked=null;
+		// Create single choice list
+		alert.setMultiChoiceItems(R.array.categories, checkItems,
+				new DialogInterface.OnMultiChoiceClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which,
+							boolean isChecked) {
+						int temp =0;
+						for (int i = 0; i < 100; i++)
+						{
+							
+							if (checkItems[i] == true)
+							{
+								temp++;
+							}
+						}
+						if (temp>3)
+						{
+						checkItems[which] = false;
+						((AlertDialog) dialog).getListView().setItemChecked(which, false);
+						Toast.makeText(MainActivity.this, "Please choose only three", Toast.LENGTH_LONG).show();
+						}
+						
+					}
+					
+				
+				});
+
+		
+		alert.setPositiveButton("Submit", new DialogInterface.OnClickListener()
+		{
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				int count=0;
+				for (int i = 0; i < checkItems.length ; i++)
+				{
+					if (checkItems[i]==true)
+					{
+						selectedThree[count] = categoryList[i];
+						count++;
+					}
+				}
+				Toast.makeText(MainActivity.this, selectedThree[0] + "" +selectedThree[1] + "" + selectedThree[2], Toast.LENGTH_LONG).show();
+			}
+			
+		});
+	   
+		alert.setView(dialog);		
+		alert.show();
+		
+	}
+	
 	public void setUpDialog(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -244,6 +332,7 @@ public class MainActivity extends FragmentActivity implements
 		final EditText title = (EditText) dialog.findViewById(R.id.title);
 		final EditText description = (EditText) dialog
 				.findViewById(R.id.description);
+		
 		alert.setView(dialog);
 
 		/* Initialize submission button. */
@@ -287,7 +376,7 @@ public class MainActivity extends FragmentActivity implements
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
 
 		int checkedItem = 0;
-
+		
 		// Create single choice list
 		builder.setSingleChoiceItems(R.array.days_array, checkedItem,
 				new DialogInterface.OnClickListener() {
