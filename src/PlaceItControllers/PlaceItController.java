@@ -29,7 +29,6 @@ public class PlaceItController {
 	public PlaceItController(iPlaceItModel db, iView view) {
 		this.db = db;
 		this.view = view;
-
 		this.placeits = new Vector<PlaceIt>();
 	}
 
@@ -37,11 +36,12 @@ public class PlaceItController {
 
 		db.getAllPlaceIts(new PlaceItListReceiver() {
 			@Override
-			public void receivePlaceIts(List<PlaceIt> placeits) {
-				for (PlaceIt pc : placeits) {
-					if (true) {
+			public void receivePlaceIts(List<PlaceIt> freshPlaceIts) {
+				for (PlaceIt pc : freshPlaceIts) {
+					if (pc.isActive()) {
 						Log.d("adding marker", pc.getTitle() + "-" + pc.getDescription());
 						view.addMarker(pc);
+						placeits = freshPlaceIts;
 					}
 				}
 
@@ -87,17 +87,17 @@ public class PlaceItController {
 		return placeit;
 	}
 
-	public void deactivatePlaceIt(final PlaceIt placeit) {
-		db.deactivatePlaceit(placeit, new RequestReceiver() {
+	public PlaceIt deactivatePlaceIt(final PlaceIt placeit) {
+		placeit.setActiveDate(0);
+		db.updatePlaceIt(placeit, new RequestReceiver() {
 
 			@Override
 			public void receiveTask(String s) {
-				view.removeMarker(placeit);
-
+				Log.d("updated placeit", placeit.getID() + " - " + s);
 			}
 
 		});
-
+		return placeit;
 	}
 
 	public void removePlaceIt(final PlaceIt placeit) {
@@ -126,7 +126,9 @@ public class PlaceItController {
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
 		for (int i = 0; i < placeits.size(); i++) {
-			if (placeits.get(i) instanceof LocationPlaceIt) {
+			Log.d("is it a instanceof", "" + (placeits.get(i) instanceof LocationPlaceIt));
+			PlaceIt placeit = placeits.get(i);
+			if (placeit.isActive() && placeit instanceof LocationPlaceIt ) {
 				LocationPlaceIt currMarker = (LocationPlaceIt) placeits.get(i);
 				Location start = new Location("Start");
 				Location end = new Location("End");
@@ -143,10 +145,7 @@ public class PlaceItController {
 					}
 				}
 			}else{
-				CategoryPlaceIt currArea = (CategoryPlaceIt) placeits.get(i);
-				if(checkCategoryLocation(currArea,coords.getLatitude(), coords.getLongitude())){
-					clean.add(currArea);
-				}
+				
 			}
 
 		}

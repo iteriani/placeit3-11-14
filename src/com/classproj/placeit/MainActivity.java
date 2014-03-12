@@ -175,7 +175,7 @@ public class MainActivity extends FragmentActivity implements
 		}
 	
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				10000, 0, this);
+				PlaceItSettings.NOTIFICATION_INTERVAL, 0, this);
 
 	}
 
@@ -556,13 +556,13 @@ public class MainActivity extends FragmentActivity implements
 		createNotifs(placeits);
 		/* Initialize dialog box */
 		final PlaceIt placeit = placeits.get(0);
-		final PlaceIt initial = scheduler.scheduleNextActivation(placeit);
-
+		placeits.set(0,controller.deactivatePlaceIt(placeit));
+		
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("You got a Place-It!");
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_notification,
-				null);
+				null); 
 		TextView textViewTitle = (TextView) dialog.findViewById(R.id.title);
 		TextView textViewDescription = (TextView) dialog
 				.findViewById(R.id.description);
@@ -592,8 +592,7 @@ public class MainActivity extends FragmentActivity implements
 						// initial.getActiveDate().toLocaleString(),
 						// Toast.LENGTH_SHORT).show();
 
-						MainActivity.this.removeMarker(initial);
-						controller.deactivatePlaceIt(initial);
+						MainActivity.this.removeMarker(placeit);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));

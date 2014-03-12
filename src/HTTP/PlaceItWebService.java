@@ -82,6 +82,7 @@ public class PlaceItWebService extends WebService implements iPlaceItModel, iPLS
 				Long.toString(placeit.getActiveDate().getTime()));
 		values.add(id);
 		values.add(activedate);
+		Log.d("updating placeit", placeit.getID() + " to " + Long.toString(placeit.getActiveDate().getTime()) + " to " + UPDATE_PLACEIT);
 		new RequestTask(receiver, context, values).execute(UPDATE_PLACEIT);
 	}
 
