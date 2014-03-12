@@ -1,14 +1,18 @@
 package PlaceItControllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
+import HTTP.PlaceReceiver;
 import HTTP.RequestReceiver;
 import Models.CategoryPlaceIt;
 import Models.LocationPlaceIt;
+import Models.Place;
 import Models.PlaceIt;
+import Models.PlaceService;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -158,7 +162,56 @@ public class PlaceItController {
 	public boolean checkCategoryLocation(CategoryPlaceIt placeit,double lat, double longitude){
 		return false;
 	}
+	
+	/*
+	 * This method is called from MainActivity whenever the user's location has changed.
+	 * It checks if any Category Place-It should be triggered from this change in location.
+	 */
+	public List<PlaceIt> checkCategoryCoordinates(Location coords) {
+		final List<PlaceIt> clean = new Vector<PlaceIt>();
+		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
+		for (int i = 0; i < placeits.size(); i++) {
+			Log.d("is it a instanceof", "" + (placeits.get(i) instanceof CategoryPlaceIt));
+			PlaceIt placeit = placeits.get(i);
+			
+			if (placeit.isActive() && placeit instanceof CategoryPlaceIt) {
+				// call PlaceService, using the currLoc's lat and long, and placeit's categories
+				
+				/* 
+				 * db.getLocations(placeit, new PlaceItReceiver(){
+				 * 		public void receivePlaceIt(CategoryPlaceit placeit){
+				 * 		view.notifyUser(new List<PlaceIt>(){placeit}, "Controller");
+				 * 
+				 * 	}
+				 * });
+				 * */
+				final CategoryPlaceIt currPlaceIt = (CategoryPlaceIt) placeits.get(i);
 
+				if (currLoc != null && currPlaceIt != null) {
+					String categories = currPlaceIt.getCategory();
+					PlaceService service = new PlaceService();
+					service.findPlaces(currLoc.latitude, currLoc.longitude, categories, new PlaceReceiver(){
+						public void receivePlaces(List<Place> places){
+							if (places != null && places.get(0) != null) {
+								Place theplace = places.get(0);
+								currPlaceIt.setPlaceName(theplace.getName());
+								currPlaceIt.setPlaceAddy(theplace.getAddy());
+								clean.add(currPlaceIt);
+							}
+						}
+					});
+					
+				}
+			}
+		}
+		view.notifyUser(clean, "Controller");
+		return clean;
+	}
+
+	/*
+	 * This method is called from MainActivity whenever the user's location has changed.
+	 * It checks if any Location Place-It should be triggered from this change in location.
+	 */
 	public List<PlaceIt> checkCoordinates(Location coords) {
 
 		List<PlaceIt> clean = new Vector<PlaceIt>();
@@ -182,9 +235,7 @@ public class PlaceItController {
 						clean.add(currMarker);
 					}
 				}
-			}else{
-				
-			}
+			}else {}
 
 		}
 		view.notifyUser(clean, "Controller");

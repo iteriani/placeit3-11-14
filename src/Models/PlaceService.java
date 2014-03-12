@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,7 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import HTTP.PlaceReceiver;
+import HTTP.RequestReceiver;
+import HTTP.RequestTask;
 
 public class PlaceService {
 
@@ -32,37 +35,56 @@ public class PlaceService {
 	 /*
 	  * This method finds all places that are near the user and fit the specifications.
 	  * Parameters: latitude and longitude of the user, and categories
-	  * Returns an ArrayList containing Place objects that fit the reqs.
+	  * Returns an ArrayList containing Place objects that fit the requirements.
 	  */
 	 
-	 public ArrayList<Place> findPlaces(double latitude, double longitude,
-	   String categories) {
+	 /* 			PlaceItReceiver rec
+		 * new RequestTask(new RequestReceiver(){
+		 * 	publi void receiveTask(String s){
+		 * 	try{
+		 * 		JSONArray arr = new JSONArray(s);
+		 * 			placeit.addLocations(arr);
+		 * 		 	receiver.receivePlaceIt(placeit);
+		 * 		}catch(Exception e){
+		 * 			e.printStackTrace();
+		 * 		}
+		 * 	}
+		 * }).execute(URL);
+		 * */
+	 
+	 public void findPlaces(final double latitude, final double longitude,
+	   final String categories, final PlaceReceiver receiver) {
+		 
+		 new RequestTask(new RequestReceiver() {
+			 public void receiveTask(String s) {
+				 String urlString = makeUrl(latitude, longitude, categories);
+					
+				  try {
+					   String json = getJSON(urlString);
+				
+					   System.out.println(json);
+					   JSONObject object = new JSONObject(json);
+					   JSONArray array = object.getJSONArray("results");
+				
+					   List<Place> arrayList = new ArrayList<Place>();
+					   for (int i = 0; i < array.length(); i++) {
+						    try {
+						     Place place = Place
+						       .jsonToPlace((JSONObject) array.get(i));
+						     //Log.v("Places Services ", "" + place);
+						     arrayList.add(place);
+						    } catch (Exception e) {
+						    }
+					   }
+					   receiver.receivePlaces(arrayList); 
+				  } catch (JSONException ex) {
+					   Logger.getLogger(PlaceService.class.getName()).log(Level.SEVERE,
+					     null, ex);
+					   receiver.receivePlaces(new ArrayList<Place>());
+				  }
+			 }
+		 });
 
-		  String urlString = makeUrl(latitude, longitude, categories);
-	
-		  try {
-		   String json = getJSON(urlString);
-	
-		   System.out.println(json);
-		   JSONObject object = new JSONObject(json);
-		   JSONArray array = object.getJSONArray("results");
-	
-		   ArrayList<Place> arrayList = new ArrayList<Place>();
-		   for (int i = 0; i < array.length(); i++) {
-		    try {
-		     Place place = Place
-		       .jsonToPlace((JSONObject) array.get(i));
-		     //Log.v("Places Services ", "" + place);
-		     arrayList.add(place);
-		    } catch (Exception e) {
-		    }
-		   }
-		   return arrayList;
-		  } catch (JSONException ex) {
-		   Logger.getLogger(PlaceService.class.getName()).log(Level.SEVERE,
-		     null, ex);
-		  }
-		  return null;
 	 }
 
 	 // https://maps.googleapis.com/maps/api/place/search/json?location=28.632808,77.218276&radius=500&types=atm&sensor=false&key=apikey

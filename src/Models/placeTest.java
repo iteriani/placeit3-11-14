@@ -11,19 +11,19 @@ public class placeTest extends TestCase {
 	 * looking for the categories grocery store, bank, and a convenience store.
 	 */
 	
+	/*
 	public void testSometing(){
 		String categories = "grocery_or_supermarket";
 		
 		
-		/* 
-		 * When the user is at the coordinate 32.865, -117.233
-		 */
+		//When the user is at the coordinate 32.865, -117.233
 		double lat = 32.865;
 		double lon = -117.233;
 		
 		/*
 		 * Then the PlacesServices will find some Places that fit those categories.
 		 */
+	/*
 		Place hello = new Place(); 
 		System.out.println(hello.toString());
 		PlaceService service = new PlaceService();
@@ -32,5 +32,6 @@ public class placeTest extends TestCase {
 			System.out.println(result.get(i).toString());
 		}
 	}
+*/
 	
 }

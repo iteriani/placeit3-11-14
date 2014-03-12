@@ -23,6 +23,10 @@ public class RequestTask extends AsyncTask<String, String, String>{
 	List<NameValuePair> values;
 	HttpContext localContext;
 	
+	public RequestTask(RequestReceiver receiver) {
+		this.receiver = receiver;
+	}
+	
 	public RequestTask(RequestReceiver receiver,HttpContext localContext){
 		this.receiver = receiver;
 		this.localContext = localContext;

@@ -11,7 +11,7 @@ public class Place {
 	public Place() {}
 	
 	    private String name;
-	    private String vicinity;
+	    private String addy;
 	    private String categories;
 	    private Double latitude;
 	    private Double longitude;
@@ -33,8 +33,8 @@ public class Place {
 	    	return this.categories; 
 	    }
 	    
-	    public String getVic() {
-	    	return this.vicinity;
+	    public String getAddy() {
+	    	return this.addy;
 	    }
 
 	    public void setLat(Double newLat){
@@ -49,8 +49,8 @@ public class Place {
 	    	this.name = newName;
 	    }
 	    
-	    public void setVic(String newVic) {
-	    	this.vicinity = newVic;
+	    public void setAddy(String newAddy) {
+	    	this.addy = newAddy;
 	    }
 	    
 	    
@@ -62,7 +62,7 @@ public class Place {
 	            result.setLat((Double) location.get("lat"));
 	            result.setLong((Double) location.get("lng"));
 	            result.setName(thePlace.getString("name"));
-	            result.setVic(thePlace.getString("vicinity"));
+	            result.setAddy(thePlace.getString("vicinity"));
 	            return result;
 	    	} catch (JSONException ex) {
 	            Logger.getLogger(Place.class.getName()).log(Level.SEVERE, null, ex);

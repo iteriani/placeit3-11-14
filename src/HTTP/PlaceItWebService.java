@@ -45,8 +45,10 @@ public class PlaceItWebService extends WebService implements iPlaceItModel, iPLS
 			}
 
 		}, context).execute(ALL_PLACEITS + id);
+		
+		
 	}
-
+	
 	@Override
 	public void getAllPlaceIts(final PlaceItListReceiver receiver) {
 		Log.d("INITIAZING", "ALL VIEWS");
