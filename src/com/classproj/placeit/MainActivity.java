@@ -304,6 +304,23 @@ public class MainActivity extends FragmentActivity implements
 								count++;
 							}
 						}
+						
+						controller.AddPlaceIt("title2", "descrip", selectedThree, new PlaceItReceiver() {
+
+							@Override
+							public void receivePlaceIt(PlaceIt placeit) {
+								scheduler
+										.scheduleNextActivation(placeit);
+								setUpSideBar();
+								/* Notification of added place-it */
+								Toast.makeText(MainActivity.this,
+										"Category !!!! Place-it added!",
+										Toast.LENGTH_SHORT).show();
+
+							}
+							
+						});
+						
 						Toast.makeText(
 								MainActivity.this,
 								selectedThree[0] + "" + selectedThree[1] + ""

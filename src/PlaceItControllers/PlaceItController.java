@@ -50,6 +50,44 @@ public class PlaceItController {
 		});
 	}
 
+	// Adds a Category Place-It to the database
+	public void AddPlaceIt(String titleText, String descText,
+			String[] categories, final PlaceItReceiver receiver) {
+		// If title and description empty. no Place-It is created
+		if (titleText.length() == 0 && descText.length() == 0) {
+			return;
+		}
+
+		// If title is empty but description is not, take first 10 chars of the
+		// description to be the title.
+		if (titleText.length() == 0) {
+			int descLength = descText.length();
+			if (descLength < 10) {
+				titleText = descText.substring(0, descLength);
+			} else {
+				titleText = descText.substring(0, 10);
+			}
+		}
+		
+		// Convert the string array of categories into one string.
+		CategoryAdapter adapter = new CategoryAdapter();
+		String categoryString = adapter.convertArrayToString(categories);
+
+		CategoryPlaceIt placeit = new CategoryPlaceIt(titleText, descText,
+				categoryString);
+
+		db.addPlaceIt(placeit, new PlaceItReceiver() {
+
+			@Override
+			public void receivePlaceIt(PlaceIt placeit) {
+				placeits.add(placeit);
+				receiver.receivePlaceIt(placeit);
+			}
+
+		});
+	}
+	
+	// Adds a Location Place-It to the database
 	@SuppressLint("NewApi")
 	public PlaceIt AddPlaceIt(String titleText, String descText,
 			final LatLng position, final PlaceItReceiver receiver) {

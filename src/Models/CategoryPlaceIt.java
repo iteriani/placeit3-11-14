@@ -7,6 +7,12 @@ public class CategoryPlaceIt extends PlaceIt{
 		super(title, description);
 	}
 	
+	public CategoryPlaceIt(String title, String description, String category) {
+		super(title, description);
+		this.category = category;
+	}
+
+	
 	public String getCategory(){
 		return this.category;
 	}
