@@ -3,5 +3,32 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- Put form controls here -->
+
+        <EditText
+            android:id="@+id/catTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:hint="Title" />
+
+        <ScrollView
+            android:id="@+id/ScrollView01"
+            android:layout_width="wrap_content"
+            android:layout_height="150dip" >
+
+            <EditText
+                android:id="@+id/catdescription"
+                android:layout_width="322dp"
+                android:layout_height="fill_parent"
+                android:hint="Description" />
+        </ScrollView>
+    </LinearLayout>
  
 </RelativeLayout>

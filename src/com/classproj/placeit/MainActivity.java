@@ -80,6 +80,10 @@ public class MainActivity extends FragmentActivity implements
 	int counter = 1;
 	Spinner categories;
 	Button spinnerSubmit;
+	EditText categoryTitle;
+	EditText categoryDesc;
+	String catTitleStr;
+	String catDescStr;
 	String[] selectedThree = new String[3];
 	View dialog;
 	Button logoutButton;
@@ -154,6 +158,8 @@ public class MainActivity extends FragmentActivity implements
 				.getSystemService(Context.LOCATION_SERVICE);
 		addButton = (Button) findViewById(R.id.add);
 		logoutButton = (Button) findViewById(R.id.logout);
+		categoryTitle = (EditText)findViewById(R.id.catTitle);
+		categoryDesc =(EditText)findViewById(R.id.catdescription);
 		addButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -304,8 +310,9 @@ public class MainActivity extends FragmentActivity implements
 								count++;
 							}
 						}
-						
-						controller.AddPlaceIt("title2", "descrip", selectedThree, new PlaceItReceiver() {
+						catTitleStr = categoryTitle.getText().toString();
+						catDescStr = categoryDesc.getText().toString();
+						controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
 
 							@Override
 							public void receivePlaceIt(PlaceIt placeit) {
