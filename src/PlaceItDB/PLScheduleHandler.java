@@ -88,7 +88,7 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
 			ContentValues values = new ContentValues();
-			values.put(KEY_PLACEITID, Integer.toString(placeit.getID()));
+			values.put(KEY_PLACEITID, placeit.getID());
 			values.put(KEY_PLACEITSTARTWEEK, Integer.toString(startweek));;
 			values.put(KEY_PLACEITDAY, Integer.toString(day));
 			values.put(KEY_PLACEITWEEK, Integer.toString(week));
@@ -154,7 +154,7 @@ public class PLScheduleHandler extends SQLiteOpenHelper implements
 					startweek = Integer.valueOf(cursor.getString(0));
 					day = Integer.valueOf(cursor.getString(1));
 					week = Integer.valueOf(cursor.getString(2));
-					schedule = new PLSchedule(placeit.getID(), startweek, day, week);
+					schedule = new PLSchedule(0, startweek, day, week);
 
 				} while (cursor.moveToNext());
 			}

@@ -1,9 +1,12 @@
 package com.classproj.placeit;
 
-import android.os.Bundle;
+import org.apache.http.protocol.HttpContext;
+
+import HTTP.RequestReceiver;
+import HTTP.WebUserService;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
+import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -12,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Login extends Activity {
-
+	Holder myHold = new Holder();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,7 +40,7 @@ public class Login extends Activity {
 		
 		loginBtn.setOnClickListener(new OnClickListener() {
 			
-			public void onClick(View v){
+			public void onClick(final View v){
 				String userNameText = userName.getText().toString();
 				String passText = pass.getText().toString();
 				
@@ -47,8 +50,28 @@ public class Login extends Activity {
 				}
 				else{
 					
-						Intent intent = new Intent(v.getContext(), MainActivity.class);
-						startActivity(intent);
+						
+						final WebUserService users = new WebUserService();
+						final HttpContext context = users.getContext();
+						users.login(userNameText,  passText, new RequestReceiver(){
+							@Override
+							public void receiveTask(String s) {
+								if(s.contains("true"))
+								{
+									myHold.setContext(context);
+									Toast.makeText(Login.this, "placeits loading", Toast.LENGTH_LONG).show();
+									Intent intent = new Intent(v.getContext(), MainActivity.class);
+									startActivity(intent);
+								}
+								else
+								{
+									
+								}
+								
+							}
+						});
+						
+
 					
 				}
 				

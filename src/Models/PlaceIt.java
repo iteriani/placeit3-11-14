@@ -1,87 +1,45 @@
 package Models;
 
-import java.sql.Date;
-import java.util.Calendar;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-
-public class PlaceIt {
-
-	// private variables
-	int _id;
+public abstract class PlaceIt {
+	String _id;
 	String _title;
 	String _description;
-	double _latitude;
-	double _longitude;
 	long _activeDate;
-	String _displayType;
 
-	// Empty constructor
-	public PlaceIt() {
-		this._id = (int) Math.floor(Math.random() * 100);
-	}
-
-	// constructor
-
-	public PlaceIt(int id, String title, String description, double latitude,
-			double longitude, long date) {
+	public PlaceIt(String id, String title, String description) {
 		this._id = id;
 		this._title = title;
 		this._description = description;
-		this._latitude = latitude;
-		this._longitude = longitude;
-		this._activeDate = date;
-	}
-
-	public PlaceIt(String title, String description, double latitude,
-			double longitude, long date) {
-		this._title = title;
-		this._description = description;
-		this._latitude = latitude;
-		this._longitude = longitude;
-		this._activeDate = date;
-	}
-
-	public PlaceIt(String title, String description, double latitude,
-			double longitude) {
-		this._title = title;
-		this._description = description;
-		this._latitude = latitude;
-		this._longitude = longitude;
 		this._activeDate = new java.util.Date().getTime();
 	}
-
-	public boolean equals(Marker o) {
-
-			Marker marker = (Marker) o;
-			LatLng position = marker.getPosition();
-			if (position.latitude == this.getLatitude()
-					&& position.longitude == this.getLongitude()) {
-				if (marker.getTitle().equals(this.getTitle())
-						&& marker.getSnippet().equals(this.getDescription())) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-	}
-
-	// constructor
+	
 	public PlaceIt(String title, String description) {
 		this._title = title;
 		this._description = description;
+		this._activeDate = new java.util.Date().getTime();
+	}
+	
+	public PlaceIt(String id, String title, String description, long activeDate) {
+		this._id = id;
+		this._title = title;
+		this._description = description;
+		this._activeDate = activeDate;
+	}
+	
+
+	public PlaceIt(String title, String description, long date) {
+		this._title = title;
+		this._description = description;
+		this._activeDate = date;
 	}
 
 	// getting ID
-	public int getID() {
+	public String getID() {
 		return this._id;
 	}
 
 	// setting ID
-	public void setID(int id) {
+	public void setID(String id) {
 		this._id = id;
 	}
 
@@ -104,27 +62,6 @@ public class PlaceIt {
 	public void setDescription(String description) {
 		this._description = description;
 	}
-
-	// getting longitude
-	public double getLongitude() {
-		return this._longitude;
-	}
-
-	// setting description
-	public void setLongitude(double longitude) {
-		this._longitude = longitude;
-	}
-
-	// getting longitude
-	public double getLatitude() {
-		return this._latitude;
-	}
-
-	// setting description
-	public void setLatitude(double latitude) {
-		this._latitude = latitude;
-	}
-
 	// getting date
 	public java.util.Date getActiveDate() {
 		return new java.util.Date(this._activeDate);
@@ -139,4 +76,6 @@ public class PlaceIt {
 	public boolean isActive() {
 		return this._activeDate != 0;
 	}
+
+	
 }

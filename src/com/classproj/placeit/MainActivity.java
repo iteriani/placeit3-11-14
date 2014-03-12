@@ -6,11 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.http.protocol.HttpContext;
+
+import HTTP.PlaceItListReceiver;
+import HTTP.PlaceItReceiver;
+import HTTP.PlaceItWebService;
+import Models.LocationPlaceIt;
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
 import PlaceItControllers.PlaceItScheduler;
 import PlaceItDB.PLScheduleHandler;
-import PlaceItDB.PlaceItHandler;
 import PlaceItDB.iPLScheduleModel;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
@@ -56,12 +61,12 @@ public class MainActivity extends FragmentActivity implements
 		GooglePlayServicesClient.OnConnectionFailedListener,
 		OnMapClickListener, LocationListener, iView,
 		com.google.android.gms.location.LocationListener,
-		 ListView.OnItemClickListener{
+		ListView.OnItemClickListener {
 	GeocoderTask findPlace;
 	/* record object is used in database handler to bind to activity */
 	FragmentActivity record = this;
 	LocationManager locationManager;
-	
+	Holder myHold = new Holder();
 	int deleteId = 0;
 	/* googleMap is our singleton map to add ui elements to. */
 	GoogleMap googleMap;
@@ -69,20 +74,20 @@ public class MainActivity extends FragmentActivity implements
 	/* Current location of user */
 	Location location;
 	boolean discard = false;
-	boolean delete = false	;
+	boolean delete = false;
 	Button addButton;
 	int index = 0;
 	int counter = 1;
 	Spinner categories;
 	Button spinnerSubmit;
-	String[] selectedThree = new String [3];
+	String[] selectedThree = new String[3];
 	View dialog;
 	Button logoutButton;
 	/* */
 	LocationRequest mLocationRequest;
 	LocationClient mLocationClient;
 	com.google.android.gms.location.LocationListener mListener = this;
-	boolean deleteCalled= false;
+	boolean deleteCalled = false;
 	/* Markers on the map */
 	List<Marker> mMarkers;
 	Marker locMarker;
@@ -96,6 +101,7 @@ public class MainActivity extends FragmentActivity implements
 	ArrayList<String> newList = new ArrayList<String>();
 	ArrayList<String> nonActive = new ArrayList<String>();
 	String[] categoryList;
+
 	@SuppressLint("NewApi")
 	private GoogleMap setUpMapIfNeeded() {
 		// Do a null check to confirm that we have not already instantiated the
@@ -133,28 +139,30 @@ public class MainActivity extends FragmentActivity implements
 		GoogleMap googleMap = this.setUpMapIfNeeded();
 		googleMap.setOnMapClickListener(this);
 		googleMap.setMyLocationEnabled(true);
-
-		iPLScheduleModel scheduleDB = new PLScheduleHandler(record);
-		iPlaceItModel db = new PlaceItHandler(record);
-		scheduler = new PlaceItScheduler(scheduleDB, db, this);
+		HttpContext context = myHold.getContext();
+		iPlaceItModel db = new PlaceItWebService(context);
 		controller = new PlaceItController(db, this);
+		// Toast.makeText(MainActivity.this, "placeits loading2",
+		// Toast.LENGTH_LONG).show();
+
+		scheduler = new PlaceItScheduler(db, this);
+		// controller = new PlaceItController(db, this);*/
 		controller.initializeView();
 		categoryList = getResources().getStringArray(R.array.categories);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 		addButton = (Button) findViewById(R.id.add);
-		logoutButton = (Button)findViewById(R.id.logout);
-		addButton.setOnClickListener(new OnClickListener()
-		{
+		logoutButton = (Button) findViewById(R.id.logout);
+		addButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				setupCategoryDialog();
-				
+
 			}
-			
 		});
+
 		this.setUpSideBar();
 		this.setUpFindButton();
 
@@ -165,63 +173,51 @@ public class MainActivity extends FragmentActivity implements
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
 		}
-
-		mLocationRequest = LocationRequest.create();
-		// Use high accuracy
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		// Set the update interval to 5 seconds
-		mLocationRequest.setInterval(PlaceItSettings.NOTIFICATION_INTERVAL);
-		mLocationClient = new LocationClient(this, this, this);
-		mLocationClient.connect();
 	
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				10000, 0, this);
+
 	}
 
-
-	
 	public void setUpSideBar() {
 		swipebarElements = new String[] { "Active Reminders" };
 		DrawerLayout myDrawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		newList = new ArrayList<String>();
-		newList.add ("Active Reminders");
+		newList.add("Active Reminders");
 		nonActive = new ArrayList<String>();
 		this.nonActive.add("Non Active Remidners");
 		List<PlaceIt> activeOne = new Vector<PlaceIt>();
 		List<PlaceIt> nonActiveOne = new Vector<PlaceIt>();
 		activeOne = controller.getActiveList();
 		nonActiveOne = controller.getNonActivePlaceIts();
-		
+
 		if (activeOne.size() == 0) {
-			
-			
+
 		} else {
 			for (PlaceIt now : activeOne) {
 				newList.add(now.getTitle());
 			}
 		}
-		
-		
-		if (nonActiveOne.size()==0)
-		{
-			
-		}
-		else{
-			for (PlaceIt now: nonActiveOne)
-			{
+
+		if (nonActiveOne.size() == 0) {
+
+		} else {
+			for (PlaceIt now : nonActiveOne) {
 				nonActive.add(now.getTitle());
 			}
 		}
-		
-		
+
 		viewLists = (ListView) findViewById(R.id.left_drawer);
 		viewLists.setAdapter(new ArrayAdapter<String>(this,
 				R.layout.drawer_left, newList));
 		viewLists.setOnItemClickListener(this);
-		rightList = (ListView)findViewById(R.id.right_drawer);
-		rightList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_left,nonActive));
+		rightList = (ListView) findViewById(R.id.right_drawer);
+		rightList.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_left, nonActive));
 		rightList.setOnItemClickListener(this);
 	}
-	
+
 	public void setUpFindButton() {
 		// Getting reference to btn_find of the layout activity_main
 		Button btn_find = (Button) findViewById(R.id.find);
@@ -254,22 +250,20 @@ public class MainActivity extends FragmentActivity implements
 			findPlace.removeMarkers();
 		}
 	}
-	
-	public void setupCategoryDialog()
-	{
+
+	public void setupCategoryDialog() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Create Place-It");
 		LayoutInflater inflater = getLayoutInflater();
 		dialog = inflater.inflate(R.layout.placeit_category, null);
 		final boolean[] checkItems = new boolean[100];
-		for (int i = 0; i < 100; i++)
-		{
+		for (int i = 0; i < 100; i++) {
 			checkItems[i] = false;
 		}
 
 		int checkedItem1 = 0;
-		 int checkCOunt= 0;
-		final boolean[]checked=null;
+		int checkCOunt = 0;
+		final boolean[] checked = null;
 		selectedThree = new String[3];
 		// Create single choice list
 		alert.setMultiChoiceItems(R.array.categories, checkItems,
@@ -278,53 +272,53 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int which,
 							boolean isChecked) {
-						int temp =0;
-						for (int i = 0; i < 100; i++)
-						{
-							
-							if (checkItems[i] == true)
-							{
+						int temp = 0;
+						for (int i = 0; i < 100; i++) {
+
+							if (checkItems[i] == true) {
 								temp++;
 							}
 						}
-						if (temp>3)
-						{
-						checkItems[which] = false;
-						((AlertDialog) dialog).getListView().setItemChecked(which, false);
-						Toast.makeText(MainActivity.this, "Please choose only three", Toast.LENGTH_LONG).show();
+						if (temp > 3) {
+							checkItems[which] = false;
+							((AlertDialog) dialog).getListView()
+									.setItemChecked(which, false);
+							Toast.makeText(MainActivity.this,
+									"Please choose only three",
+									Toast.LENGTH_LONG).show();
 						}
-						
+
 					}
-					
-				
+
 				});
 
-		
-		alert.setPositiveButton("Submit", new DialogInterface.OnClickListener()
-		{
+		alert.setPositiveButton("Submit",
+				new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				int count=0;
-				for (int i = 0; i < checkItems.length ; i++)
-				{
-					if (checkItems[i]==true)
-					{
-						selectedThree[count] = categoryList[i];
-						count++;
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						int count = 0;
+						for (int i = 0; i < checkItems.length; i++) {
+							if (checkItems[i] == true) {
+								selectedThree[count] = categoryList[i];
+								count++;
+							}
+						}
+						Toast.makeText(
+								MainActivity.this,
+								selectedThree[0] + "" + selectedThree[1] + ""
+										+ selectedThree[2], Toast.LENGTH_LONG)
+								.show();
+
 					}
-				}
-				Toast.makeText(MainActivity.this, selectedThree[0] + "" +selectedThree[1] + "" + selectedThree[2], Toast.LENGTH_LONG).show();
-				
-			}
-			
-		});
-	   
-		alert.setView(dialog);		
+
+				});
+
+		alert.setView(dialog);
 		alert.show();
-		
+
 	}
-	
+
 	public void setUpDialog(final LatLng position) {
 		/* Initialize dialog box */
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -334,7 +328,7 @@ public class MainActivity extends FragmentActivity implements
 		final EditText title = (EditText) dialog.findViewById(R.id.title);
 		final EditText description = (EditText) dialog
 				.findViewById(R.id.description);
-		
+
 		alert.setView(dialog);
 
 		/* Initialize submission button. */
@@ -343,16 +337,16 @@ public class MainActivity extends FragmentActivity implements
 				/* User submits his/her placeit and this method is called */
 				String descText = description.getText().toString();
 				String titleText = title.getText().toString();
-				
+
 				// Check that user has entered a title or description
 				if (descText.matches("") && titleText.matches("")) {
-					Toast.makeText(MainActivity.this, "Please enter a title or descripion.",
+					Toast.makeText(MainActivity.this,
+							"Please enter a title or descripion.",
 							Toast.LENGTH_SHORT).show();
 					setUpDialog(position);
-				}
-				else {
+				} else {
 					setupTimeDialog(titleText, descText, position);
-					setUpSideBar(); 
+					setUpSideBar();
 				}
 			}
 		});
@@ -371,14 +365,14 @@ public class MainActivity extends FragmentActivity implements
 
 	public void setupTimeDialog(final String title, final String description,
 			final LatLng location) {
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Set recurrence for PlaceIt " + title);
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_time_form, null);
 
 		int checkedItem = 0;
-		
+
 		// Create single choice list
 		builder.setSingleChoiceItems(R.array.days_array, checkedItem,
 				new DialogInterface.OnClickListener() {
@@ -387,12 +381,11 @@ public class MainActivity extends FragmentActivity implements
 						// do something with checkedItem
 					}
 				});
-		
+
 		// Create textbox for number of weeks
 		TextView every = (TextView) dialog.findViewById(R.id.every);
 		final EditText numweeks = (EditText) dialog.findViewById(R.id.numweeks);
 		TextView weeks = (TextView) dialog.findViewById(R.id.weeks);
-		
 
 		// Set the action buttons
 		builder.setPositiveButton(R.string.recurrence_ok,
@@ -400,40 +393,47 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 
-						int selectedDay  = ((AlertDialog)dialog).getListView().getCheckedItemPosition()-1;
-						// subtract 1 from interval because 1st option is "no interval"
+						int selectedDay = ((AlertDialog) dialog).getListView()
+								.getCheckedItemPosition() - 1;
+						// subtract 1 from interval because 1st option is
+						// "no interval"
 						String weekString = numweeks.getText().toString();
 						int week = -1;
-						
-						Toast.makeText(MainActivity.this, "the checkeditemposition is " + selectedDay,
+
+						Toast.makeText(MainActivity.this,
+								"the checkeditemposition is " + selectedDay,
 								Toast.LENGTH_SHORT).show();
 						if (selectedDay > 0 && weekString.matches("")) {
-							Toast.makeText(MainActivity.this, "Please enter a week interval.",
+							Toast.makeText(MainActivity.this,
+									"Please enter a week interval.",
 									Toast.LENGTH_SHORT).show();
 							setupTimeDialog(title, description, location);
-						}
-						else if (weekString.matches("")) {
+						} else if (weekString.matches("")) {
 							week = 1;
-						}
-						else {
+						} else {
 							week = Integer.valueOf(weekString);
 						}
-						
-						
-						PlaceIt placeit = controller.AddPlaceIt(title, description, location);
-						if(selectedDay >= 0){
-							scheduler.addSchedules(placeit, selectedDay, week);
-						}
-						scheduler.scheduleNextActivation(placeit);
-						setUpSideBar(); 
-		
-						/* Notification of added place-it */
-						Toast.makeText(MainActivity.this, "Place-it added!",
-								Toast.LENGTH_SHORT).show();
+
+						controller.AddPlaceIt(title, description, location,
+								new PlaceItReceiver() {
+
+									@Override
+									public void receivePlaceIt(PlaceIt placeit) {
+										scheduler
+												.scheduleNextActivation(placeit);
+										setUpSideBar();
+										/* Notification of added place-it */
+										Toast.makeText(MainActivity.this,
+												"Place-it added!",
+												Toast.LENGTH_SHORT).show();
+
+									}
+
+								});
 
 					}
 				});
-		
+
 		builder.setNegativeButton(R.string.recurrence_cancel,
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -446,65 +446,56 @@ public class MainActivity extends FragmentActivity implements
 		builder.show();
 	}
 
-	public void setUpDiscard()
-	{
+	public void setUpDiscard() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setTitle("Discard or Delete");
 		LayoutInflater inflater = getLayoutInflater();
-	
-		
-		alert.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				
-				if (MainActivity.this.nonActive.size()!= 1)
-				{
-					
-					if (index == 1)
-					{
-						index = 0;
-					}
-					else
-					{
-						index = (newList.size() + nonActive.size()-index-2-counter);
-						counter+=2;
-					}
-					
-					
-					
-				}
-				else
-				{
-				
 
-					index = index-1;
-				}
+		alert.setPositiveButton("Dismiss",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
 
-				
-				Log.d("Test = PlaceIt", ""+index+"");
-				String temp = controller.movePlaceIts(index);
-				//Toast.makeText(MainActivity.this, "" + temp + "", Toast.LENGTH_SHORT).show();
-				setUpSideBar();
-			}
-		});
+						if (MainActivity.this.nonActive.size() != 1) {
+
+							if (index == 1) {
+								index = 0;
+							} else {
+								index = (newList.size() + nonActive.size()
+										- index - 2 - counter);
+								counter += 2;
+							}
+
+						} else {
+
+							index = index - 1;
+						}
+
+						Log.d("Test = PlaceIt", "" + index + "");
+						String temp = controller.movePlaceIts(index);
+						// Toast.makeText(MainActivity.this, "" + temp + "",
+						// Toast.LENGTH_SHORT).show();
+						setUpSideBar();
+					}
+				});
 
 		/* Cancel button which does nothing when clicked and exits the dialog. */
 		alert.setNegativeButton("Delete",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						
+
 						int tempInd = index;
-						if (nonActive.size()==1)
-						{
+						if (nonActive.size() == 1) {
 							index = index - 1;
+						} else {
+							index = (newList.size() - nonActive.size()) + 1;
 						}
-						else 
-						{
-							index = (newList.size() - nonActive.size())+1;
-						}
-						
-						//Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
-						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
+
+						// Toast.makeText(MainActivity.this, "" +
+						// nonActive.size()+ " = " + newList.size()+" = " +
+						// index + "", Toast.LENGTH_SHORT).show();
+						controller.deletePlaceIts(index,
+								MainActivity.this.getApplicationContext());
 						deleteCalled = true;
 						deleteId = tempInd;
 						setUpSideBar();
@@ -513,40 +504,41 @@ public class MainActivity extends FragmentActivity implements
 
 		alert.show();
 	}
-	
-	public void setupRepost()
-	{
+
+	public void setupRepost() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("Repost or Delete");
 		LayoutInflater inflater = getLayoutInflater();
-	
-		
-		alert.setPositiveButton("Repost", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-			
-				PlaceIt correct = scheduler.scheduleNextActivation(controller.repostIt(reportIndex-1));
-				
-				setUpSideBar();
-			}
-		});
+
+		alert.setPositiveButton("Repost",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+
+						PlaceIt correct = scheduler
+								.scheduleNextActivation(controller
+										.repostIt(reportIndex - 1));
+
+						setUpSideBar();
+					}
+				});
 
 		/* Cancel button which does nothing when clicked and exits the dialog. */
 		alert.setNegativeButton("Delete",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						
+
 						int tempInd = index;
-						if (nonActive.size()==1)
-						{
+						if (nonActive.size() == 1) {
 							index = index - 1;
+						} else {
+							index = (newList.size() - nonActive.size()) + 1;
 						}
-						else 
-						{
-							index = (newList.size() - nonActive.size())+1;
-						}
-						
-						//Toast.makeText(MainActivity.this, "" + nonActive.size()+ " = " + newList.size()+" = " + index + "", Toast.LENGTH_SHORT).show();
-						controller.deletePlaceIts(index, MainActivity.this.getApplicationContext());
+
+						// Toast.makeText(MainActivity.this, "" +
+						// nonActive.size()+ " = " + newList.size()+" = " +
+						// index + "", Toast.LENGTH_SHORT).show();
+						controller.deletePlaceIts(index,
+								MainActivity.this.getApplicationContext());
 						deleteCalled = true;
 						deleteId = tempInd;
 						setUpSideBar();
@@ -577,8 +569,7 @@ public class MainActivity extends FragmentActivity implements
 		textViewTitle.setText(placeit.getTitle());
 		textViewDescription.setText(placeit.getDescription());
 		alert.setView(dialog);
-		
-		
+
 		/* Initialize submission button. */
 		alert.setPositiveButton("Repost",
 				new DialogInterface.OnClickListener() {
@@ -597,8 +588,10 @@ public class MainActivity extends FragmentActivity implements
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// gotta rename
 
-						//Toast.makeText(MainActivity.this, initial.getActiveDate().toLocaleString(), Toast.LENGTH_SHORT).show();
-						
+						// Toast.makeText(MainActivity.this,
+						// initial.getActiveDate().toLocaleString(),
+						// Toast.LENGTH_SHORT).show();
+
 						MainActivity.this.removeMarker(initial);
 						controller.deactivatePlaceIt(initial);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
@@ -620,7 +613,16 @@ public class MainActivity extends FragmentActivity implements
 		return true;
 	}
 
-	public void addMarker(PlaceIt pc) {
+	public void addMarker(PlaceIt _pc) {
+
+		LocationPlaceIt pc = (LocationPlaceIt) _pc;
+		Toast.makeText(
+				MainActivity.this,
+				pc.getLatitude() + "-" + pc.getLongitude() + pc.getTitle()
+						+ "-" + pc.getDescription(), Toast.LENGTH_SHORT).show();
+		Log.d("aa",
+				"adding marker " + pc.getLatitude() + "-" + pc.getLongitude()
+						+ pc.getTitle() + "-" + pc.getDescription());
 		String title = pc.getTitle();
 		String descText = pc.getDescription();
 		Marker added = googleMap.addMarker(new MarkerOptions()
@@ -634,12 +636,12 @@ public class MainActivity extends FragmentActivity implements
 
 		List<Marker> markersRemoved = new Vector<Marker>();
 		for (Marker marker : mMarkers) {
-			
+
 			if (pc.equals(marker)) {
 				markersRemoved.add(marker);
 			}
 		}
-		
+
 		for (int i = 0; i < markersRemoved.size(); i++) {
 			mMarkers.remove(markersRemoved.get(i));
 			markersRemoved.get(i).remove();
@@ -682,8 +684,12 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
-	
-	//	List<PlaceIt> cleanList = controller.checkCoordinates(arg0);
+
+		Toast.makeText(
+				MainActivity.this,
+				"Location changed to " + arg0.getLatitude() + ","
+						+ arg0.getLongitude(), Toast.LENGTH_SHORT).show();
+		controller.checkCoordinates(arg0);
 
 	}
 
@@ -721,11 +727,12 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
-		Toast.makeText(MainActivity.this, "Place-it notified by " + ControllerType + " with " + placeits.size() + " placeits",
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(
+				MainActivity.this,
+				"Place-it notified by " + ControllerType + " with "
+						+ placeits.size() + " placeits", Toast.LENGTH_SHORT)
+				.show();
 		if (ControllerType.equals("Controller")) {
-			scheduler.checkActive(placeits);
-		} else if (ControllerType.equals("Scheduler")) {
 			setUpNotification(placeits);
 		}
 
@@ -736,29 +743,24 @@ public class MainActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 	}
-	
-	public GoogleMap getViewMap(){
+
+	public GoogleMap getViewMap() {
 		return googleMap;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		if (viewLists == arg0)
-		{
-			if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders")))
-			{
+		if (viewLists == arg0) {
+			if (arg3 != 0 && !(newList.get(arg2).equals("No Reminders"))) {
 				index = arg2;
 				this.setUpDiscard();
 			}
-		}
-		else
-		{
-			//Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
+		} else {
+			// Toast.makeText(this, "Came here", Toast.LENGTH_LONG).show();
 			this.reportIndex = arg2;
 			this.setupRepost();
 		}
 
-		
 	}
 
 }

@@ -10,6 +10,7 @@ import com.classproj.placeit.PlaceItSettings;
 
 import android.provider.SyncStateContract.Constants;
 import android.util.Log;
+import HTTP.RequestReceiver;
 import Models.PLSchedule;
 import Models.PlaceIt;
 import PlaceItDB.iPLScheduleModel;
@@ -18,23 +19,21 @@ import PlaceItDB.iPlaceItModel;
 public class PlaceItScheduler {
 
 	private iPlaceItModel PLrepository;
-	private iPLScheduleModel scheduleRepository;
 	private iView view;
 
-	public PlaceItScheduler(iPLScheduleModel scheduleDB, iPlaceItModel db, iView view) {
+	public PlaceItScheduler(iPlaceItModel db, iView view) {
 		this.PLrepository = db;
-		this.scheduleRepository = scheduleDB;
 		this.view = view;
 	}
 
 	public void setUpSchedules() {
-		List<PlaceIt> placeits = this.PLrepository.getAllPlaceIts();
+	/*	List<PlaceIt> placeits = this.PLrepository.getAllPlaceIts();
 		for (PlaceIt placeit : placeits) {
 			if (placeit.isActive() == true) {
 				PLSchedule schedule = this.scheduleRepository.getSchedule(placeit);
 				placeit = this.initializeSchedule(placeit, schedule);
 			}
-		}
+		}*/
 	}
 
 	/*
@@ -63,57 +62,14 @@ public class PlaceItScheduler {
 		//}
 
 		placeit.setActiveDate(minDate.getTime());
-		this.PLrepository.updatePlaceIt(placeit);
+		//this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
 	}
-
-	public PlaceIt startSchedule(PlaceIt placeit, PLSchedule schedule) {
-		this.addSchedules(placeit, schedule.getDay(), schedule.getWeek());
-		return this.initializeSchedule(placeit, schedule);
-	}
-
-	/*
-	 * Called from MainActivity when user sets a Place-It's recurrence.
-	 * Will add the given schedule to PLSchedule database and return a new placeit to be
-	 * updated.
-	 */
-	public void addSchedules(PlaceIt placeit, int day, int week) {
-		this.scheduleRepository.addSchedule(placeit, day, week);
-	}
-
-	/* Will remove schedule from placeit and return a new placeit to be updated. */
-	public PlaceIt removeSchedule(PlaceIt placeit, int day, int week) {
-		return this.scheduleRepository.removeSchedule(placeit, day, week);
-	}
-
-	/*
-	 * Upon receiving a placeit, it will look for the next scheduled time and
-	 * return the place it with the activated date.
-	 */
 	public PlaceIt scheduleNextActivation(PlaceIt placeit) {
 		
-		PLSchedule schedule = this.scheduleRepository.getSchedule(placeit);
-		if (schedule == null) { 
 			return this.repostPlaceit(placeit, 
 					PlaceItSettings.INTERVAL_TYPE, 
 					PlaceItSettings.INTERVAL_NUMBER);
-		}
-		
-		int startweek = schedule.getStartWeek();
-		int day = schedule.getDay();
-		int week = schedule.getWeek();
-		
-		if (day == 0) {
-			// the "day" interval is 1 minute
-			Log.d("IN THE MINUTE SCHEDULER", "TRUE");
-			return this.repostPlaceit(placeit, Calendar.MINUTE, 1);
-		}
-		else if (day > 0) {
-			return this.repostPlaceit(placeit, 
-					PlaceItSettings.INTERVAL_TYPE, 
-					PlaceItSettings.INTERVAL_NUMBER);
-		} 
-		return null;
 	}
 
 	public PlaceIt repostPlaceit(PlaceIt placeit, int TIMEVAL, int timeAMT) {
@@ -135,7 +91,13 @@ public class PlaceItScheduler {
 		placeit.setActiveDate(newDate.getTime());
 		//Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
 		Log.d("NEW ACTIVE DATE ", placeit.getActiveDate().toLocaleString());
-		this.PLrepository.updatePlaceIt(placeit);
+		this.PLrepository.updatePlaceIt(placeit, new RequestReceiver(){
+
+			@Override
+			public void receiveTask(String s) {
+				// TODO Auto-generated method stub
+				
+			}});
 		 return placeit;
 	}
 	
@@ -143,7 +105,7 @@ public class PlaceItScheduler {
 		Calendar cal = Calendar.getInstance();
 		cal.add(PlaceItSettings.INTERVAL_TYPE, PlaceItSettings.INTERVAL_NUMBER);
 		placeit.setActiveDate(cal.getTime().getTime());
-		this.PLrepository.updatePlaceIt(placeit);
+	//	this.PLrepository.updatePlaceIt(placeit);
 		return placeit;
 	}
 	
@@ -164,8 +126,9 @@ public class PlaceItScheduler {
 	public List<PlaceIt> checkActive(List<PlaceIt> placeits){
 		List<PlaceIt> newActive = new Vector<PlaceIt>();
 		for (int i = 0; i < placeits.size(); i++) {
-			PlaceIt plDB = this.PLrepository.getPlaceIt(placeits.get(i).getID());
-			Log.d(plDB.getActiveDate().toLocaleString(), new Date().toLocaleString());
+			//PlaceIt plDB = this.PLrepository.getPlaceIt(placeits.get(i).getID());
+		
+			/*Log.d(plDB.getActiveDate().toLocaleString(), new Date().toLocaleString());
 			if(plDB.isActive() && plDB.getActiveDate().getTime() - new Date().getTime() < 0){	
 				
 				PLSchedule schedule = this.scheduleRepository.getSchedule(plDB);
@@ -182,6 +145,7 @@ public class PlaceItScheduler {
 					newActive.add(placeits.get(i));
 				}
 			}
+			*/
 		}
 		view.notifyUser(newActive, "Scheduler");
 		return newActive;
