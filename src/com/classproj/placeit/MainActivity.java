@@ -82,8 +82,8 @@ public class MainActivity extends FragmentActivity implements
 	Button spinnerSubmit;
 	EditText categoryTitle;
 	EditText categoryDesc;
-	String catTitleStr;
-	String catDescStr;
+	String catTitleStr = "";
+	String catDescStr = "";
 	String[] selectedThree = new String[3];
 	View dialog;
 	Button logoutButton;
@@ -158,8 +158,7 @@ public class MainActivity extends FragmentActivity implements
 				.getSystemService(Context.LOCATION_SERVICE);
 		addButton = (Button) findViewById(R.id.add);
 		logoutButton = (Button) findViewById(R.id.logout);
-		categoryTitle = (EditText)findViewById(R.id.catTitle);
-		categoryDesc =(EditText)findViewById(R.id.catdescription);
+		
 		addButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -263,6 +262,8 @@ public class MainActivity extends FragmentActivity implements
 		LayoutInflater inflater = getLayoutInflater();
 		dialog = inflater.inflate(R.layout.placeit_category, null);
 		final boolean[] checkItems = new boolean[100];
+		final EditText catTitle = (EditText)dialog.findViewById(R.id.catTitle);
+		final EditText catDesc =(EditText)dialog.findViewById(R.id.catdescription);
 		for (int i = 0; i < 100; i++) {
 			checkItems[i] = false;
 		}
@@ -310,9 +311,21 @@ public class MainActivity extends FragmentActivity implements
 								count++;
 							}
 						}
-						catTitleStr = categoryTitle.getText().toString();
-						catDescStr = categoryDesc.getText().toString();
-						controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
+						
+						if (catTitle== null && catDesc == null)
+						{
+							
+							Toast.makeText(MainActivity.this, "Please enter both a title and a description", Toast.LENGTH_LONG).show();
+							setupCategoryDialog();
+						}					
+					
+						else
+						{
+							
+							catTitleStr = catTitle.getText().toString();
+							catDescStr = catDesc.getText().toString();
+						
+							controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
 
 							@Override
 							public void receivePlaceIt(PlaceIt placeit) {
@@ -328,15 +341,12 @@ public class MainActivity extends FragmentActivity implements
 							
 						});
 						
-						Toast.makeText(
-								MainActivity.this,
-								selectedThree[0] + "" + selectedThree[1] + ""
-										+ selectedThree[2], Toast.LENGTH_LONG)
-								.show();
+						}
 
 					}
 
 				});
+		
 
 		alert.setView(dialog);
 		alert.show();
@@ -712,6 +722,9 @@ public class MainActivity extends FragmentActivity implements
 				MainActivity.this,
 				"Location changed to " + arg0.getLatitude() + ","
 						+ arg0.getLongitude(), Toast.LENGTH_SHORT).show();
+		
+		//controller.initializeView();
+		//controller.removeAllPlaceIts();
 		controller.checkCoordinates(arg0);
 
 	}
