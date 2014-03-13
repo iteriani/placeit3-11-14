@@ -135,7 +135,7 @@ public class PlaceItWebService extends WebService implements iPlaceItModel, iPLS
 			CategoryPlaceIt cplaceit = (CategoryPlaceIt) placeit;
 			values.add(new BasicNameValuePair("category", (cplaceit
 					.getCategory())));
-			values.add(new BasicNameValuePair("latititude", null));
+			values.add(new BasicNameValuePair("latitude", null));
 			values.add(new BasicNameValuePair("longitude", null));
 		}
 		values.add(new BasicNameValuePair("start_week", ""));

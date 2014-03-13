@@ -59,13 +59,13 @@ public class Login extends Activity {
 								if(s.contains("true"))
 								{
 									myHold.setContext(context);
-									Toast.makeText(Login.this, "placeits loading", Toast.LENGTH_LONG).show();
+									
 									Intent intent = new Intent(v.getContext(), MainActivity.class);
 									startActivity(intent);
 								}
 								else
 								{
-									
+									Toast.makeText(Login.this, "Incorrect user/password combinations", Toast.LENGTH_LONG).show();
 								}
 								
 							}

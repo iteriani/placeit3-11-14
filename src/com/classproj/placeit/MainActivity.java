@@ -11,6 +11,7 @@ import org.apache.http.protocol.HttpContext;
 import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
 import HTTP.PlaceItWebService;
+import Models.CategoryPlaceIt;
 import Models.LocationPlaceIt;
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
@@ -310,8 +311,8 @@ public class MainActivity extends FragmentActivity implements
 								count++;
 							}
 						}
-						catTitleStr = categoryTitle.getText().toString();
-						catDescStr = categoryDesc.getText().toString();
+						catTitleStr = "test1";
+						catDescStr = "test2";
 						controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
 
 							@Override
@@ -590,8 +591,14 @@ public class MainActivity extends FragmentActivity implements
 		TextView textViewTitle = (TextView) dialog.findViewById(R.id.title);
 		TextView textViewDescription = (TextView) dialog
 				.findViewById(R.id.description);
+		TextView locationDescription = (TextView) dialog
+				.findViewById(R.id.location);
 		textViewTitle.setText(placeit.getTitle());
 		textViewDescription.setText(placeit.getDescription());
+		if(placeit instanceof CategoryPlaceIt){
+			CategoryPlaceIt cplaceit = (CategoryPlaceIt) placeit;
+			locationDescription.setText(cplaceit.getPlaceName() + "\r\n" + cplaceit.getPlaceAddy());
+		}
 		alert.setView(dialog);
 
 		/* Initialize submission button. */
@@ -628,7 +635,7 @@ public class MainActivity extends FragmentActivity implements
 
 		alert.show();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

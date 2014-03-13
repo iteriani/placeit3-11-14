@@ -1,18 +1,20 @@
 package PlaceItControllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
 import HTTP.PlaceReceiver;
+import HTTP.PlaceService;
 import HTTP.RequestReceiver;
 import Models.CategoryPlaceIt;
 import Models.LocationPlaceIt;
 import Models.Place;
 import Models.PlaceIt;
-import Models.PlaceService;
 import PlaceItDB.iPlaceItModel;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -43,8 +45,10 @@ public class PlaceItController {
 			public void receivePlaceIts(List<PlaceIt> freshPlaceIts) {
 				for (PlaceIt pc : freshPlaceIts) {
 					if (pc.isActive()) {
-						Log.d("adding marker", pc.getTitle() + "-" + pc.getDescription());
-						view.addMarker(pc);
+						Log.d("adding marker",
+								pc.getTitle() + "-" + pc.getDescription());
+						if (pc instanceof LocationPlaceIt)
+							view.addMarker(pc);
 						placeits = freshPlaceIts;
 					}
 				}
@@ -72,7 +76,7 @@ public class PlaceItController {
 				titleText = descText.substring(0, 10);
 			}
 		}
-		
+
 		// Convert the string array of categories into one string.
 		CategoryAdapter adapter = new CategoryAdapter();
 		String categoryString = adapter.convertArrayToString(categories);
@@ -90,7 +94,7 @@ public class PlaceItController {
 
 		});
 	}
-	
+
 	// Adds a Location Place-It to the database
 	@SuppressLint("NewApi")
 	public PlaceIt AddPlaceIt(String titleText, String descText,
@@ -158,68 +162,63 @@ public class PlaceItController {
 	public List<PlaceIt> getList() {
 		return placeits;
 	}
-	
-	public boolean checkCategoryLocation(CategoryPlaceIt placeit,double lat, double longitude){
+
+	public boolean checkCategoryLocation(CategoryPlaceIt placeit, double lat,
+			double longitude) {
 		return false;
 	}
-	
-	/*
-	 * This method is called from MainActivity whenever the user's location has changed.
-	 * It checks if any Category Place-It should be triggered from this change in location.
-	 */
-	public List<PlaceIt> checkCategoryCoordinates(Location coords) {
-		final List<PlaceIt> clean = new Vector<PlaceIt>();
-		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
-		for (int i = 0; i < placeits.size(); i++) {
-			Log.d("is it a instanceof", "" + (placeits.get(i) instanceof CategoryPlaceIt));
-			PlaceIt placeit = placeits.get(i);
-			
-			if (placeit.isActive() && placeit instanceof CategoryPlaceIt) {
-				// call PlaceService, using the currLoc's lat and long, and placeit's categories
-				
-				/* 
-				 * db.getLocations(placeit, new PlaceItReceiver(){
-				 * 		public void receivePlaceIt(CategoryPlaceit placeit){
-				 * 		view.notifyUser(new List<PlaceIt>(){placeit}, "Controller");
-				 * 
-				 * 	}
-				 * });
-				 * */
-				final CategoryPlaceIt currPlaceIt = (CategoryPlaceIt) placeits.get(i);
 
-				if (currLoc != null && currPlaceIt != null) {
-					String categories = currPlaceIt.getCategory();
-					PlaceService service = new PlaceService();
-					service.findPlaces(currLoc.latitude, currLoc.longitude, categories, new PlaceReceiver(){
-						public void receivePlaces(List<Place> places){
-							if (places != null && places.get(0) != null) {
-								Place theplace = places.get(0);
-								currPlaceIt.setPlaceName(theplace.getName());
-								currPlaceIt.setPlaceAddy(theplace.getAddy());
-								clean.add(currPlaceIt);
+	/*
+	 * This method is called from MainActivity whenever the user's location has
+	 * changed. It checks if any Category Place-It should be triggered from this
+	 * change in location.
+	 */
+
+	public void checkCoordinates(Location coords, final CategoryPlaceIt placeit) {
+		if (placeit.isActive()) {
+			String categories = placeit.getCategory();
+			PlaceService service = new PlaceService();
+			Log.d("notifying category", "NOTIFYING WITH " + placeit.getTitle());
+			try {
+				service.findPlaces(coords.getLatitude(), coords.getLongitude(),
+						categories, new PlaceReceiver() {
+							public void receivePlaces(List<Place> places) {
+								if (places != null && places.get(0) != null) {
+									Place theplace = places.get(0);
+									placeit.setPlaceName(theplace.getName());
+									placeit.setPlaceAddy(theplace.getAddy());
+									List<PlaceIt> list = new Vector<PlaceIt>();
+									list.add(placeit);
+									view.notifyUser(list, "Controller");
+								} else {
+									List<PlaceIt> list = new Vector<PlaceIt>();
+									Log.d("notifying category", "NOTIFYING WITH DONE " + placeit.getTitle());
+									list.add(placeit);
+									view.notifyUser(list, "Controller");
+								}
 							}
-						}
-					});
-					
-				}
+						});
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		view.notifyUser(clean, "Controller");
-		return clean;
 	}
 
 	/*
-	 * This method is called from MainActivity whenever the user's location has changed.
-	 * It checks if any Location Place-It should be triggered from this change in location.
+	 * This method is called from MainActivity whenever the user's location has
+	 * changed. It checks if any Location Place-It should be triggered from this
+	 * change in location.
 	 */
 	public List<PlaceIt> checkCoordinates(Location coords) {
 
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
 		for (int i = 0; i < placeits.size(); i++) {
-			Log.d("is it a instanceof", "" + (placeits.get(i) instanceof LocationPlaceIt));
+			Log.d("is it a instanceof", ""
+					+ (placeits.get(i) instanceof LocationPlaceIt));
 			PlaceIt placeit = placeits.get(i);
-			if (placeit.isActive() && placeit instanceof LocationPlaceIt ) {
+			if (placeit.isActive() && placeit instanceof LocationPlaceIt) {
 				LocationPlaceIt currMarker = (LocationPlaceIt) placeits.get(i);
 				Location start = new Location("Start");
 				Location end = new Location("End");
@@ -235,7 +234,13 @@ public class PlaceItController {
 						clean.add(currMarker);
 					}
 				}
-			}else {}
+			} else {
+				if (placeit.isActive()) {
+					CategoryPlaceIt cplaceIt = (CategoryPlaceIt) placeits
+							.get(i);
+					checkCoordinates(coords, cplaceIt);
+				}
+			}
 
 		}
 		view.notifyUser(clean, "Controller");

@@ -228,19 +228,21 @@ containing a value of this type.
         public static final int ic_plusone_tall_off_client=0x7f02001f;
     }
     public static final class id {
-        public static final int ScrollView01=0x7f05001d;
+        public static final int ScrollView01=0x7f05001e;
         public static final int add=0x7f050009;
         public static final int bottomBar=0x7f05000e;
+        public static final int catTitle=0x7f05001d;
+        public static final int catdescription=0x7f05001f;
         public static final int confirmPass=0x7f050014;
         public static final int createAcctBtn=0x7f050016;
         public static final int createPass=0x7f050012;
         public static final int createUserName=0x7f050010;
-        public static final int description=0x7f05001f;
+        public static final int description=0x7f050021;
         public static final int drawer_layout=0x7f050005;
         public static final int enterConfirmPass=0x7f050015;
         public static final int enterPass=0x7f050013;
         public static final int enterUserName=0x7f050011;
-        public static final int every=0x7f050020;
+        public static final int every=0x7f050022;
         public static final int find=0x7f050008;
         public static final int hybrid=0x7f050004;
         public static final int left_drawer=0x7f05000b;
@@ -252,7 +254,7 @@ containing a value of this type.
         public static final int myBack=0x7f050006;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int numweeks=0x7f050021;
+        public static final int numweeks=0x7f050023;
         public static final int pass=0x7f05001b;
         public static final int right_drawer=0x7f05000c;
         public static final int satellite=0x7f050002;
@@ -260,9 +262,9 @@ containing a value of this type.
         public static final int textView=0x7f050017;
         public static final int textView1=0x7f050018;
         public static final int textView2=0x7f050019;
-        public static final int title=0x7f05001e;
+        public static final int title=0x7f050020;
         public static final int userName=0x7f05001a;
-        public static final int weeks=0x7f050022;
+        public static final int weeks=0x7f050024;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;

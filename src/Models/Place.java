@@ -54,7 +54,7 @@ public class Place {
 	    }
 	    
 	    
-	   static Place jsonToPlace(JSONObject thePlace){
+	   public static Place jsonToPlace(JSONObject thePlace){
 	    	try {
 	            Place result = new Place();
 	            JSONObject geometry = (JSONObject) thePlace.get("geometry");

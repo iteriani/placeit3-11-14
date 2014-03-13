@@ -1,5 +1,7 @@
 package com.classproj.placeit;
 
+import HTTP.RequestReceiver;
+import HTTP.WebUserService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -27,7 +29,7 @@ public class CreateAccountActivity extends Activity{
 		
 		createAccountBtn.setOnClickListener(new OnClickListener() {	
 			
-			public void onClick(View v){
+			public void onClick(final View v){
 				
 				String userNameText = userName.getText().toString();
 				String passText = pass.getText().toString();
@@ -43,8 +45,17 @@ public class CreateAccountActivity extends Activity{
 								"Passwords do not match", Toast.LENGTH_SHORT).show();
 					}
 					else{
-						Intent intent = new Intent(v.getContext(), Login.class);
-						startActivity(intent);
+						WebUserService service = new WebUserService();
+						service.signup(userNameText, passText, new RequestReceiver(){
+
+							@Override
+							public void receiveTask(String s) {
+								Intent intent = new Intent(v.getContext(), Login.class);
+								startActivity(intent);		
+							}
+							
+						});
+
 					}
 					
 				}

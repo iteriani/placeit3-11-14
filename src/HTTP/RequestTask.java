@@ -48,7 +48,10 @@ public class RequestTask extends AsyncTask<String, String, String>{
         String responseString = null;
         try {
         	if(this.values == null){
-            response = httpclient.execute(new HttpGet(uri[0]), localContext);
+        		if(localContext != null)
+        			response = httpclient.execute(new HttpGet(uri[0]), localContext);
+        		else
+        			response = httpclient.execute(new HttpGet(uri[0]));
         	}else{
         		HttpPost httppost = new HttpPost(uri[0]);
         		httppost.setEntity(new UrlEncodedFormEntity(values, "UTF-8"));
