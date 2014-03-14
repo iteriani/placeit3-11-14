@@ -11,6 +11,7 @@ import org.apache.http.protocol.HttpContext;
 import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
 import HTTP.PlaceItWebService;
+import HTTP.RequestReceiver;
 import Models.LocationPlaceIt;
 import Models.PlaceIt;
 import PlaceItControllers.PlaceItController;
@@ -23,6 +24,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -160,13 +162,32 @@ public class MainActivity extends FragmentActivity implements
 		logoutButton = (Button) findViewById(R.id.logout);
 		
 		addButton.setOnClickListener(new OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				setupCategoryDialog();
 
 			}
 		});
+		
+		logoutButton.setOnClickListener(new OnClickListener(){
+			public void onClick(final View v) {
+				
+				myHold.getUser().logout(new RequestReceiver() {
+					public void receiveTask(String s){
+								Toast.makeText(MainActivity.this,
+										"Couldn't logout!",
+										Toast.LENGTH_SHORT).show();
+								Intent intent = new Intent(v.getContext(), Login.class);
+								startActivity(intent);
+								finish();	
+						}
+					}
+				);
+			}
+		});
+		
+		
 
 		this.setUpSideBar();
 		this.setUpFindButton();

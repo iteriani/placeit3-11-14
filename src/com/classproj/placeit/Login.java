@@ -59,6 +59,7 @@ public class Login extends Activity {
 								if(s.contains("true"))
 								{
 									myHold.setContext(context);
+									myHold.setUser(users);
 									Toast.makeText(Login.this, "placeits loading", Toast.LENGTH_LONG).show();
 									Intent intent = new Intent(v.getContext(), MainActivity.class);
 									startActivity(intent);
