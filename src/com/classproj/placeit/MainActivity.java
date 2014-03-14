@@ -11,6 +11,7 @@ import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
 import HTTP.PlaceItWebService;
 import HTTP.RequestReceiver;
+import HTTP.WebUserService;
 import Models.CategoryPlaceIt;
 import Models.LocationPlaceIt;
 import Models.PlaceIt;
@@ -24,6 +25,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -83,8 +85,8 @@ public class MainActivity extends FragmentActivity implements
 	Button spinnerSubmit;
 	EditText categoryTitle;
 	EditText categoryDesc;
-	String catTitleStr;
-	String catDescStr;
+	String catTitleStr = "";
+	String catDescStr = "";
 	String[] selectedThree = new String[3];
 	View dialog;
 	Button logoutButton;
@@ -163,13 +165,30 @@ public class MainActivity extends FragmentActivity implements
 		categoryTitle = (EditText) findViewById(R.id.catTitle);
 		categoryDesc = (EditText) findViewById(R.id.catdescription);
 		addButton.setOnClickListener(new OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				setupCategoryDialog();
 
 			}
 		});
+		
+		logoutButton.setOnClickListener(new OnClickListener(){
+			public void onClick(final View v) {
+				
+				new WebUserService().logout(new RequestReceiver() {
+					public void receiveTask(String s){
+								Intent intent = new Intent(v.getContext(), Login.class);
+								Holder.myContext=null;
+								startActivity(intent);
+								finish();	
+						}
+					}
+				);
+			}
+		});
+		
+		
 
 		List<PlaceIt> checkList = null;
 		Location myLocationNow = locationManager
@@ -262,6 +281,8 @@ public class MainActivity extends FragmentActivity implements
 		LayoutInflater inflater = getLayoutInflater();
 		dialog = inflater.inflate(R.layout.placeit_category, null);
 		final boolean[] checkItems = new boolean[100];
+		final EditText catTitle = (EditText)dialog.findViewById(R.id.catTitle);
+		final EditText catDesc =(EditText)dialog.findViewById(R.id.catdescription);
 		for (int i = 0; i < 100; i++) {
 			checkItems[i] = false;
 		}
@@ -309,35 +330,42 @@ public class MainActivity extends FragmentActivity implements
 								count++;
 							}
 						}
-						catTitleStr = "test1";
-						catDescStr = "test2";
-						controller.AddPlaceIt(catTitleStr, catDescStr,
-								selectedThree, new PlaceItReceiver() {
 
-									@Override
-									public void receivePlaceIt(PlaceIt placeit) {
-										scheduler
-												.scheduleNextActivation(placeit);
-										setUpSideBar();
-										/* Notification of added place-it */
-										Toast.makeText(
-												MainActivity.this,
-												"Category !!!! Place-it added!",
-												Toast.LENGTH_SHORT).show();
+						if (catTitle== null && catDesc == null)
+						{
+							
+							Toast.makeText(MainActivity.this, "Please enter both a title and a description", Toast.LENGTH_LONG).show();
+							setupCategoryDialog();
+						}					
+					
+						else
+						{
+							
+							catTitleStr = catTitle.getText().toString();
+							catDescStr = catDesc.getText().toString();
+						
+							controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
 
-									}
+							@Override
+							public void receivePlaceIt(PlaceIt placeit) {
+								scheduler
+										.scheduleNextActivation(placeit);
+								setUpSideBar();
+								/* Notification of added place-it */
+								Toast.makeText(MainActivity.this,
+										"Category !!!! Place-it added!",
+										Toast.LENGTH_SHORT).show();
 
-								});
-
-						Toast.makeText(
-								MainActivity.this,
-								selectedThree[0] + "" + selectedThree[1] + ""
-										+ selectedThree[2], Toast.LENGTH_LONG)
-								.show();
+							}
+							
+						});
+						
+						}
 
 					}
 
 				});
+		
 
 		alert.setView(dialog);
 		alert.show();

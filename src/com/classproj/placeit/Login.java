@@ -59,7 +59,6 @@ public class Login extends Activity {
 								if(s.contains("true"))
 								{
 									myHold.setContext(context);
-									
 									Intent intent = new Intent(v.getContext(), MainActivity.class);
 									startActivity(intent);
 								}
