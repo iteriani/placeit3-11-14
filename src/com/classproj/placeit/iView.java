@@ -16,4 +16,6 @@ public interface iView {
 
 	void notifyUser(List<PlaceIt> placeits, String ControllerType);
 
+	void clearMap();
+
 }

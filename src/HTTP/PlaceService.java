@@ -63,6 +63,7 @@ public class PlaceService {
 					   JSONArray array = object.getJSONArray("results");
 					   
 					   List<Place> arrayList = new ArrayList<Place>();
+					   if(array.length() > 0){
 					   for (int i = 0; i < array.length(); i++) {
 						    try {
 						     Place place = Place
@@ -72,6 +73,7 @@ public class PlaceService {
 						    } catch (Exception e) {
 						    }
 					   }
+					  }
 					   receiver.receivePlaces(arrayList); 
 				  } catch (JSONException ex) {
 					   ex.printStackTrace();

@@ -38,12 +38,13 @@ public class PlaceItController {
 		this.placeits = new Vector<PlaceIt>();
 	}
 
-	public void initializeView() {
-
+	public void initializeView(final RequestReceiver s) {
+		Log.d("init", "INITIALIZNG VIEW AGAIN!");
 		db.getAllPlaceIts(new PlaceItListReceiver() {
 			@Override
 			public void receivePlaceIts(List<PlaceIt> freshPlaceIts) {
 				for (PlaceIt pc : freshPlaceIts) {
+					Log.d("checkactive", pc.getTitle() + "-" + pc.isActive());
 					if (pc.isActive()) {
 						Log.d("adding marker",
 								pc.getTitle() + "-" + pc.getDescription());
@@ -52,9 +53,8 @@ public class PlaceItController {
 						placeits = freshPlaceIts;
 					}
 				}
-
+				s.receiveTask("done");
 			}
-
 		});
 	}
 
@@ -178,12 +178,11 @@ public class PlaceItController {
 		if (placeit.isActive()) {
 			String categories = placeit.getCategory();
 			PlaceService service = new PlaceService();
-			Log.d("notifying category", "NOTIFYING WITH " + placeit.getTitle());
 			try {
 				service.findPlaces(coords.getLatitude(), coords.getLongitude(),
 						categories, new PlaceReceiver() {
 							public void receivePlaces(List<Place> places) {
-								if (places != null && places.get(0) != null) {
+								if (places != null && places.size() > 0 && places.get(0) != null) {
 									Place theplace = places.get(0);
 									placeit.setPlaceName(theplace.getName());
 									placeit.setPlaceAddy(theplace.getAddy());
@@ -191,10 +190,6 @@ public class PlaceItController {
 									list.add(placeit);
 									view.notifyUser(list, "Controller");
 								} else {
-									List<PlaceIt> list = new Vector<PlaceIt>();
-									Log.d("notifying category", "NOTIFYING WITH DONE " + placeit.getTitle());
-									list.add(placeit);
-									view.notifyUser(list, "Controller");
 								}
 							}
 						});
@@ -215,8 +210,6 @@ public class PlaceItController {
 		List<PlaceIt> clean = new Vector<PlaceIt>();
 		LatLng currLoc = new LatLng(coords.getLatitude(), coords.getLongitude());
 		for (int i = 0; i < placeits.size(); i++) {
-			Log.d("is it a instanceof", ""
-					+ (placeits.get(i) instanceof LocationPlaceIt));
 			PlaceIt placeit = placeits.get(i);
 			if (placeit.isActive() && placeit instanceof LocationPlaceIt) {
 				LocationPlaceIt currMarker = (LocationPlaceIt) placeits.get(i);

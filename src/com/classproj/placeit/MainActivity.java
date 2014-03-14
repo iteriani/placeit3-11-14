@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.http.protocol.HttpContext;
-
 import HTTP.PlaceItListReceiver;
 import HTTP.PlaceItReceiver;
 import HTTP.PlaceItWebService;
+import HTTP.RequestReceiver;
 import Models.CategoryPlaceIt;
 import Models.LocationPlaceIt;
 import Models.PlaceIt;
@@ -127,10 +127,6 @@ public class MainActivity extends FragmentActivity implements
 		String[] newArray = new String[swipebarElements.length + 1];
 		System.arraycopy(swipebarElements, 0, newArray, 0,
 				swipebarElements.length);
-
-		// an alternative to using System.arraycopy would be a for-loop:
-		// for(int i = 0; i < OrigArray.length; i++)
-		// newArray[i] = OrigArray[i];
 		swipebarElements = newArray;
 	}
 
@@ -152,15 +148,20 @@ public class MainActivity extends FragmentActivity implements
 
 		scheduler = new PlaceItScheduler(db, this);
 		// controller = new PlaceItController(db, this);*/
-		controller.initializeView();
+		controller.initializeView(new RequestReceiver() {
+			public void receiveTask(String s) {
+				setUpSideBar();
+				setUpFindButton();
+			}
+		});
 		categoryList = getResources().getStringArray(R.array.categories);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 		addButton = (Button) findViewById(R.id.add);
 		logoutButton = (Button) findViewById(R.id.logout);
-		categoryTitle = (EditText)findViewById(R.id.catTitle);
-		categoryDesc =(EditText)findViewById(R.id.catdescription);
+		categoryTitle = (EditText) findViewById(R.id.catTitle);
+		categoryDesc = (EditText) findViewById(R.id.catdescription);
 		addButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -170,9 +171,6 @@ public class MainActivity extends FragmentActivity implements
 			}
 		});
 
-		this.setUpSideBar();
-		this.setUpFindButton();
-
 		List<PlaceIt> checkList = null;
 		Location myLocationNow = locationManager
 				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
@@ -180,7 +178,7 @@ public class MainActivity extends FragmentActivity implements
 		if (myLocationNow != null) {
 			checkList = controller.checkCoordinates(myLocationNow);
 		}
-	
+
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				PlaceItSettings.NOTIFICATION_INTERVAL, 0, this);
 
@@ -313,22 +311,24 @@ public class MainActivity extends FragmentActivity implements
 						}
 						catTitleStr = "test1";
 						catDescStr = "test2";
-						controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
+						controller.AddPlaceIt(catTitleStr, catDescStr,
+								selectedThree, new PlaceItReceiver() {
 
-							@Override
-							public void receivePlaceIt(PlaceIt placeit) {
-								scheduler
-										.scheduleNextActivation(placeit);
-								setUpSideBar();
-								/* Notification of added place-it */
-								Toast.makeText(MainActivity.this,
-										"Category !!!! Place-it added!",
-										Toast.LENGTH_SHORT).show();
+									@Override
+									public void receivePlaceIt(PlaceIt placeit) {
+										scheduler
+												.scheduleNextActivation(placeit);
+										setUpSideBar();
+										/* Notification of added place-it */
+										Toast.makeText(
+												MainActivity.this,
+												"Category !!!! Place-it added!",
+												Toast.LENGTH_SHORT).show();
 
-							}
-							
-						});
-						
+									}
+
+								});
+
 						Toast.makeText(
 								MainActivity.this,
 								selectedThree[0] + "" + selectedThree[1] + ""
@@ -581,13 +581,13 @@ public class MainActivity extends FragmentActivity implements
 		createNotifs(placeits);
 		/* Initialize dialog box */
 		final PlaceIt placeit = placeits.get(0);
-		placeits.set(0,controller.deactivatePlaceIt(placeit));
-		
+		placeits.set(0, controller.deactivatePlaceIt(placeit));
+
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		alert.setTitle("You got a Place-It!");
 		LayoutInflater inflater = getLayoutInflater();
 		final View dialog = inflater.inflate(R.layout.placeit_notification,
-				null); 
+				null);
 		TextView textViewTitle = (TextView) dialog.findViewById(R.id.title);
 		TextView textViewDescription = (TextView) dialog
 				.findViewById(R.id.description);
@@ -595,9 +595,10 @@ public class MainActivity extends FragmentActivity implements
 				.findViewById(R.id.location);
 		textViewTitle.setText(placeit.getTitle());
 		textViewDescription.setText(placeit.getDescription());
-		if(placeit instanceof CategoryPlaceIt){
+		if (placeit instanceof CategoryPlaceIt) {
 			CategoryPlaceIt cplaceit = (CategoryPlaceIt) placeit;
-			locationDescription.setText(cplaceit.getPlaceName() + "\r\n" + cplaceit.getPlaceAddy());
+			locationDescription.setText(cplaceit.getPlaceName() + "\r\n"
+					+ cplaceit.getPlaceAddy());
 		}
 		alert.setView(dialog);
 
@@ -605,7 +606,7 @@ public class MainActivity extends FragmentActivity implements
 		alert.setPositiveButton("Repost",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						scheduler.repostPlaceit(placeit);
+						scheduler.scheduleNextActivation(placeit);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));
@@ -617,13 +618,7 @@ public class MainActivity extends FragmentActivity implements
 		alert.setNegativeButton("Discard",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						// gotta rename
-
-						// Toast.makeText(MainActivity.this,
-						// initial.getActiveDate().toLocaleString(),
-						// Toast.LENGTH_SHORT).show();
-
-						MainActivity.this.removeMarker(placeit);
+						removeMarker(placeit);
 						List<PlaceIt> newplaceits = new ArrayList<PlaceIt>();
 						for (int i = 1; i < placeits.size(); i++) {
 							newplaceits.add(placeits.get(i));
@@ -635,7 +630,7 @@ public class MainActivity extends FragmentActivity implements
 
 		alert.show();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -667,14 +662,15 @@ public class MainActivity extends FragmentActivity implements
 		List<Marker> markersRemoved = new Vector<Marker>();
 		for (Marker marker : mMarkers) {
 
-			if (pc.equals(marker)) {
+			if (pc.getTitle() == marker.getTitle() && pc.getDescription() == marker.getSnippet()) {
 				markersRemoved.add(marker);
 			}
 		}
 
 		for (int i = 0; i < markersRemoved.size(); i++) {
-			mMarkers.remove(markersRemoved.get(i));
 			markersRemoved.get(i).remove();
+			mMarkers.remove(markersRemoved.get(i));
+			
 
 		}
 
@@ -713,14 +709,20 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onLocationChanged(Location arg0) {
+	public void onLocationChanged(final Location arg0) {
+		clearMap();
+		controller.initializeView(new RequestReceiver() {
+			public void receiveTask(String s) {
+				setUpSideBar();
+				setUpFindButton();
+				controller.checkCoordinates(arg0);
+			}
+		});
+	}
 
-		Toast.makeText(
-				MainActivity.this,
-				"Location changed to " + arg0.getLatitude() + ","
-						+ arg0.getLongitude(), Toast.LENGTH_SHORT).show();
-		controller.checkCoordinates(arg0);
-
+	@Override
+	public void clearMap() {
+		this.googleMap.clear();
 	}
 
 	@Override
