@@ -22,6 +22,8 @@
     <string-array name="categories">
         <item>Account</item>
         <item>Airport</item>
+                <item>Food</item>
+     
         <item>Amusement Park</item>
         <item>Aquarium</item>
         <item>Art Galley</item>
@@ -57,7 +59,6 @@
         <item>Finance</item>
                 <item>Fire Station</item>
         <item>Florist</item>
-        <item>Food</item>
         <item>Funeral Home</item>
                 <item>Furniture Store</item>
         <item>Gas Station</item>

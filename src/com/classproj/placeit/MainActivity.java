@@ -187,8 +187,6 @@ public class MainActivity extends FragmentActivity implements
 				);
 			}
 		});
-		
-		
 
 		List<PlaceIt> checkList = null;
 		Location myLocationNow = locationManager
@@ -300,7 +298,6 @@ public class MainActivity extends FragmentActivity implements
 							boolean isChecked) {
 						int temp = 0;
 						for (int i = 0; i < 100; i++) {
-
 							if (checkItems[i] == true) {
 								temp++;
 							}
@@ -311,7 +308,7 @@ public class MainActivity extends FragmentActivity implements
 							((AlertDialog) dialog).getListView()
 									.setItemChecked(which, false);
 							Toast.makeText(MainActivity.this,
-									"Please choose only three",
+									"Please choose only three categories.",
 									Toast.LENGTH_LONG).show();
 						}
 
@@ -325,6 +322,9 @@ public class MainActivity extends FragmentActivity implements
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						int temp = 0;
+						catTitleStr = catTitle.getText().toString();
+						catDescStr = catDesc.getText().toString();
+						
 						for (int i = 0; i < 100; i++) {
 							if (checkItems[i] == true) {
 								temp++;
@@ -346,25 +346,17 @@ public class MainActivity extends FragmentActivity implements
 							}
 						}
 
-						if (catTitle== null && catDesc == null)
-						{
-							
-							Toast.makeText(MainActivity.this, "Please enter both a title and a description", Toast.LENGTH_LONG).show();
+						if (catTitleStr.matches("") && catDescStr.matches("")) {
+							Toast.makeText(MainActivity.this, "Please enter a title or description", Toast.LENGTH_LONG).show();
 							setupCategoryDialog();
 						}					
-					
-						else
-						{
+						else {
 							
-							catTitleStr = catTitle.getText().toString();
-							catDescStr = catDesc.getText().toString();
-						
 							controller.AddPlaceIt(catTitleStr, catDescStr, selectedThree, new PlaceItReceiver() {
 
 							@Override
 							public void receivePlaceIt(PlaceIt placeit) {
-								scheduler
-										.scheduleNextActivation(placeit);
+								scheduler.scheduleNextActivation(placeit);
 								setUpSideBar();
 								/* Notification of added place-it */
 								Toast.makeText(MainActivity.this,
@@ -412,7 +404,7 @@ public class MainActivity extends FragmentActivity implements
 				// Check that user has entered a title or description
 				if (descText.matches("") && titleText.matches("")) {
 					Toast.makeText(MainActivity.this,
-							"Please enter a title or descripion.",
+							"Please enter a title or description.",
 							Toast.LENGTH_SHORT).show();
 					setUpDialog(position);
 				} else {
@@ -471,9 +463,9 @@ public class MainActivity extends FragmentActivity implements
 						String weekString = numweeks.getText().toString();
 						int week = -1;
 
-						Toast.makeText(MainActivity.this,
+						/*Toast.makeText(MainActivity.this,
 								"the checkeditemposition is " + selectedDay,
-								Toast.LENGTH_SHORT).show();
+								Toast.LENGTH_SHORT).show(); */
 						if (selectedDay > 0 && weekString.matches("")) {
 							Toast.makeText(MainActivity.this,
 									"Please enter a week interval.",
@@ -487,11 +479,9 @@ public class MainActivity extends FragmentActivity implements
 
 						controller.AddPlaceIt(title, description, location,
 								new PlaceItReceiver() {
-
 									@Override
 									public void receivePlaceIt(PlaceIt placeit) {
-										scheduler
-												.scheduleNextActivation(placeit);
+										scheduler.scheduleNextActivation(placeit);
 										setUpSideBar();
 										/* Notification of added place-it */
 										Toast.makeText(MainActivity.this,
@@ -542,7 +532,7 @@ public class MainActivity extends FragmentActivity implements
 							index = index - 1;
 						}
 
-						Log.d("Test = PlaceIt", "" + index + "");
+						//Log.d("Test = PlaceIt", "" + index + "");
 						String temp = controller.movePlaceIts(index);
 						// Toast.makeText(MainActivity.this, "" + temp + "",
 						// Toast.LENGTH_SHORT).show();
@@ -687,13 +677,13 @@ public class MainActivity extends FragmentActivity implements
 	public void addMarker(PlaceIt _pc) {
 
 		LocationPlaceIt pc = (LocationPlaceIt) _pc;
-		Toast.makeText(
+		/*Toast.makeText(
 				MainActivity.this,
 				pc.getLatitude() + "-" + pc.getLongitude() + pc.getTitle()
 						+ "-" + pc.getDescription(), Toast.LENGTH_SHORT).show();
 		Log.d("aa",
 				"adding marker " + pc.getLatitude() + "-" + pc.getLongitude()
-						+ pc.getTitle() + "-" + pc.getDescription());
+						+ pc.getTitle() + "-" + pc.getDescription()); */
 		String title = pc.getTitle();
 		String descText = pc.getDescription();
 		Marker added = googleMap.addMarker(new MarkerOptions()
@@ -704,22 +694,16 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void removeMarker(PlaceIt pc) {
-
 		List<Marker> markersRemoved = new Vector<Marker>();
 		for (Marker marker : mMarkers) {
-
 			if (pc.getTitle() == marker.getTitle() && pc.getDescription() == marker.getSnippet()) {
 				markersRemoved.add(marker);
 			}
 		}
-
 		for (int i = 0; i < markersRemoved.size(); i++) {
 			markersRemoved.get(i).remove();
 			mMarkers.remove(markersRemoved.get(i));
-			
-
 		}
-
 	}
 
 	@Override
@@ -757,7 +741,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onLocationChanged(final Location arg0) {
 		clearMap();
-		Toast.makeText(MainActivity.this, "Moved",
+		Toast.makeText(MainActivity.this, "Location has changed",
 				Toast.LENGTH_SHORT).show();
 		controller.initializeView(new RequestReceiver() {
 			public void receiveTask(String s) {
@@ -799,19 +783,19 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		Toast.makeText(MainActivity.this, "Place-it connected!",
-				Toast.LENGTH_SHORT).show();
+		/* Toast.makeText(MainActivity.this, "Place-it connected!",
+				Toast.LENGTH_SHORT).show(); */
 		mLocationClient.requestLocationUpdates(mLocationRequest, mListener);
 
 	}
 
 	@Override
 	public void notifyUser(List<PlaceIt> placeits, String ControllerType) {
-		Toast.makeText(
+		/*Toast.makeText(
 				MainActivity.this,
 				"Place-it notified by " + ControllerType + " with "
 						+ placeits.size() + " placeits", Toast.LENGTH_SHORT)
-				.show();
+				.show();*/
 		if (ControllerType.equals("Controller")) {
 			setUpNotification(placeits);
 		}
