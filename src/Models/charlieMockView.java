@@ -39,4 +39,10 @@ public class charlieMockView implements iView{
 		
 	}
 
+	@Override
+	public void clearMap() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

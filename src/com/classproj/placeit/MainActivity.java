@@ -286,7 +286,7 @@ public class MainActivity extends FragmentActivity implements
 		for (int i = 0; i < 100; i++) {
 			checkItems[i] = false;
 		}
-
+		int tempNext = 0;
 		int checkedItem1 = 0;
 		int checkCOunt = 0;
 		final boolean[] checked = null;
@@ -305,6 +305,7 @@ public class MainActivity extends FragmentActivity implements
 								temp++;
 							}
 						}
+					
 						if (temp > 3) {
 							checkItems[which] = false;
 							((AlertDialog) dialog).getListView()
@@ -323,6 +324,22 @@ public class MainActivity extends FragmentActivity implements
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						
+						int temp = 0;
+						for (int i = 0; i < 100; i++) {
+
+							if (checkItems[i] == true) {
+								temp++;
+							}
+						}
+						
+						if ((temp == 0) && (catTitle.getText().toString()).compareTo("") == 0 
+								&& (catDesc.getText().toString().compareTo(""))==0)
+						{
+							//Toast.makeText(MainActivity.this, "Hi", Toast.LENGTH_LONG).show();
+							setupCategoryDialog();
+
+						}
 						int count = 0;
 						for (int i = 0; i < checkItems.length; i++) {
 							if (checkItems[i] == true) {
@@ -363,6 +380,8 @@ public class MainActivity extends FragmentActivity implements
 						}
 
 					}
+					
+					
 
 				});
 		
@@ -501,7 +520,7 @@ public class MainActivity extends FragmentActivity implements
 
 	public void setUpDiscard() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
+		
 		alert.setTitle("Discard or Delete");
 		LayoutInflater inflater = getLayoutInflater();
 
