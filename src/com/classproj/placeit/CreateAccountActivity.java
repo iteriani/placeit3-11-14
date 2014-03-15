@@ -51,7 +51,8 @@ public class CreateAccountActivity extends Activity{
 							@Override
 							public void receiveTask(String s) {
 								Intent intent = new Intent(v.getContext(), Login.class);
-								startActivity(intent);		
+								startActivity(intent);	
+								finish();
 							}
 							
 						});

@@ -61,6 +61,7 @@ public class Login extends Activity {
 									myHold.setContext(context);
 									Intent intent = new Intent(v.getContext(), MainActivity.class);
 									startActivity(intent);
+									finish();
 								}
 								else
 								{
