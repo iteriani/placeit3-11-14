@@ -1,3 +1,12 @@
+/**
+ * This is an abstract class 
+ * It is parent of webservice for all the other classes' webservice
+ * user
+ * placeit
+ * place
+ * can extends it and has their own concrete class
+ */
+
 package HTTP;
 
 public abstract class WebService {

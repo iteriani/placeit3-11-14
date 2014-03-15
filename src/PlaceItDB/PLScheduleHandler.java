@@ -1,3 +1,10 @@
+/**
+ * 
+ * This class implements iPLScheduleModel to handle placeit schedules
+ * It also links to the database and updates each modification
+ *
+ */
+
 package PlaceItDB;
 
 import java.util.ArrayList;

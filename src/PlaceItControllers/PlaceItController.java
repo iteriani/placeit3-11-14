@@ -1,3 +1,11 @@
+/**
+ * 
+ * This is the placeit controller
+ * it connects the database and UI
+ * placeits functions here
+ *
+ */
+
 package PlaceItControllers;
 
 import java.io.UnsupportedEncodingException;

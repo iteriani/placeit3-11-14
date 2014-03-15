@@ -1,3 +1,9 @@
+/**
+ * This place class stores information of a place
+ * to support category placeit
+ * it has category and location (latitude and longitude)
+ */
+
 package Models;
 
 import java.util.logging.Level;

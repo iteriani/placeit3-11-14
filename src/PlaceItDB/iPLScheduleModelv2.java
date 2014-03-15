@@ -1,3 +1,11 @@
+/**
+ * 
+ *This interface manipulate schedule for placeits
+ *it adds or get schedules
+ *
+ *This is the version used in milestone2
+ */
+
 package PlaceItDB;
 
 import HTTP.PLScheduleReceiver;

@@ -1,3 +1,8 @@
+/**
+ * This is the activity for creating an account
+ * This is first the UI part, signup/login screen
+ */
+
 package com.classproj.placeit;
 
 import HTTP.RequestReceiver;

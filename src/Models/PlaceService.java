@@ -1,3 +1,10 @@
+/**
+ * 
+ * Implement Google Places API
+ * Provide places information to support category placeit
+ *
+ */
+
 package Models;
 
 import java.io.BufferedReader;

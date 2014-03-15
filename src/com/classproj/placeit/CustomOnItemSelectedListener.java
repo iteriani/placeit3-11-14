@@ -1,3 +1,8 @@
+/**
+ * This customs the OnItemSelectedListener listener
+ * it make toast if an item is selected
+ */
+
 package com.classproj.placeit;
 import android.view.View;
 import android.widget.AdapterView;

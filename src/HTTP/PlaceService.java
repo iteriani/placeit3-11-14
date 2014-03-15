@@ -1,3 +1,8 @@
+/**
+ * This is the class that provides services related to places
+ * It can find places, set and get URL
+ */
+
 package HTTP;
 
 import java.io.BufferedReader;

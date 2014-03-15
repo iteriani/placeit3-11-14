@@ -1,4 +1,4 @@
-/*
+/**
  * This class has the sole purpose of ADAPTING the categories given by the user in MainActivity as a string array into a single string
  * with the categories separated by "|" character.
  */

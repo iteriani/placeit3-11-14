@@ -1,3 +1,13 @@
+/**
+ * 
+ * This interface models the user database
+ * it can store a newly signed-up user
+ * it can check the login information for an existing user
+ * it checks if a given user is logged in or not
+ * it can help a logged in user log out
+ *
+ */
+
 package PlaceItDB;
 
 import java.util.List;

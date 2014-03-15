@@ -1,3 +1,8 @@
+/**
+ * This is a factory to create placeits and notify the database
+ *
+ */
+
 package Models;
 
 import org.json.JSONException;

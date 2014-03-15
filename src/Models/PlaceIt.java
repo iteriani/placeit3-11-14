@@ -1,3 +1,8 @@
+/**
+ * This is an abstract class of place it
+ * it's the parent of both category place it and location place it
+ */
+
 package Models;
 
 public abstract class PlaceIt {

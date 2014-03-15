@@ -1,3 +1,9 @@
+/**
+ * This is an activity for login
+ * This works on multiple users
+ * It helps user to login or signup and check/update information in the database
+ */
+
 package com.classproj.placeit;
 
 import org.apache.http.protocol.HttpContext;

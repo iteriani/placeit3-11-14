@@ -1,3 +1,9 @@
+/**
+ * 
+ * This arranges schedule for placeits in milestone 2
+ * It is the new version for PLSchedule
+ */
+
 package Models;
 
 import java.util.LinkedList;

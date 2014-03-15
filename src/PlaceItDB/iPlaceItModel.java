@@ -1,3 +1,10 @@
+/**
+ * 
+ * This is an interface for placeit model
+ * It can add/delete/deactive/get a placeit from the placeit list or get the whole list
+ *
+ */
+
 package PlaceItDB;
 
 import HTTP.PLScheduleReceiver;

@@ -1,3 +1,12 @@
+/**
+ * 
+ * This interface manipulate schedules of a given placeit 
+ * and return the new placeit
+ * 
+ * This is the version used in milestone 1
+ *
+ */
+
 package PlaceItDB;
 
 import java.util.List;

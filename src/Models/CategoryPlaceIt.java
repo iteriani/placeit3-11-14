@@ -1,3 +1,8 @@
+/**
+ * This is a category placeit class. 
+ * It inherits the abstract class PlaceIt and has one more field to store its categories.
+ */
+
 package Models;
 
 public class CategoryPlaceIt extends PlaceIt{

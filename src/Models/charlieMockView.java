@@ -1,3 +1,8 @@
+/**
+ * This is the mocking view for testing in MS1
+ * Charlie created this to assist his part of testing
+ */
+
 package Models;
 
 import java.util.LinkedList;

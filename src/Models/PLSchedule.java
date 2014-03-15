@@ -1,3 +1,10 @@
+/**
+ * 
+ * This class arrange schdules for placeits
+ * This is used in MS1
+ *
+ */
+
 package Models;
 
 import java.util.LinkedList;

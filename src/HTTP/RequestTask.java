@@ -1,3 +1,8 @@
+/**
+ * This is a subclass of AsyncTask class
+ * Tasks are requested and run in background
+ */
+
 package HTTP;
 
 import java.io.ByteArrayOutputStream;

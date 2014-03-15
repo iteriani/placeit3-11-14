@@ -1,3 +1,7 @@
+/**
+ * Test if place class is working
+ */
+
 package Models;
 
 import java.util.ArrayList;

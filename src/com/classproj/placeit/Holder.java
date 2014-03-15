@@ -1,3 +1,8 @@
+/**
+ * This class stores a static variable 
+ * to temporarily store things between the two activity
+ */
+
 package com.classproj.placeit;
 
 import org.apache.http.protocol.HttpContext;

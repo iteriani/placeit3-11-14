@@ -1,3 +1,8 @@
+/**
+ * This is a location placeit class. 
+ * It inherits the abstract class PlaceIt and has latitude and longitude to store its location.
+ */
+
 package Models;
 
 public class LocationPlaceIt extends PlaceIt {

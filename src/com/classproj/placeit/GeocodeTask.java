@@ -1,3 +1,10 @@
+/**
+ * This is an asynctask for googlemap
+ * 
+ * Adding Markers on Google Map for each matching address
+ * Creating an instance of GeoPoint, to display in Google Map
+ */
+
 package com.classproj.placeit;
 
 import java.io.IOException;

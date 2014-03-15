@@ -1,3 +1,7 @@
+/**
+ * This is the main activity for the whole app, the UI part
+ */
+
 package com.classproj.placeit;
 
 import java.util.ArrayList;

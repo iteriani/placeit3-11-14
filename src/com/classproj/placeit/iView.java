@@ -1,3 +1,9 @@
+/**
+ * This is an interface for the main view
+ * On the map it add and remove markers
+ * it notifies user and get markers
+ */
+
 package com.classproj.placeit;
 
 import java.util.List;

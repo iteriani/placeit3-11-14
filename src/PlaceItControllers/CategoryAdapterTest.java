@@ -1,3 +1,8 @@
+/**
+ * This class tests the adaptor
+ * We check the string in the console
+ */
+
 package PlaceItControllers;
 
 import junit.framework.TestCase;

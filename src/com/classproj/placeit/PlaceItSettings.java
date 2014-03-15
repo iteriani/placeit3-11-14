@@ -1,3 +1,11 @@
+/**
+ * This is a class where we set properties
+ * 	interval type
+ * 	interval number 
+ * 	notification interval
+ * for placeits
+ */
+
 package com.classproj.placeit;
 
 import java.util.Calendar;

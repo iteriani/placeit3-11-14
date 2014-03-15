@@ -1,3 +1,11 @@
+/**
+ * 
+ * This class manipulate placeit's schedules
+ * the schedule class functions here
+ * This PlaceItScheduler connects the database and the UI
+ *
+ */
+
 package PlaceItControllers;
 
 import java.util.Calendar;

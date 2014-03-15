@@ -1,3 +1,10 @@
+/**
+ * This is the webservice for user class
+ * it implements userdbmodel
+ * 
+ * it gets signup/login/logout status of a user on a webservice level
+ */
+
 package HTTP;
 
 import java.io.IOException;

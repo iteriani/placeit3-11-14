@@ -1,3 +1,10 @@
+/**
+ * This class manipulate placeits and their schedules at the web server level
+ * it implemetns iPlaceItModel, iPLScheduleModelv2 
+ * this is the database for milestone 2
+ * 
+ */
+
 package HTTP;
 
 import java.util.List;
