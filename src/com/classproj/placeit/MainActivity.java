@@ -277,7 +277,7 @@ public class MainActivity extends FragmentActivity implements
 
 	public void setupCategoryDialog() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle("Create Place-It");
+		alert.setTitle("Create Category Place-It");
 		LayoutInflater inflater = getLayoutInflater();
 		dialog = inflater.inflate(R.layout.placeit_category, null);
 		final boolean[] checkItems = new boolean[100];
@@ -291,7 +291,7 @@ public class MainActivity extends FragmentActivity implements
 		int checkCOunt = 0;
 		final boolean[] checked = null;
 		selectedThree = new String[3];
-		// Create single choice list
+		// Create multi choice list
 		alert.setMultiChoiceItems(R.array.categories, checkItems,
 				new DialogInterface.OnMultiChoiceClickListener() {
 
@@ -324,10 +324,8 @@ public class MainActivity extends FragmentActivity implements
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
 						int temp = 0;
 						for (int i = 0; i < 100; i++) {
-
 							if (checkItems[i] == true) {
 								temp++;
 							}
@@ -370,19 +368,20 @@ public class MainActivity extends FragmentActivity implements
 								setUpSideBar();
 								/* Notification of added place-it */
 								Toast.makeText(MainActivity.this,
-										"Category !!!! Place-it added!",
+										"Category Place-it added!",
 										Toast.LENGTH_SHORT).show();
-
 							}
-							
 						});
-						
 						}
-
 					}
-					
-					
-
+				});
+		/* Cancel button which does nothing when clicked and exits the dialog. */
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						Toast.makeText(MainActivity.this, "Nothing added!",
+								Toast.LENGTH_SHORT).show();
+					}
 				});
 		
 
@@ -758,6 +757,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onLocationChanged(final Location arg0) {
 		clearMap();
+		Toast.makeText(MainActivity.this, "Moved",
+				Toast.LENGTH_SHORT).show();
 		controller.initializeView(new RequestReceiver() {
 			public void receiveTask(String s) {
 				setUpSideBar();
